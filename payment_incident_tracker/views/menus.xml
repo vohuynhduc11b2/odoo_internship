@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_payment_incident_root"
+              name="Theo dõi thanh toán"
+              sequence="80"
+              groups="payment_incident_tracker.group_payment_incident_user"/>
+
+    <menuitem id="menu_payment_incident_log"
+              name="Sự cố/Cảnh báo"
+              parent="menu_payment_incident_root"
+              action="action_oms_payment_incident_log"
+              sequence="10"
+              groups="payment_incident_tracker.group_payment_incident_user"/>
+
+    <menuitem id="menu_payment_incident_config"
+              name="Cấu hình"
+              parent="menu_payment_incident_root"
+              sequence="90"
+              groups="payment_incident_tracker.group_payment_incident_manager"/>
+
+    <menuitem id="menu_payment_incident_category"
+              name="Danh mục sự cố"
+              parent="menu_payment_incident_config"
+              action="action_oms_payment_incident_category"
+              sequence="10"
+              groups="payment_incident_tracker.group_payment_incident_manager"/>
+</odoo>

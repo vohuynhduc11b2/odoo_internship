@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_outstation_option_tree" model="ir.ui.view">
+        <field name="name">oms.solar.outstation.option.tree</field>
+        <field name="model">oms.solar.outstation.option</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_outstation_option_form" model="ir.ui.view">
+        <field name="name">oms.solar.outstation.option.form</field>
+        <field name="model">oms.solar.outstation.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_outstation_option" model="ir.actions.act_window">
+        <field name="name">Cấu hình giao ngoại tỉnh</field>
+        <field name="res_model">oms.solar.outstation.option</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_custom_order_oms_tree" model="ir.ui.view">
+        <field name="name">sale.custom.order.oms.tree</field>
+        <field name="model">sale_custom.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="oms_buyer_partner_id"/>
+                <field name="oms_invoice_customer_id"/>
+                <field name="oms_delivery_method"/>
+                <field name="oms_expected_delivery_date"/>
+                <field name="oms_duplicate_info_status"/>
+                <field name="oms_lock_flag"/>
+                <field name="oms_payment_incident_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_custom_order_oms_form" model="ir.ui.view">
+        <field name="name">sale.custom.order.oms.form</field>
+        <field name="model">sale_custom.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_view_oms_payment_incidents" string="Sự cố thanh toán" type="object" class="oe_stat_button" icon="fa-exclamation-triangle"/>
+                    <button name="action_request_sales_quote" string="Gửi Sales báo giá" type="object" class="oe_highlight" invisible="not oms_has_contact_price_item"/>
+                    <button name="action_sync_oms_gift_combo" string="Đồng bộ combo quà" type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group string="Khách hàng &amp; hoá đơn">
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="oms_buyer_partner_id" domain="[('id', 'in', oms_available_buyer_partner_ids)]"/>
+                            <field name="oms_invoice_customer_id" domain="[('id', 'in', oms_available_invoice_partner_ids)]"/>
+                            <field name="oms_available_buyer_partner_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="oms_available_invoice_partner_ids" widget="many2many_tags" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="oms_payment_incident_count" readonly="1"/>
+                            <field name="oms_has_contact_price_item" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Giao hàng">
+                        <group>
+                            <field name="oms_delivery_method"/>
+                            <field name="oms_outstation_option_id" invisible="oms_delivery_method != 'outstation'" required="oms_delivery_method == 'outstation'"/>
+                            <field name="oms_transport_need" invisible="1"/>
+                            <field name="oms_transport_address" invisible="oms_delivery_method != 'outstation'" required="oms_delivery_method == 'outstation'"/>
+                            <field name="oms_transport_note" invisible="oms_delivery_method != 'outstation'" placeholder="Thông tin người nhận, giờ giao mong muốn, ghi chú thêm..."/>
+                        </group>
+                        <group>
+                            <field name="oms_destination_state_id"/>
+                            <field name="oms_delivery_leadtime_rule_id" readonly="1"/>
+                            <field name="oms_expected_delivery_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Lock / kho">
+                        <group>
+                            <field name="oms_lock_flag"/>
+                            <field name="oms_lock_note" required="oms_lock_flag"/>
+                        </group>
+                        <group>
+                            <field name="oms_deposit_hold_required"/>
+                            <field name="oms_deposit_hold_note" invisible="not oms_deposit_hold_required"/>
+                        </group>
+                    </group>
+                    <group string="Theo dõi bổ sung">
+                        <group>
+                            <field name="oms_duplicate_info_status"/>
+                            <field name="oms_duplicate_info_note"/>
+                        </group>
+                        <group>
+                            <field name="oms_approval_rule_note"/>
+                        </group>
+                    </group>
+                    <group string="Cảnh báo tồn kho" invisible="not oms_low_stock_warning_text">
+                        <field name="oms_low_stock_warning_text" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="Combo quà tặng / giá CTKM">
+                        <group>
+                            <field name="oms_gift_combo_selection_count" readonly="1"/>
+                        </group>
+                        <group/>
+                        <field name="oms_gift_combo_selection_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="line_id" readonly="1"/>
+                                <field name="promotion_id" readonly="1"/>
+                                <field name="combo_id"/>
+                                <field name="purchased_qty" readonly="1"/>
+                                <field name="allowed_qty" readonly="1"/>
+                                <field name="selected_qty"/>
+                                <field name="main_product_price" readonly="1"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sale_custom_order_oms_followup" model="ir.actions.act_window">
+        <field name="name">Đơn OMS theo dõi bổ sung</field>
+        <field name="res_model">sale_custom.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_sale_custom_order_oms_tree"/>
+    </record>
+</odoo>

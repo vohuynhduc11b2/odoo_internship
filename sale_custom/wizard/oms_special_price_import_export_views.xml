@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_oms_special_price_import_export_wizard_form" model="ir.ui.view">
+        <field name="name">oms.special.price.import.export.wizard.form</field>
+        <field name="model">oms.special.price.import.export.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import/Export Giá đặc biệt OMS">
+                <group>
+                    <field name="special_price_id" readonly="1" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_export_template" type="object" string="Export giá đặc biệt" class="btn-primary"/>
+                    <field name="file" filename="filename"/>
+                    <button name="action_import_file" type="object" string="Import giá đặc biệt" class="btn-success"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_oms_special_price_import_export" model="ir.actions.act_window">
+        <field name="name">Import/Export Giá đặc biệt OMS</field>
+        <field name="res_model">oms.special.price.import.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_special_price_id': active_id}</field>
+    </record>
+</odoo>

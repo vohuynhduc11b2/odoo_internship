@@ -1,0 +1,265 @@
+.o_wsale_address_fill,
+.oms_address_form_screen {
+    --oms-ink: #142c34;
+    --oms-muted: #6f8086;
+    --oms-line: rgba(20, 44, 52, 0.12);
+    --oms-surface: rgba(255, 255, 255, 0.92);
+    --oms-accent: #173f49;
+
+    max-width: 1180px;
+    margin-right: auto;
+    margin-left: auto;
+    color: var(--oms-ink);
+
+    position: relative;
+    padding-top: 18px !important;
+    padding-bottom: 64px !important;
+
+    &::before {
+        position: absolute;
+        inset: 86px 12px 26px;
+        z-index: -1;
+        border-radius: 34px;
+        background:
+            radial-gradient(circle at 18% 10%, rgba(23, 63, 73, 0.10), transparent 34%),
+            linear-gradient(135deg, rgba(247, 250, 249, 0.94), rgba(238, 244, 242, 0.88));
+        content: '';
+    }
+
+    > .row:last-child,
+    .oms_address_panel {
+        width: 100%;
+        max-width: 920px;
+        margin: 18px auto 0;
+        padding: clamp(22px, 3vw, 34px);
+        border: 1px solid var(--oms-line);
+        border-radius: 30px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 253, 252, 0.90)),
+            var(--oms-surface);
+        box-shadow:
+            0 28px 80px rgba(17, 45, 52, 0.12),
+            0 1px 0 rgba(255, 255, 255, 0.85) inset;
+        backdrop-filter: blur(12px);
+    }
+
+    > .row:last-child .oe_cart {
+        width: 100%;
+        max-width: 820px;
+        margin-right: auto;
+        margin-left: auto;
+        flex: 0 0 100%;
+    }
+
+    .checkout_autoformat > .row {
+        --bs-gutter-x: 18px;
+        --bs-gutter-y: 12px;
+    }
+
+    h3.mb-3 {
+        position: relative;
+        margin: 20px 0 22px !important;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--oms-line);
+        color: var(--oms-ink);
+        font-size: clamp(1.65rem, 3vw, 2.35rem);
+        font-weight: 650;
+        letter-spacing: -0.045em;
+        line-height: 0.98;
+        text-wrap: balance;
+
+        &::before {
+            position: absolute;
+            top: -18px;
+            left: 0;
+            color: var(--oms-accent);
+            font-size: 0.72rem;
+            font-weight: 750;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            content: 'Thông tin nhận hàng';
+        }
+    }
+
+    .oms_address_panel_header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--oms-line);
+
+        h3 {
+            margin: 4px 0 6px;
+            color: var(--oms-ink);
+            font-size: clamp(1.65rem, 3vw, 2.35rem);
+            font-weight: 650;
+            letter-spacing: -0.045em;
+            line-height: 0.98;
+            text-wrap: balance;
+        }
+
+        p {
+            max-width: 520px;
+            margin: 0;
+            color: var(--oms-muted);
+            font-size: 0.98rem;
+            line-height: 1.55;
+        }
+    }
+
+    .oms_address_kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--oms-accent);
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+
+        &::before {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--oms-accent);
+            box-shadow: 0 0 0 5px rgba(23, 63, 73, 0.10);
+            content: '';
+        }
+    }
+
+    .oms_address_panel_badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+        padding: 9px 12px;
+        border-radius: 999px;
+        background: rgba(23, 63, 73, 0.08);
+        color: var(--oms-accent);
+        font-size: 0.82rem;
+        font-weight: 650;
+    }
+
+    .oms_address_alert {
+        border: 0;
+        border-radius: 18px;
+        background: #fff8e8;
+        color: #73521b;
+    }
+
+    .oms_address_subtitle {
+        margin: 24px 0 12px;
+        color: var(--oms-ink);
+        font-size: 1rem;
+        font-weight: 650;
+    }
+
+    .oms_address_form_grid {
+        --bs-gutter-x: 18px;
+        --bs-gutter-y: 14px;
+    }
+
+    .col-form-label {
+        padding-bottom: 7px;
+        color: rgba(20, 44, 52, 0.78);
+        font-size: 0.83rem;
+        font-weight: 650;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 48px;
+        border-color: rgba(20, 44, 52, 0.10);
+        border-radius: 15px;
+        background-color: rgba(255, 255, 255, 0.94);
+        color: var(--oms-ink);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.72),
+            0 8px 18px rgba(20, 44, 52, 0.03);
+        transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+
+        &:focus {
+            border-color: rgba(23, 63, 73, 0.52);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(23, 63, 73, 0.10);
+        }
+    }
+
+    .checkout_autoformat > .d-flex:last-child,
+    .oms_address_actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 26px !important;
+        padding-top: 20px;
+        border-top: 1px solid var(--oms-line);
+    }
+
+    .btn-outline-secondary,
+    #save_address,
+    .oms_address_back_btn,
+    .oms_address_save_btn {
+        min-height: 46px;
+        border-radius: 999px;
+        padding: 0.68rem 1.15rem;
+        font-weight: 650;
+        transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+
+        &:hover {
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0) scale(0.99);
+        }
+    }
+
+    .btn-outline-secondary,
+    .oms_address_back_btn {
+        border: 1px solid var(--oms-line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--oms-accent);
+    }
+
+    #save_address,
+    .oms_address_save_btn {
+        border-color: var(--oms-accent);
+        background: var(--oms-accent);
+        box-shadow: 0 12px 28px rgba(23, 63, 73, 0.22);
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .o_wsale_address_fill,
+    .oms_address_form_screen {
+        padding-bottom: 32px !important;
+
+        &::before {
+            inset: 58px -12px 0;
+            border-radius: 24px;
+        }
+
+        > .row:last-child,
+        .oms_address_panel {
+            padding: 20px;
+            border-radius: 22px;
+        }
+
+        .oms_address_panel_header,
+        .oms_address_actions {
+            flex-direction: column;
+        }
+
+        .oms_address_panel_badge,
+        .btn-outline-secondary,
+        #save_address,
+        .oms_address_back_btn,
+        .oms_address_save_btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+}

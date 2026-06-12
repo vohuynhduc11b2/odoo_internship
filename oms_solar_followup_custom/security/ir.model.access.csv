@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_oms_delivery_leadtime_rule_user,oms.delivery.leadtime.rule.user,model_oms_delivery_leadtime_rule,base.group_user,1,1,1,1
+access_oms_outstation_option_user,oms.solar.outstation.option.user,model_oms_solar_outstation_option,base.group_user,1,1,1,1
+access_oms_payment_incident_user,oms.payment.incident.user,model_oms_payment_incident,base.group_user,1,1,1,1
+access_oms_gift_combo_selection_user,oms.solar.gift.combo.selection.user,model_oms_solar_gift_combo_selection,base.group_user,1,1,1,1

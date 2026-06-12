@@ -1,0 +1,134 @@
+/* ============================================================
+   DAT — Portal brand design tokens
+   Shared by /my/orders, /my/quotes and the order detail page.
+   Anchored on the existing DAT blue; refactor of hard-coded hex.
+   ============================================================ */
+
+.o_portal {
+    // Brand core
+    --dat-primary: #1d4ed8;
+    --dat-primary-600: #2563eb;
+    --dat-primary-700: #1e40af;
+    --dat-primary-050: #eff4ff;
+    --dat-accent: #f59e0b;        // solar amber — highlights / CTA accents
+    --dat-accent-050: #fff7ed;
+
+    // Neutrals
+    --dat-ink: #0f172a;
+    --dat-text: #334155;
+    --dat-muted: #64748b;
+    --dat-line: #e2e8f0;
+    --dat-line-soft: #eef2f7;
+    --dat-surface: #ffffff;
+    --dat-surface-2: #f8fafc;
+
+    // Status
+    --dat-success: #16a34a;
+    --dat-success-bg: #dcfce7;
+    --dat-success-ink: #166534;
+    --dat-danger: #e11d48;
+    --dat-info: #0284c7;
+    --dat-info-bg: #e0f2fe;
+    --dat-info-ink: #075985;
+
+    // Shape & elevation
+    --dat-radius: 16px;
+    --dat-radius-sm: 10px;
+    --dat-radius-pill: 999px;
+    --dat-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+    --dat-shadow-hover: 0 22px 54px rgba(15, 23, 42, 0.11);
+    --dat-shadow-cta: 0 10px 22px rgba(29, 78, 216, 0.22);
+
+    // Brand gradients
+    --dat-grad-header: linear-gradient(120deg, #1e40af 0%, #2563eb 55%, #3b82f6 100%);
+    --dat-grad-accent: linear-gradient(120deg, #f59e0b, #fb923c);
+}
+
+/* ---- Shared brand primitives (used across the 3 portal pages) ---- */
+
+.o_portal {
+    .dat-eyebrow {
+        color: var(--dat-muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+        text-transform: uppercase;
+
+        &--ondark { color: rgba(255, 255, 255, 0.78); }
+    }
+
+    .dat-card {
+        background: var(--dat-surface);
+        border: 1px solid var(--dat-line);
+        border-radius: var(--dat-radius);
+        box-shadow: var(--dat-shadow);
+    }
+
+    // Brand banner header (customer card / detail header / quotes header)
+    .dat-banner {
+        background: var(--dat-grad-header);
+        border-radius: var(--dat-radius);
+        box-shadow: var(--dat-shadow);
+        color: #fff;
+        overflow: hidden;
+        position: relative;
+
+        &::after {
+            // subtle solar glow on the right
+            background: radial-gradient(circle at 80% -20%, rgba(255, 255, 255, 0.28), transparent 60%);
+            content: '';
+            inset: 0;
+            position: absolute;
+        }
+
+        > * {
+            position: relative;
+            z-index: 1;
+        }
+    }
+
+    // Status badge primitive
+    .dat-badge {
+        align-items: center;
+        border-radius: var(--dat-radius-pill);
+        display: inline-flex;
+        font-size: 0.72rem;
+        font-weight: 800;
+        gap: 0.3rem;
+        line-height: 1;
+        padding: 0.42rem 0.66rem;
+        white-space: nowrap;
+
+        &.dat-badge--paid { background: var(--dat-success-bg); color: var(--dat-success-ink); }
+        &.dat-badge--partial { background: var(--dat-info-bg); color: var(--dat-info-ink); }
+        &.dat-badge--unpaid { background: #e2e8f0; color: #334155; }
+        &.dat-badge--warn { background: var(--dat-accent-050); color: #b45309; }
+        &.dat-badge--other { background: var(--dat-surface-2); border: 1px solid var(--dat-line); color: var(--dat-muted); }
+    }
+
+    // Brand button feel reused by action groups
+    .dat-btn {
+        align-items: center;
+        border-radius: var(--dat-radius-sm);
+        display: inline-flex;
+        font-size: 0.78rem;
+        font-weight: 700;
+        gap: 0.3rem;
+        min-height: 32px;
+        padding: 0.34rem 0.6rem;
+        transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+
+        &:hover { transform: translateY(-1px); }
+        &:active { transform: translateY(0); }
+
+        &.dat-btn--primary {
+            background: var(--dat-primary);
+            border-color: var(--dat-primary);
+            box-shadow: var(--dat-shadow-cta);
+            color: #fff;
+
+            &:hover { background: var(--dat-primary-700); border-color: var(--dat-primary-700); color: #fff; }
+        }
+    }
+}

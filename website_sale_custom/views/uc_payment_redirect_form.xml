@@ -1,0 +1,11 @@
+<odoo>
+    <!-- Thêm redirect form global để PaymentForm._processRedirectFlow luôn tìm thấy -->
+    <template id="uc_payment_redirect_form_global" inherit_id="website.layout" name="UC Payment Redirect Form">
+        <xpath expr="//body" position="inside">
+            <form id="o_payment_redirect_form"
+                  name="o_payment_redirect_form"
+                  method="post"
+                  class="d-none o_payment_redirect_form"/>
+        </xpath>
+    </template>
+</odoo>

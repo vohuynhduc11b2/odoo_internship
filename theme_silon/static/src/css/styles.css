@@ -1,0 +1,2033 @@
+/**
+ * Odoo Website Product Button Responsive CSS - Improved Version
+ * File: odoo-responsive-buttons.css
+ * Description: Makes o_wsale_product_btn responsive with better visibility and mobile support
+ * Compatible with: Odoo 13, 14, 15, 16, 17+
+ * Author: Custom Odoo Enhancement
+ * Version: 2.0
+ */
+
+/* =============================================================================
+   MAIN PRODUCT BUTTON WRAPPER
+   ============================================================================= */
+
+.o_wsale_product_btn {
+  display: flex !important;
+  flex-wrap: nowrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 15px;
+  text-align: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* =============================================================================
+   INDIVIDUAL BUTTON STYLING
+   ============================================================================= */
+
+.o_wsale_product_btn .btn {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding: 8px 8px;
+  border-radius: 6px;
+  line-height: 1.4;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9ecef;
+  color: #495057;
+  text-decoration: none !important;
+  box-sizing: border-box;
+  background-color:white !important;
+}
+
+/* Improved hover effect - more visible with gradient */
+.o_wsale_product_btn .btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-color: #667eea !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Dynamic alignment based on available buttons */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+  /* Only 1 button */
+  flex: 0 1 auto;
+  max-width: 200px;
+}
+
+.o_wsale_product_btn:has(.btn:nth-child(2):nth-last-child(1)) .btn {
+  /* 2 buttons */
+  flex: 1;
+  max-width: none;
+}
+
+.o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn {
+  /* 3 buttons */
+  flex: 1;
+  max-width: none;
+}
+
+/* =============================================================================
+   BUTTON TYPES - ALL BUTTONS UNIFIED STYLING
+   ============================================================================= */
+
+
+
+.o_wsale_product_btn .btn {
+  margin-left: -5px;
+  padding-left: 12px;
+  font-weight: 600;
+}
+
+.o_wsale_product_btn .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+
+/* =============================================================================
+   ICON STYLING
+   ============================================================================= */
+
+.o_wsale_product_btn .btn i,
+.o_wsale_product_btn .btn .fa {
+  margin-right: 4px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.o_wsale_product_btn .btn .fa-heart,
+.o_wsale_product_btn .btn .fa-compare {
+  margin-right: 4px;
+}
+
+/* =============================================================================
+   BUTTON STATES
+   ============================================================================= */
+
+.o_wsale_product_btn .btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%) !important;
+  border-color: #495057 !important;
+  color: #ffffff !important;
+}
+
+/* Cart button active state */
+.o_wsale_product_btn .btn:first-child:active {
+  background: linear-gradient(135deg, #1e7e34 0%, #155724 100%) !important;
+  border-color: #155724 !important;
+}
+
+.o_wsale_product_btn .btn.disabled,
+.o_wsale_product_btn .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  background-color: #f8f9fa !important;
+}
+
+.o_wsale_product_btn .btn:focus,
+.o_wsale_product_btn .btn:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+}
+
+/* =============================================================================
+   EXTRA LARGE SCREENS (> 1920px) - ULTRA WIDE DISPLAYS
+   ============================================================================= */
+
+@media (min-width: 1920px) {
+  .o_wsale_product_btn {
+    gap: 12px;
+    max-width: 400px;
+    margin: 15px auto 0 auto;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 16px;
+    padding: 12px 20px;
+    min-height: 45px;
+    border-radius: 8px;
+  }
+
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -8px;
+    padding-left: 28px;
+  }
+}
+
+/* =============================================================================
+   LARGE DESKTOP SCREENS (1600px - 1919px)
+   ============================================================================= */
+
+@media (max-width: 1919px) and (min-width: 1600px) {
+  .o_wsale_product_btn {
+    gap: 10px;
+    max-width: 500px;
+    margin: 15px auto 0 auto;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 15px;
+    padding: 10px 16px;
+    min-height: 42px;
+    border-radius: 7px;
+  }
+
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -6px;
+    padding-left: 22px;
+  }
+}
+
+/* =============================================================================
+   STANDARD DESKTOP SCREENS (1468px - 1599px)
+   ============================================================================= */
+
+@media (max-width: 1599px) and (min-width: 1468px) {
+  .o_wsale_product_btn {
+    gap: 8px;
+    max-width: 400px;
+    margin: 15px auto 0 auto;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 14px;
+    padding: 9px 14px;
+    min-height: 40px;
+  }
+
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -5px;
+    padding-left: 19px;
+  }
+}
+
+/* =============================================================================
+   MEDIUM DESKTOP SCREENS (1200px - 1467px) - FIX FOR BUTTON OVERFLOW
+   ============================================================================= */
+
+@media (max-width: 1467px) and (min-width: 1200px) {
+  .o_wsale_product_btn {
+    gap: 6px;
+    height:40px !important;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+
+  /* Cart button adjustment for medium screens */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -8px;
+    padding-left: 14px;
+  }
+
+  /* Ensure buttons don't overflow on medium screens */
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn {
+    max-width: calc(33.333% - 4px);
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:first-child {
+    padding-left: 10px;
+  }
+}
+
+/* =============================================================================
+   SMALL DESKTOP/LARGE TABLET SCREENS (1024px - 1199px)
+   ============================================================================= */
+
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .o_wsale_product_btn {
+    gap: 6px;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 13px;
+    padding: 8px 8px;
+  }
+
+  /* Cart button adjustment */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -10px;
+    padding-left: 18px;
+  }
+
+  /* For 3 buttons, ensure they fit properly */
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn {
+    max-width: calc(33.333% - 4px);
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:first-child {
+    padding-left: 12px;
+    margin-left: -12px;
+  }
+}
+
+/* =============================================================================
+   MEDIUM TABLET SCREENS (968px - 1023px)
+   ============================================================================= */
+
+@media (max-width: 1023px) and (min-width: 968px) {
+  .o_wsale_product_btn {
+    gap: 6px;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  /* Cart button adjustment */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: -12px;
+    padding-left: 18px;
+  }
+
+  /* For 3 buttons, stack them properly */
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) {
+    flex-wrap: wrap;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:first-child {
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin-left: 0;
+    padding-left: 8px;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:not(:first-child) {
+    flex: 1 1 calc(50% - 3px);
+    max-width: calc(50% - 3px);
+  }
+}
+
+/* =============================================================================
+   TABLET RESPONSIVE STYLES (768px - 967px)
+   ============================================================================= */
+
+@media (max-width: 967px) and (min-width: 768px) {
+  .o_wsale_product_btn {
+    flex-wrap: wrap;
+    gap: 8px;
+    height:50px !important;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 13px;
+    padding: 9px 12px;
+    min-height: 40px;
+  }
+
+  /* Reset cart button margin on tablet */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: 0;
+    padding-left: 12px;
+  }
+
+  /* 1 button - centered with max width */
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    flex: 0 1 auto;
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  /* 2 buttons - 50% each */
+  .o_wsale_product_btn:has(.btn:nth-child(2):nth-last-child(1)) .btn {
+    flex: 1 1 calc(50% - 4px);
+    max-width: calc(50% - 4px);
+  }
+
+  /* 3 buttons - first button full width, others 50% */
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:first-child {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn:not(:first-child) {
+    flex: 1 1 calc(50% - 4px);
+    max-width: calc(50% - 4px);
+  }
+}
+
+/* =============================================================================
+   LARGE MOBILE LANDSCAPE (640px - 767px)
+   ============================================================================= */
+
+@media (max-width: 767px) and (min-width: 640px) {
+  .o_wsale_product_btn {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .o_wsale_product_btn .btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 12px;
+    min-height: 42px;
+  }
+
+  /* Reset cart button margin */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: 0;
+    padding-left: 12px;
+  }
+
+  /* 1 button - full width but centered */
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    flex: 0 1 auto;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  /* 2 buttons - side by side */
+  .o_wsale_product_btn:has(.btn:nth-child(2):nth-last-child(1)) .btn {
+    flex: 1 1 calc(50% - 4px);
+    max-width: calc(50% - 4px);
+  }
+
+  /* 3 buttons - all stacked */
+  .o_wsale_product_btn:has(.btn:nth-child(3):nth-last-child(1)) .btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* =============================================================================
+   STANDARD MOBILE SCREENS (480px - 639px)
+   ============================================================================= */
+
+@media (max-width: 639px) and (min-width: 480px) {
+  .o_wsale_product_btn {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .o_wsale_product_btn .btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 8px;
+    min-height: 42px;
+  }
+
+  /* Reset cart button margin */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: 0;
+    padding-left: 8px;
+  }
+
+  /* All button configurations - full width stacked */
+  .o_wsale_product_btn .btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  /* Adjust icon spacing */
+  .o_wsale_product_btn .btn i,
+  .o_wsale_product_btn .btn .fa {
+    margin-right: 6px;
+    font-size: 12px;
+  }
+
+  /* Ensure compare button is visible */
+  .o_wsale_product_btn .o_add_compare {
+    display: inline-flex !important;
+    visibility: visible !important;
+  }
+
+  .o_wsale_product_btn .o_add_compare .fa-compare {
+    display: inline-block !important;
+  }
+}
+
+/* =============================================================================
+   SMALL MOBILE SCREENS (360px - 479px)
+   ============================================================================= */
+
+@media (max-width: 479px) and (min-width: 360px) {
+  .o_wsale_product_btn {
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .o_wsale_product_btn .btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+    font-size: 12px;
+    padding: 9px 6px;
+    min-height: 40px;
+  }
+
+  /* Reset cart button margin */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: 0;
+    padding-left: 6px;
+  }
+
+  /* Adjust icon spacing */
+  .o_wsale_product_btn .btn i,
+  .o_wsale_product_btn .btn .fa {
+    margin-right: 4px;
+    font-size: 11px;
+  }
+}
+
+/* =============================================================================
+   EXTRA SMALL MOBILE SCREENS (< 360px)
+   ============================================================================= */
+
+@media (max-width: 359px) {
+  .o_wsale_product_btn {
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 0 5px;
+  }
+
+  .o_wsale_product_btn .btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+    font-size: 11px;
+    padding: 8px 4px;
+    min-height: 38px;
+    border-radius: 4px;
+  }
+
+  /* Reset cart button margin */
+  .o_wsale_product_btn .btn:first-child {
+    margin-left: 0;
+    padding-left: 4px;
+  }
+
+  /* Minimize icon spacing */
+  .o_wsale_product_btn .btn i,
+  .o_wsale_product_btn .btn .fa {
+    margin-right: 3px;
+    font-size: 10px;
+  }
+
+  /* Ensure text doesn't break */
+  .o_wsale_product_btn .btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* =============================================================================
+   EXTRA SMALL MOBILE (< 576px) - LEGACY SUPPORT
+   ============================================================================= */
+
+@media (max-width: 575.98px) {
+  .o_wsale_product_btn {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .o_wsale_product_btn .btn {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  /* Ensure all buttons are properly stacked */
+  .o_wsale_product_btn .btn {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* =============================================================================
+   PRODUCT CARD INTEGRATION
+   ============================================================================= */
+
+.oe_product_cart,
+.o_wsale_product_card {
+  position: relative;
+  overflow: hidden;
+}
+
+.oe_product_cart .o_wsale_product_btn,
+.o_wsale_product_card .o_wsale_product_btn {
+  padding: 0 10px 15px 10px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* =============================================================================
+   VARIANT SELECTOR INTEGRATION
+   ============================================================================= */
+
+.js_product.o_product_configurator .o_wsale_product_btn {
+  margin-top: 20px;
+  border-top: 1px solid #dee2e6;
+  padding-top: 15px;
+}
+
+/* =============================================================================
+   LIST VIEW ADJUSTMENTS
+   ============================================================================= */
+
+.o_wsale_products_list_view .o_wsale_product_btn {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.o_wsale_products_list_view .o_wsale_product_btn .btn {
+  flex: none;
+  margin-right: 10px;
+}
+
+@media (max-width: 767.98px) {
+  .o_wsale_products_list_view .o_wsale_product_btn {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .o_wsale_products_list_view .o_wsale_product_btn .btn {
+    margin-right: 0;
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* =============================================================================
+   QUANTITY SELECTOR INTEGRATION
+   ============================================================================= */
+
+.o_wsale_product_btn .css_quantity {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.o_wsale_product_btn .css_quantity input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+@media (max-width: 767.98px) {
+  .o_wsale_product_btn .css_quantity {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+}
+
+/* =============================================================================
+   THEME COMPATIBILITY
+   ============================================================================= */
+
+/* Dark theme support */
+.o_dark .o_wsale_product_btn .btn {
+  background-color: transparent !important;
+  color: #adb5bd !important;
+  border-color: #495057 !important;
+}
+
+.o_dark .o_wsale_product_btn .btn:hover {
+  background-color: #1e3a8a !important;
+  color: #93c5fd !important;
+  border-color: #3b82f6 !important;
+}
+
+/* =============================================================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================================================= */
+
+.o_wsale_product_btn .btn:focus-visible {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+  background-color: #e3f2fd !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .o_wsale_product_btn .btn {
+    border-width: 2px;
+  }
+
+  .o_wsale_product_btn .btn:hover {
+    border-width: 2px;
+    background-color: #0d47a1 !important;
+    color: #ffffff !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .o_wsale_product_btn .btn {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+   FORCE VISIBILITY FOR COMPARE BUTTON
+   ============================================================================= */
+
+.o_wsale_product_btn .o_add_compare,
+.o_wsale_product_btn .btn[data-oe-model="product.template"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.o_wsale_product_btn .o_add_compare i,
+.o_wsale_product_btn .o_add_compare .fa {
+  display: inline-block !important;
+  visibility: visible !important;
+}
+
+/* =============================================================================
+   CONTAINER CONSTRAINTS - ENHANCED
+   ============================================================================= */
+
+.o_wsale_product_btn {
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.o_wsale_product_btn * {
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal scrolling on smaller screens */
+@media (max-width: 1468px) {
+  .oe_product_cart .o_wsale_product_btn,
+  .o_wsale_product_card .o_wsale_product_btn {
+    padding: 0 5px 15px 5px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Ensure proper spacing in product cards */
+@media (max-width: 767px) {
+  .oe_product_cart .o_wsale_product_btn,
+  .o_wsale_product_card .o_wsale_product_btn {
+    padding: 0 8px 12px 8px;
+  }
+}
+
+/* Ultra-wide screen constraints */
+@media (min-width: 1920px) {
+  .oe_product_cart .o_wsale_product_btn,
+  .o_wsale_product_card .o_wsale_product_btn {
+    padding: 0 20px 20px 20px;
+  }
+}
+
+/* =============================================================================
+   ORIENTATION-BASED OPTIMIZATIONS
+   ============================================================================= */
+
+/* Landscape mobile optimization */
+@media (max-width: 926px) and (orientation: landscape) {
+  .o_wsale_product_btn {
+    gap: 6px;
+  }
+
+  .o_wsale_product_btn .btn {
+    padding: 6px 8px;
+    min-height: 36px;
+    font-size: 12px;
+  }
+
+  /* For 2 buttons in landscape, keep them side by side */
+  .o_wsale_product_btn:has(.btn:nth-child(2):nth-last-child(1)) .btn {
+    flex: 1 1 calc(50% - 3px);
+    max-width: calc(50% - 3px);
+  }
+}
+
+/* Portrait tablet optimization */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .o_wsale_product_btn {
+    gap: 8px;
+  }
+
+  .o_wsale_product_btn .btn {
+    padding: 10px 12px;
+    min-height: 42px;
+  }
+}
+/* Nuclear option for cart line buttons - guaranteed to work */
+.o_wsale_cart_line_button_container,
+div[name="o_wsale_cart_line_button_container"],
+.oe_cart .oe_cart_line .btn-group {
+    display: flex !important;
+    gap: 2px !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    min-width: 90px !important;
+}
+
+
+@media (max-width: 768px) {
+
+  .o_wsale_products_searchbar_form{
+  width:100%;
+  }
+
+  }
+/* X-Small buttons for ALL screens */
+.o_wsale_cart_line_button_container .btn,
+div[name="o_wsale_cart_line_button_container"] .btn,
+.oe_cart .oe_cart_line .btn-group .btn {
+    padding: 1px 3px !important;
+    font-size: 9px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* Special handling for the 965px-1406px range */
+@media (min-width: 965px) and (max-width: 1406px) {
+    .o_wsale_cart_line_button_container,
+    div[name="o_wsale_cart_line_button_container"],
+    .oe_cart .oe_cart_line .btn-group {
+        min-width: 80px !important;
+    }
+
+    .o_wsale_cart_line_button_container .btn,
+    div[name="o_wsale_cart_line_button_container"] .btn,
+    .oe_cart .oe_cart_line .btn-group .btn {
+        padding: 1px 2px !important;
+        font-size: 8px !important;
+        min-width: 20px !important;
+    }
+}
+
+/* Icon-only buttons */
+.o_wsale_cart_line_button_container .btn i,
+div[name="o_wsale_cart_line_button_container"] .btn i,
+.oe_cart .oe_cart_line .btn-group .btn i {
+    font-size: 10px !important;
+    margin: 0 !important;
+}
+
+/* Hide text on all screens */
+.o_wsale_cart_line_button_container .btn span,
+div[name="o_wsale_cart_line_button_container"] .btn span,
+.oe_cart .oe_cart_line .btn-group .btn span {
+    display: none !important;
+}
+
+/* Special case for text-only buttons */
+.o_wsale_cart_line_button_container .btn:not(:has(i)),
+div[name="o_wsale_cart_line_button_container"] .btn:not(:has(i)),
+.oe_cart .oe_cart_line .btn-group .btn:not(:has(i)) {
+    padding: 1px 2px !important;
+    font-size: 7px !important;
+    min-width: 18px !important;
+}
+/* Target the product card buttons container */
+.o_wsale_product_btn {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+/* Specifically target the cart button (first button) */
+.o_wsale_product_btn .btn:first-child,
+.o_wsale_product_btn .btn-primary:first-child {
+    margin-left: 0 !important;
+    padding-left: 8px !important; /* Reduced from original 12px */
+}
+
+/* Remove any inherited left spacing */
+.o_wsale_product_btn .btn:first-child i.fa-shopping-cart,
+.o_wsale_product_btn .btn:first-child .fa-shopping-cart {
+    margin-left: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_wsale_product_btn .btn:first-child {
+        padding-left: 6px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .o_wsale_product_btn .btn:first-child {
+        padding-left: 4px !important;
+    }
+}
+/* Extended responsive styles for product buttons (up to 1200px) */
+.o_wsale_product_btn {
+    display: flex !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    padding: 0 5px !important;
+}
+
+/* Base button styling for all screens */
+.o_wsale_product_btn .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+    min-height: 36px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Special treatment for cart button (first button) */
+.o_wsale_product_btn .btn:first-child {
+    margin-left: 0 !important;
+    padding-left: 8px !important;
+    flex-grow: 1.2;
+}
+
+/* Optimized for 768px-1200px range */
+@media (min-width: 768px) and (max-width: 1200px) {
+    .o_wsale_product_btn {
+        gap: 4px !important;
+        padding: 0 3px !important;
+    }
+
+    .o_wsale_product_btn .btn {
+        padding: 5px 6px !important;
+        font-size: 11px !important;
+        min-height: 34px;
+    }
+
+    .o_wsale_product_btn .btn:first-child {
+        padding-left: 6px !important;
+    }
+
+    /* Icon adjustments */
+    .o_wsale_product_btn .btn i {
+        font-size: 12px !important;
+        margin-right: 3px !important;
+    }
+}
+
+/* Transition to desktop styles above 1200px */
+@media (min-width: 1201px) {
+    .o_wsale_product_btn {
+        gap: 8px !important;
+    }
+
+    .o_wsale_product_btn .btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+}
+/* Shift buttons left in product cards */
+.oe_product_cart .o_wsale_product_btn,
+.o_wsale_product_card .o_wsale_product_btn {
+    margin-left: -8px !important;  /* Pull container left */
+    margin-right: -8px !important; /* Compensate for left shift */
+    padding-left: 5px !important;  /* Add slight padding back */
+}
+
+/* Adjust button spacing */
+.oe_product_cart .o_wsale_product_btn .btn,
+.o_wsale_product_card .o_wsale_product_btn .btn {
+    margin-left: 3px !important;   /* Fine-tune individual button spacing */
+    margin-right: 3px !important;
+}
+
+/* Special handling for 968px-1200px range */
+@media (min-width: 968px) and (max-width: 1200px) {
+    .oe_product_cart .o_wsale_product_btn,
+    .o_wsale_product_card .o_wsale_product_btn {
+        margin-left: -12px !important;
+        margin-right: -8px !important;
+    }
+
+    .oe_product_cart .o_wsale_product_btn .btn,
+    .o_wsale_product_card .o_wsale_product_btn .btn {
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+}
+
+/* Ensure product card boundaries aren't affected */
+.oe_product_cart,
+.o_wsale_product_card {
+    overflow: hidden !important; /* Contain the negative margins */
+}
+
+/* Mobile Button Fixes (767px down to 0) */
+@media (max-width: 767px) {
+    .o_wsale_product_btn {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 4px !important;
+        padding: 0 8px 10px 8px !important;
+        margin: 0 -5px !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .o_wsale_product_btn .btn {
+        flex: 0 0 auto !important;
+        min-width: 50px !important;
+        padding: 5px !important;
+        font-size: 10px !important;
+        min-height: 28px !important;
+        border-radius: 4px !important;
+    }
+
+    /* Icon size reduction */
+    .o_wsale_product_btn .btn i,
+    .o_wsale_product_btn .btn .fa {
+        font-size: 10px !important;
+        margin-right: 3px !important;
+        margin-left: 0 !important;
+    }
+
+    /* Text hiding for smallest screens */
+    @media (max-width: 480px) {
+        .o_wsale_product_btn .btn span {
+            display: none !important;
+        }
+        .o_wsale_product_btn .btn {
+            min-width: 32px !important;
+            padding: 4px 2px !important;
+        }
+        .o_wsale_product_btn .btn i {
+            margin-right: 0 !important;
+        }
+    }
+
+    /* Ultra-compact for very small devices */
+    @media (max-width: 360px) {
+        .o_wsale_product_btn {
+            gap: 2px !important;
+            padding: 0 4px 8px 4px !important;
+        }
+        .o_wsale_product_btn .btn {
+            min-width: 28px !important;
+            padding: 3px 1px !important;
+        }
+    }
+}
+
+/* Mobile Icon Visibility Fix (767px and below) */
+@media (max-width: 767px) {
+    /* Force cart icon visibility */
+    .o_wsale_product_btn .btn:first-child i.fa-shopping-cart,
+    .o_wsale_product_btn .btn:first-child .fa-shopping-cart {
+        display: inline-block !important;
+        visibility: visible !important;
+        font-size: 12px !important; /* Slightly larger for visibility */
+        margin-right: 3px !important;
+    }
+
+    /* Ensure icon isn't being hidden by parent elements */
+    .o_wsale_product_btn .btn:first-child {
+        position: relative;
+        overflow: visible !important;
+    }
+
+    /* Fallback for icon font loading issues */
+    .o_wsale_product_btn .btn:first-child:before {
+        content: "🛒"; /* Unicode cart fallback */
+        display: inline-block;
+        margin-right: 3px;
+        font-size: 12px;
+    }
+}
+
+/* Ultra-small screens adjustment */
+@media (max-width: 480px) {
+    .o_wsale_product_btn .btn:first-child i.fa-shopping-cart,
+    .o_wsale_product_btn .btn:first-child .fa-shopping-cart {
+        font-size: 10px !important;
+        margin-right: 2px !important;
+    }
+}
+
+/* Mobile Icon Visibility Fix (0-767px) */
+@media (max-width: 767px) {
+    /* Force all button icons to show */
+    .o_wsale_product_btn .btn i,
+    .o_wsale_product_btn .btn .fa {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 12px !important;
+        margin-right: 4px !important;
+    }
+
+    /* Special treatment for cart icon */
+    .o_wsale_product_btn .btn:first-child i.fa-shopping-cart,
+    .o_wsale_product_btn .btn:first-child .fa-shopping-cart {
+        font-size: 14px !important; /* Slightly larger cart icon */
+    }
+
+    /* Fix for ultra-small screens (0-486px) */
+    @media (max-width: 486px) {
+        .o_wsale_product_btn .btn i,
+        .o_wsale_product_btn .btn .fa {
+            font-size: 10px !important;
+            margin-right: 3px !important;
+        }
+
+        .o_wsale_product_btn .btn:first-child i.fa-shopping-cart,
+        .o_wsale_product_btn .btn:first-child .fa-shopping-cart {
+            font-size: 12px !important;
+            margin-right: 2px !important;
+        }
+
+        /* Fallback for FontAwesome loading issues */
+        .o_wsale_product_btn .btn:first-child:after {
+            content: "🛒";
+            display: inline-block;
+            margin-left: 2px;
+            font-size: 12px;
+        }
+    }
+}
+
+.o_main_nav .btn .badge{
+background-color:red !important;
+}
+
+.o_main_nav .btn:hover{
+background-color:pink;
+}
+
+.oe_cart .bg-primary {
+  background-color: pink !important;
+}
+
+/* =============================================================================
+   ENHANCED SINGLE BUTTON STYLING FOR .o_wsale_product_btn
+   ============================================================================= */
+
+/* Single Button - Enhanced Styling */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 15px 20px !important;
+  margin-top: 20px !important;
+}
+
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+  flex: 0 1 auto !important;
+  max-width: 280px !important;
+  min-width: 200px !important;
+  padding: 12px 25px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  min-height: 45px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+
+  /* Enhanced shadow */
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+
+  /* Smooth transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Single Button Hover Effect */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4) !important;
+}
+
+/* Single Button Active State */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:active {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5) !important;
+}
+
+/* Single Button Focus State */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:focus {
+  outline: 3px solid rgba(40, 167, 69, 0.3) !important;
+  outline-offset: 3px !important;
+}
+
+/* Icon styling for single button */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+  font-size: 16px !important;
+  margin-right: 8px !important;
+  vertical-align: middle !important;
+}
+
+/* =============================================================================
+   RESPONSIVE SINGLE BUTTON STYLES
+   ============================================================================= */
+
+/* Large Desktop (1600px+) */
+@media (min-width: 1600px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 20px 25px !important;
+    margin-top: 25px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 320px !important;
+    min-width: 240px !important;
+    padding: 15px 30px !important;
+    font-size: 16px !important;
+    min-height: 50px !important;
+    border-radius: 10px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 18px !important;
+    margin-right: 10px !important;
+  }
+}
+
+/* Standard Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 18px 22px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 300px !important;
+    min-width: 220px !important;
+    padding: 14px 28px !important;
+    font-size: 15px !important;
+    min-height: 47px !important;
+  }
+}
+
+/* Medium Desktop (968px - 1199px) */
+@media (min-width: 968px) and (max-width: 1199px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 15px 18px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 260px !important;
+    min-width: 180px !important;
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+    min-height: 42px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 14px !important;
+    margin-right: 6px !important;
+  }
+}
+
+/* Tablet (768px - 967px) */
+@media (min-width: 768px) and (max-width: 967px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 12px 15px !important;
+    margin-top: 15px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 240px !important;
+    min-width: 160px !important;
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+    min-height: 40px !important;
+    border-radius: 6px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 13px !important;
+    margin-right: 5px !important;
+  }
+}
+
+/* Large Mobile (640px - 767px) */
+@media (min-width: 640px) and (max-width: 767px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 10px 12px !important;
+    margin-top: 12px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 220px !important;
+    min-width: 140px !important;
+    padding: 10px 18px !important;
+    font-size: 13px !important;
+    min-height: 38px !important;
+  }
+}
+
+/* Standard Mobile (480px - 639px) */
+@media (min-width: 480px) and (max-width: 639px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 8px 10px !important;
+    margin-top: 10px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 200px !important;
+    min-width: 120px !important;
+    padding: 9px 16px !important;
+    font-size: 12px !important;
+    min-height: 36px !important;
+    border-radius: 5px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 12px !important;
+    margin-right: 4px !important;
+  }
+}
+
+/* Small Mobile (360px - 479px) */
+@media (min-width: 360px) and (max-width: 479px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 6px 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 180px !important;
+    min-width: 100px !important;
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    min-height: 34px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 11px !important;
+    margin-right: 3px !important;
+  }
+}
+
+/* Extra Small Mobile (< 360px) */
+@media (max-width: 359px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 5px 6px !important;
+    margin-top: 6px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    max-width: 160px !important;
+    min-width: 90px !important;
+    padding: 7px 12px !important;
+    font-size: 10px !important;
+    min-height: 32px !important;
+    border-radius: 4px !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i {
+    font-size: 10px !important;
+    margin-right: 2px !important;
+  }
+}
+
+/* =============================================================================
+   SINGLE BUTTON ACCESSIBILITY & SPECIAL STATES
+   ============================================================================= */
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    border-width: 3px !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+    transition: none !important;
+  }
+
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:hover {
+    transform: none !important;
+  }
+}
+
+/* Loading state */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn.loading {
+  pointer-events: none !important;
+  opacity: 0.7 !important;
+  position: relative !important;
+}
+
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn.loading:after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: -8px 0 0 -8px !important;
+  border: 2px solid transparent !important;
+  border-top-color: #ffffff !important;
+  border-radius: 50% !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Disabled state */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:disabled,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn.disabled {
+  background: #e9ecef !important;
+  border-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* =============================================================================
+   SINGLE BUTTON IN PRODUCT CARDS
+   ============================================================================= */
+
+.oe_product_cart .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)),
+.o_wsale_product_card .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+  padding: 15px 15px 20px 15px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Mobile adjustments for product cards */
+@media (max-width: 767px) {
+  .oe_product_cart .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)),
+  .o_wsale_product_card .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) {
+    padding: 10px 10px 15px 10px !important;
+  }
+}
+
+/* =============================================================================
+   SINGLE BUTTON THEMES & DARK MODE
+   ============================================================================= */
+
+/* Dark theme support */
+.o_dark .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+
+  box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3) !important;
+}
+
+.o_dark .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:hover {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4) !important;
+}
+
+/* =============================================================================
+   SINGLE ICON SIZE REDUCTION FOR .o_wsale_product_btn
+   ============================================================================= */
+
+/* Target single button with icon - reduce icon size */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+  font-size: 12px !important; /* Reduced from 16px */
+  margin-right: 6px !important; /* Reduced from 8px */
+  vertical-align: middle !important;
+}
+
+/* =============================================================================
+   RESPONSIVE SINGLE ICON ADJUSTMENTS
+   ============================================================================= */
+
+/* Large Desktop (1600px+) - Reduced icon size */
+@media (min-width: 1600px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 14px !important; /* Reduced from 18px */
+    margin-right: 8px !important; /* Reduced from 10px */
+  }
+}
+
+/* Standard Desktop (1200px - 1599px) - Reduced icon size */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 13px !important; /* Reduced from default */
+    margin-right: 7px !important;
+  }
+}
+
+/* Medium Desktop (968px - 1199px) - Reduced icon size */
+@media (min-width: 968px) and (max-width: 1199px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 12px !important; /* Reduced from 14px */
+    margin-right: 5px !important; /* Reduced from 6px */
+  }
+}
+
+/* Tablet (768px - 967px) - Reduced icon size */
+@media (min-width: 768px) and (max-width: 967px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 11px !important; /* Reduced from 13px */
+    margin-right: 4px !important; /* Reduced from 5px */
+  }
+}
+
+/* Large Mobile (640px - 767px) - Reduced icon size */
+@media (min-width: 640px) and (max-width: 767px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 10px !important;
+    margin-right: 4px !important;
+  }
+}
+
+/* Standard Mobile (480px - 639px) - Reduced icon size */
+@media (min-width: 480px) and (max-width: 639px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 10px !important; /* Reduced from 12px */
+    margin-right: 3px !important; /* Reduced from 4px */
+  }
+}
+
+/* Small Mobile (360px - 479px) - Reduced icon size */
+@media (min-width: 360px) and (max-width: 479px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 9px !important; /* Reduced from 11px */
+    margin-right: 2px !important; /* Reduced from 3px */
+  }
+}
+
+/* Extra Small Mobile (< 360px) - Reduced icon size */
+@media (max-width: 359px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 8px !important; /* Reduced from 10px */
+    margin-right: 2px !important;
+  }
+}
+
+/* =============================================================================
+   SPECIFIC ICON TYPE ADJUSTMENTS
+   ============================================================================= */
+
+/* Shopping cart icon - slightly larger than other single icons */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-shopping-cart,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-cart-plus {
+  font-size: 13px !important; /* Slightly larger than base 12px */
+}
+
+/* Heart/wishlist icon - smaller */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-heart,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-heart-o {
+  font-size: 11px !important; /* Smaller than base */
+}
+
+/* Compare icon - smaller */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-compare,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa-exchange {
+  font-size: 11px !important; /* Smaller than base */
+}
+
+/* =============================================================================
+   ULTRA-COMPACT SINGLE ICON MODE
+   ============================================================================= */
+
+/* Optional: Ultra-compact mode for very small single buttons */
+.o_wsale_product_btn.compact:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+.o_wsale_product_btn.compact:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+  font-size: 10px !important;
+  margin-right: 4px !important;
+}
+
+/* Mobile ultra-compact */
+@media (max-width: 767px) {
+  .o_wsale_product_btn.compact:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+  .o_wsale_product_btn.compact:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+    font-size: 8px !important;
+    margin-right: 2px !important;
+  }
+}
+
+/* =============================================================================
+   ICON-ONLY SINGLE BUTTON (NO TEXT)
+   ============================================================================= */
+
+/* When single button has only icon (no text) */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:not(:has(span)):not(:has(.btn-text)) i,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:not(:has(span)):not(:has(.btn-text)) .fa {
+  font-size: 14px !important; /* Slightly larger when icon-only */
+  margin: 0 !important; /* No margin when icon-only */
+}
+
+/* Mobile icon-only adjustments */
+@media (max-width: 767px) {
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:not(:has(span)):not(:has(.btn-text)) i,
+  .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn:not(:has(span)):not(:has(.btn-text)) .fa {
+    font-size: 12px !important;
+  }
+}
+
+/* =============================================================================
+   BALANCE ADJUSTMENT FOR BUTTON CONTENT
+   ============================================================================= */
+
+/* Ensure button content is properly centered with smaller icons */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* Prevent icon from affecting text alignment */
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn i,
+.o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn .fa {
+  flex-shrink: 0 !important; /* Prevent icon from shrinking */
+}
+
+@media (max-width: 767px) {
+  .o_wsale_product_btn .o_add_wishlist:first-child::before {
+    content: none !important;
+    display: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .o_wsale_product_btn .o_add_wishlist:first-child::after {
+    content: none !important;
+    display: none !important;
+  }
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_wsale_product_btn:has(.o_add_wishlist:nth-child(1):nth-last-child(1)) .o_add_wishlist,
+    .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+        min-width: 32px !important;
+        max-width: 32px !important;
+        padding: 6px !important;
+    }
+
+    .o_wsale_product_btn:has(.o_add_wishlist:nth-child(1):nth-last-child(1)) .o_add_wishlist i.fa-heart {
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 767px) {
+  .o_wsale_product_btn .o_add_compare:first-child::before {
+    content: none !important;
+    display: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .o_wsale_product_btn .o_add_compare:first-child::after {
+    content: none !important;
+    display: none !important;
+  }
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_wsale_product_btn:has(.o_add_compare:nth-child(1):nth-last-child(1)) .o_add_compare,
+    .o_wsale_product_btn:has(.btn:nth-child(1):nth-last-child(1)) .btn {
+        min-width: 32px !important;
+        max-width: 32px !important;
+        padding: 6px !important;
+    }
+
+    .o_wsale_product_btn:has(.o_add_compare:nth-child(1):nth-last-child(1)) .o_add_compare i.fa-compare {
+        font-size: 12px !important;
+    }
+}
+/*---------------------------------------------------------------------------------------------------------------*/
+/* Remove button styling, show only icon (<= 538px) */
+@media (max-width: 538px) {
+  .oe_website_sale .table-comparator .o_add_cart_form_compare .btn {
+    /* Remove button styling */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+
+    /* Hide all text */
+    color: transparent !important;
+    font-size: 0 !important;
+  }
+
+  /* Show only icon */
+  .oe_website_sale .table-comparator .o_add_cart_form_compare .btn i.fa-shopping-cart {
+    color: #000 !important; /* Icon color (change if needed) */
+    font-size: 20px !important;
+    display: inline-block !important;
+    visibility: visible !important;
+  }
+
+  /* Hide other elements */
+  .oe_website_sale .table-comparator .o_add_cart_form_compare .btn > span,
+  .oe_website_sale .table-comparator .o_add_cart_form_compare .btn::before,
+  .oe_website_sale .table-comparator .o_add_cart_form_compare .btn::after {
+    display: none !important;
+  }
+}
+/* Responsive Products Header - Odoo Shop Page */
+/* Mobile-First Responsive Products Header */
+.products_header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Left section (filters + product count) */
+.products_header > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1 1 auto;
+}
+
+/* Right section (sorting) */
+.products_header > div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+}
+
+/* Filter button */
+.products_header .o_wsale_sidebar_filter_btn {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+/* Product count */
+.products_header .o_wsale_products_count {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Sort dropdown */
+.products_header .o_wsale_products_sortby {
+  min-width: 200px;
+}
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .products_header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .products_header > div:first-child,
+  .products_header > div:last-child {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .products_header > div:first-child {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .products_header .o_wsale_sidebar_filter_btn {
+    order: 1;
+    flex: 1 1 100%;
+  }
+
+  .products_header .o_wsale_products_count {
+    order: 2;
+    text-align: center;
+    width: 100%;
+  }
+
+  .products_header > div:last-child {
+    order: 3;
+  }
+
+  .products_header .o_wsale_products_sortby {
+    width: 100%;
+  }
+}
+/* Products Header Layout Adjustment */
+.products_header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+}
+
+/* Left section (grid/list view + product count) */
+.products_header > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  order: 1; /* Ensure left content comes first */
+}
+
+/* Middle section (empty in standard Odoo, can be used for search) */
+.products_header > div:nth-child(2) {
+  flex: 1;
+  min-width: 20px; /* Provides spacing */
+}
+
+/* Right section (filter button + sort dropdown) */
+.products_header > div:last-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  order: 2; /* Positions filter/sort to the right */
+}
+
+/* Grid/List View Buttons */
+.products_header .btn-group.o_wsale_view_buttons {
+  margin-right: auto; /* Pushes everything else to the right */
+}
+
+/* Filter Button Positioning */
+.products_header .o_wsale_sidebar_filter_btn {
+  order: 1; /* Places filter button before sort dropdown */
+  margin-left: 15px; /* Spacing from view buttons */
+}
+
+/* Sort Dropdown */
+.products_header .o_wsale_products_sortby {
+  order: 2;
+  min-width: 200px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .products_header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .products_header > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .products_header .o_wsale_sidebar_filter_btn {
+    margin-left: 0;
+    order: 2; /* Moves filter below on mobile */
+  }
+
+  .products_header .o_wsale_products_sortby {
+    order: 3;
+    width: 100%;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .products_header .btn-group.o_wsale_view_buttons {
+    margin-right: 0;
+  }
+
+  .products_header > div:first-child {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Filter Button Styling */
+.products_header .o_wsale_sidebar_filter_btn {
+  /* Text and Icon */
+  content: "Filter";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* Sizing */
+  min-width: 100px !important;
+  padding: 8px 16px !important;
+  height: 40px;
+
+  /* Styling */
+  background: #f8f9fa !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  color: #495057 !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  /* Icon adjustment */
+  position: relative;
+}
+
+/* Filter icon alignment */
+.products_header .o_wsale_sidebar_filter_btn i.fa {
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+/* Hover state */
+.products_header .o_wsale_sidebar_filter_btn:hover {
+  background: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+
+/* Active state */
+.products_header .o_wsale_sidebar_filter_btn:active {
+  background: #dee2e6 !important;
+}
+
+/* Mobile responsive adjustment */
+@media (max-width: 768px) {
+  .products_header .o_wsale_sidebar_filter_btn {
+    min-width: 90px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+/* Ensure button shows "Filter" text */
+.products_header .o_wsale_sidebar_filter_btn span.d-none.d-md-inline {
+  display: inline-block !important;
+}
+
+/* Force 'Filter' text to show with proper width */
+.products_header .o_wsale_sidebar_filter_btn {
+    min-width: 90px !important;  /* Fixed width */
+    width: auto !important;
+    padding: 8px 15px !important;
+}
+
+/* Show the text label (for Odoo 18+) */
+.products_header .o_wsale_sidebar_filter_btn .d-none.d-md-inline {
+    display: inline-block !important;
+    margin-left: 5px;
+}
+
+/* Mobile responsive adjustment */
+@media (max-width: 768px) {
+    .products_header .o_wsale_sidebar_filter_btn {
+        min-width: 80px !important;
+        padding: 8px 10px !important;
+    }
+}
+.o_sale_product_configurator_qty .quantity{
+width:188px;
+}
+/* ===== PROFESSIONAL MOBILE BUTTON STYLING (<= 767px) ===== */
+@media (max-width: 767px) {
+  /* 1. BASE BUTTON STYLING */
+  .oe_website_sale .table-comparator .btn {
+    /* Consistent sizing */
+    min-width: 44px !important;  /* Minimum touch target size */
+    height: 44px !important;
+    padding: 0 10px !important;
+
+    /* Visual styling */
+    border-radius: 6px !important;
+    border: 1px solid #e0e0e0 !important;
+    background: #f8f9fa !important;
+    color: #333 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+
+    /* Layout */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 2. BUTTON TYPE VARIATIONS */
+  /* Add to Cart */
+  .oe_website_sale .table-comparator .btn-primary,
+  .oe_website_sale .table-comparator .btn-success {
+    background: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+  }
+
+  /* Add Compare */
+  .oe_website_sale .table-comparator .o_add_compare {
+    background: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    color: white !important;
+  }
+
+  /* Remove Compare */
+  .oe_website_sale .table-comparator .o_remove_compare {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+  }
+
+  /* 3. ICON STYLING */
+  .oe_website_sale .table-comparator .btn i,
+  .oe_website_sale .table-comparator .btn .fa,
+  .oe_website_sale .table-comparator .btn svg {
+    font-size: 16px !important;
+    margin-right: 6px !important;
+    min-width: 16px !important;
+    text-align: center !important;
+  }
+
+  /* 4. TEXT OPTIMIZATION */
+  .oe_website_sale .table-comparator .btn span {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 60px !important;
+    display: inline-block !important;
+  }
+
+  /* 5. COMPACT MODE FOR SMALL SCREENS */
+  @media (max-width: 480px) {
+    .oe_website_sale .table-comparator .btn {
+      min-width: 36px !important;
+      padding: 0 6px !important;
+    }
+   
+    .oe_website_sale .table-comparator .btn i,
+    .oe_website_sale .table-comparator .btn .fa,
+    .oe_website_sale .table-comparator .btn svg {
+      margin-right: 0 !important;
+      font-size: 18px !important;
+    }
+  }
+}
+/* =============================================================================
+   END OF FILE
+   ============================================================================= */

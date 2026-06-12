@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_payment_incident_auto_warning" model="ir.config_parameter">
+        <field name="key">payment_incident_tracker.auto_warning</field>
+        <field name="value">True</field>
+    </record>
+    <record id="param_payment_incident_pending_minutes" model="ir.config_parameter">
+        <field name="key">payment_incident_tracker.pending_minutes</field>
+        <field name="value">30</field>
+    </record>
+
+    <record id="category_payment_pending_timeout" model="oms.payment.incident.category">
+        <field name="sequence">10</field>
+        <field name="name">Thanh toán treo quá lâu</field>
+        <field name="code">PAYMENT_PENDING_TIMEOUT</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">warning</field>
+        <field name="default_severity">medium</field>
+        <field name="default_root_cause">Giao dịch thanh toán ở trạng thái pending quá lâu, có thể do khách rời phiên thanh toán, callback/webhook chậm hoặc lỗi đồng bộ trạng thái.</field>
+        <field name="default_prevention_action">Thiết lập ngưỡng cảnh báo pending, giám sát callback/webhook, đối soát trạng thái định kỳ và nhắc khách hoàn tất giao dịch khi cần.</field>
+    </record>
+
+    <record id="category_payment_error" model="oms.payment.incident.category">
+        <field name="sequence">20</field>
+        <field name="name">Giao dịch lỗi</field>
+        <field name="code">PAYMENT_ERROR</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">error</field>
+        <field name="default_severity">high</field>
+        <field name="default_root_cause">Giao dịch bị lỗi do phản hồi từ cổng thanh toán, sai cấu hình, lỗi số tiền, lỗi token hoặc trạng thái giao dịch không khớp.</field>
+        <field name="default_prevention_action">Chuẩn hóa cấu hình provider, kiểm tra webhook, xác minh số tiền/tham chiếu và bổ sung checklist kiểm thử trước khi go-live.</field>
+    </record>
+
+    <record id="category_customer_abort" model="oms.payment.incident.category">
+        <field name="sequence">30</field>
+        <field name="name">Khách hủy giữa chừng</field>
+        <field name="code">CUSTOMER_ABORT</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">warning</field>
+        <field name="default_severity">medium</field>
+        <field name="default_root_cause">Khách hàng thoát hoặc hủy bước thanh toán trước khi hoàn tất xác nhận.</field>
+        <field name="default_prevention_action">Tối ưu hướng dẫn trên màn hình thanh toán, rút ngắn luồng thao tác và cung cấp kênh hỗ trợ nhanh khi phát sinh vướng mắc.</field>
+    </record>
+
+    <record id="category_amount_mismatch" model="oms.payment.incident.category">
+        <field name="sequence">40</field>
+        <field name="name">Số tiền không khớp</field>
+        <field name="code">AMOUNT_MISMATCH</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">error</field>
+        <field name="default_severity">high</field>
+        <field name="default_root_cause">Số tiền thanh toán thực tế không khớp với số tiền giao dịch hoặc số tiền trên đơn hàng.</field>
+        <field name="default_prevention_action">Khóa số tiền ở bước xác nhận, kiểm tra đồng bộ tổng tiền trước khi gọi cổng thanh toán và ghi log tham chiếu đầy đủ.</field>
+    </record>
+
+    <record id="category_webhook_missing" model="oms.payment.incident.category">
+        <field name="sequence">50</field>
+        <field name="name">Không nhận callback/webhook</field>
+        <field name="code">WEBHOOK_MISSING</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">error</field>
+        <field name="default_severity">critical</field>
+        <field name="default_root_cause">Cổng thanh toán không callback về hệ thống hoặc callback không cập nhật được trạng thái giao dịch.</field>
+        <field name="default_prevention_action">Giám sát endpoint callback, lưu request/response, kiểm tra chữ ký xác thực và cấu hình cảnh báo khi callback không về trong ngưỡng cho phép.</field>
+    </record>
+
+    <record id="category_unc_missing_proof" model="oms.payment.incident.category">
+        <field name="sequence">60</field>
+        <field name="name">Thiếu chứng từ thanh toán</field>
+        <field name="code">UNC_MISSING_PROOF</field>
+        <field name="scope">payment</field>
+        <field name="default_incident_type">warning</field>
+        <field name="default_severity">medium</field>
+        <field name="default_root_cause">Khách chọn chuyển khoản/UNC nhưng chưa tải đủ chứng từ hoặc nội dung chuyển khoản không đúng định dạng.</field>
+        <field name="default_prevention_action">Bắt buộc kiểm tra chứng từ trước khi gửi duyệt, chuẩn hóa nội dung chuyển khoản và hiển thị hướng dẫn rõ ràng ở trang thanh toán.</field>
+    </record>
+</odoo>

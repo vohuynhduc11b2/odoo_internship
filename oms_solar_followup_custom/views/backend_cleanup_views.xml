@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Remove backend form/list overrides created by earlier versions of this addon.
+         This addon should only affect website checkout, not replace the default
+         quote/order or picking forms in backend. -->
+    <delete id="view_sale_custom_order_oms_tree" model="ir.ui.view"/>
+    <delete id="view_sale_custom_order_oms_form" model="ir.ui.view"/>
+    <delete id="action_sale_custom_order_oms_followup" model="ir.actions.act_window"/>
+    <delete id="view_stock_picking_oms_tree" model="ir.ui.view"/>
+    <delete id="view_stock_picking_oms_form" model="ir.ui.view"/>
+    <delete id="action_stock_picking_oms_followup" model="ir.actions.act_window"/>
+</odoo>

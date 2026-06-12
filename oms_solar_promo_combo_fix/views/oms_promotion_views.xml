@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_promotion_product_price_list" model="ir.ui.view">
+        <field name="name">oms.promotion.product.price.list</field>
+        <field name="model">oms.promotion.product.price</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="product_tmpl_id"/>
+                <field name="apply_scope"/>
+                <field name="promo_price"/>
+                <field name="note"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_promotion_product_price_form" model="ir.ui.view">
+        <field name="name">oms.promotion.product.price.form</field>
+        <field name="model">oms.promotion.product.price</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="promotion_id" invisible="1"/>
+                        <field name="sequence"/>
+                        <field name="product_tmpl_id"/>
+                        <field name="apply_scope"/>
+                        <field name="promo_price"/>
+                        <field name="active"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_oms_promotion_oms_solar_form_combo_rules" model="ir.ui.view">
+        <field name="name">oms.promotion.oms.solar.form.combo.rules</field>
+        <field name="model">oms.promotion</field>
+        <field name="inherit_id" ref="sale_custom.view_oms_promotion_form"/>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Gia CTKM">
+                    <group>
+                        <group string="Thiet lap qua tang">
+                            <field name="oms_allow_customer_select_gift_combo"/>
+                            <field name="oms_force_gift_qty_by_combo_qty"/>
+                            <field name="oms_gift_qty_limit"/>
+                            <field name="oms_gift_combo_note" placeholder="Khach hang co the lua chon combo qua tang cua CTKM"/>
+                        </group>
+                        <group string="Gia san pham chinh">
+                            <field name="oms_apply_main_product_price"/>
+                            <field name="oms_main_product_price" invisible="not oms_apply_main_product_price"/>
+                        </group>
+                    </group>
+                    <group string="Gia CTKM cho san pham chinh va ban kem">
+                        <div class="mb-2">
+                            <button name="action_sync_product_price_lines" type="object" string="Tu dong them san pham vao bang gia" class="btn-secondary"/>
+                        </div>
+                        <div class="o_form_label">PM nhap gia theo tung san pham. Co the ap cho san pham chinh, ban kem hoac ca hai. So luong qua tang bam theo so luong combo san pham khach hang mua va gioi han cua chuong trinh.</div>
+                        <field name="oms_product_price_ids" mode="list,form" nolabel="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

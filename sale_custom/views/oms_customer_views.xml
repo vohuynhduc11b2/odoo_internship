@@ -1,0 +1,110 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_oms_customer_list" model="ir.ui.view">
+        <field name="name">oms.customer.list</field>
+        <field name="model">oms.customer</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="card_code"/>
+                <field name="card_name"/>
+                <field name="group_name"/>
+                <field name="credit_line"/>
+                <field name="debt_line"/>
+                <field name="cntct_prsn"/>
+                <field name="pymnt_group"/>
+                <field name="extra_days"/>
+                <field name="group_num"/>
+                <field name="active"/>
+                <field name="res_partner_id"/>
+                <field name="u_first_buy_date"/>
+                <field name="u_last_buy_date"/>
+
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_oms_customer_form" model="ir.ui.view">
+        <field name="name">oms.customer.form</field>
+        <field name="model">oms.customer</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group colspan="2">
+                        <field name="card_code"/>
+                        <field name="card_name"/>
+                        <field name="group_code"/>
+                        <field name="group_name"/>
+                        <field name="lic_trad_num"/>
+                        <field name="credit_line"/>
+                        <field name="debt_line"/>
+                        <field name="slp_code"/>
+                        <field name="currency"/>
+                        <field name="territory"/>
+                        <field name="descript"/>
+                    </group>
+                    <group colspan="2">
+                        <field name="create_date_api"/>
+                        <field name="update_date_api"/>
+                        <field name="u_first_buy_date"/>
+                        <field name="u_last_buy_date"/>
+                        <field name="industry_c"/>
+                        <field name="ind_name"/>
+                        <field name="ten_xuat_hoa_don"/>
+                        <field name="u_business_unit"/>
+                        <field name="u_debt_level"/>
+                        <field name="u_tele_note"/>
+                        <field name="u_cs_note"/>
+                        <field name="valid_for"/>
+                        <field name="ship_to_def"/>
+                        <field name="cntct_prsn"/>
+                        <field name="pymnt_group"/>
+                        <field name="extra_days"/>
+                        <field name="group_num"/>
+                        <field name="active"/>
+                        <field name="res_partner_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Liên hệ">
+                            <field name="contact_ids">
+                                <list editable="bottom">
+                                    <field name="cntct_code"/>
+                                    <field name="name"/>
+                                    <field name="first_name"/>
+                                    <field name="position"/>
+                                    <field name="title"/>
+                                    <field name="cellolar"/>
+                                    <field name="tel1"/>
+                                    <field name="tel2"/>
+                                    <field name="create_date_api"/>
+                                    <field name="update_date_api"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Địa chỉ">
+                            <field name="address_ids">
+                                <list editable="bottom">
+                                    <field name="address"/>
+                                    <field name="street"/>
+                                    <field name="address3"/>
+                                    <field name="county"/>
+                                    <field name="city"/>
+                                    <field name="country"/>
+                                    <field name="adres_type"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_oms_customer" model="ir.actions.act_window">
+        <field name="name">Khách hàng OMS</field>
+        <field name="res_model">oms.customer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

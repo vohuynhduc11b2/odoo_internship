@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_frontend" inherit_id="website.assets_frontend" name="UC tier price fix assets">
+        <xpath expr="." position="inside">
+            <script type="module" src="/uc_website_sale_tier_price_fix/static/src/js/tier_price_fix.js"/>
+            <link rel="stylesheet" href="/uc_website_sale_tier_price_fix/static/src/scss/tier_price_fix.scss"/>
+        </xpath>
+    </template>
+</odoo>

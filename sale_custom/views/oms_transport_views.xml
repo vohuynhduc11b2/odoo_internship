@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_oms_transport_list" model="ir.ui.view">
+    <field name="name">oms.transport.list</field>
+    <field name="model">oms.transport</field>
+    <field name="arch" type="xml">
+      <list string="Phương thức vận chuyển" default_order="trnsp_code asc" editable="bottom">
+        <field name="trnsp_code"/>
+        <field name="trnsp_name"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- Form view -->
+  <record id="view_oms_transport_form" model="ir.ui.view">
+    <field name="name">oms.transport.form</field>
+    <field name="model">oms.transport</field>
+    <field name="arch" type="xml">
+      <form string="Phương thức vận chuyển">
+        <sheet>
+          <group>
+            <group>
+              <field name="trnsp_code" required="1"/>
+              <field name="trnsp_name" required="1"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Search view -->
+  <record id="view_oms_transport_search" model="ir.ui.view">
+    <field name="name">oms.transport.search</field>
+    <field name="model">oms.transport</field>
+    <field name="arch" type="xml">
+      <search string="Tìm kiếm">
+        <field name="trnsp_code" filter_domain="[]"/>
+        <field name="trnsp_name" filter_domain="[]"/>
+        <separator/>
+        <group expand="0" string="Nhóm">
+          <filter string="Theo mã" name="grp_code" context="{'group_by':'trnsp_code'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <!-- =========================
+       ACTION & MENU
+  ========================== -->
+
+  <!-- Window action -->
+  <record id="action_oms_transport" model="ir.actions.act_window">
+    <field name="name">Phương thức vận chuyển</field>
+    <field name="res_model">oms.transport</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{}</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Tạo phương thức vận chuyển đầu tiên
+      </p>
+    </field>
+  </record>
+</odoo>

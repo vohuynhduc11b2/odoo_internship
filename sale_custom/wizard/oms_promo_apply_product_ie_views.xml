@@ -1,0 +1,28 @@
+<odoo>
+  <!-- Form wizard: Import/Export SP Khuyến mãi -->
+  <record id="view_oms_promo_apply_product_ie_wizard_form" model="ir.ui.view">
+    <field name="name">oms.promo.apply.product.ie.wizard.form</field>
+    <field name="model">oms.promo.apply.product.ie.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Import/Export SP Khuyến mãi OMS">
+        <group>
+          <field name="promotion_id" readonly="1" invisible="1"/>
+        </group>
+        <footer>
+          <button name="action_export" type="object" string="Export SP áp dụng" class="btn-primary"/>
+          <field name="file" filename="filename"/>
+          <button name="action_import" type="object" string="Import SP áp dụng" class="btn-success"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action mở wizard -->
+  <record id="action_oms_promo_apply_product_ie" model="ir.actions.act_window">
+    <field name="name">Import/Export SP Khuyến mãi OMS</field>
+    <field name="res_model">oms.promo.apply.product.ie.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_promotion_id': active_id}</field>
+  </record>
+</odoo>

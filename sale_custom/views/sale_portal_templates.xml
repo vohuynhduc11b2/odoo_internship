@@ -1,0 +1,1364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_sale" name="Portal layout : sales menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li id="portal_breadcrumbs_sale" t-if="page_name == 'quote' or sale_order and sale_order_custom.state in ('sent', 'cancel')" t-attf-class="breadcrumb-item #{'active ' if not sale_order else ''}">
+                <a t-if="sale_order" t-attf-href="/my/quotes?{{ keep_query() }}">Quotations</a>
+                <t t-else="">Quotations</t>
+            </li>
+            <li t-elif="page_name == 'order' or sale_order and sale_order_custom.state not in ('sent', 'cancel')" t-attf-class="breadcrumb-item #{'active ' if not sale_order else ''}">
+                <a t-if="sale_order" t-attf-href="/my/orders?{{ keep_query() }}">Sales Orders</a>
+                <t t-else="">Sales Orders</t>
+            </li>
+            <li t-if="sale_order" class="breadcrumb-item active">
+                <span t-field="sale_order_custom.type_name"/>
+                <t t-out="sale_order_custom.name"/>
+            </li>
+        </xpath>
+    </template>
+    <template id="portal_my_home_sale" name="Quotations / Sales Orders" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+            <t t-set="portal_alert_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_alert_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="bg_color" t-value="'alert alert-primary align-items-center'"/>
+                <t t-set="placeholder_count" t-value="'quotation_count'"/>
+                <t t-set="title">Quotations to review</t>
+                <t t-set="url" t-value="'/my/quotes'"/>
+                <t t-set="show_count" t-value="True"/>
+            </t>
+        </div>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                <t t-set="title">Your Orders</t>
+                <t t-set="url" t-value="'/my/orders'"/>
+                <t t-set="text">Follow, view or pay your orders</t>
+                <t t-set="placeholder_count" t-value="'order_count'"/>
+            </t>
+        </div>
+    </template>
+    <!-- ===== Reusable: quotation status badge (context: quotation) ===== -->
+    <template id="portal_quote_badge" name="DAT quotation status badge">
+        <t t-if="quotation.state == 'cancel'">
+            <span class="dat-badge dat-badge--unpaid"><i class="fa fa-ban"/>Đã hủy</span>
+        </t>
+        <t t-elif="quotation.is_expired">
+            <span class="dat-badge dat-badge--warn"><i class="fa fa-clock-o"/>Hết hạn</span>
+        </t>
+        <t t-elif="quotation.state == 'sent'">
+            <span class="dat-badge dat-badge--partial"><i class="fa fa-paper-plane-o"/>Chờ phản hồi</span>
+        </t>
+        <t t-else="">
+            <span class="dat-badge dat-badge--other"><i class="fa fa-pencil"/>Nháp</span>
+        </t>
+    </template>
+
+    <template id="portal_my_quotations" name="My Quotations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Báo giá</t>
+                <!-- sort/filter are rendered in the branded toolbar below, not the navbar -->
+                <t t-set="searchbar_sortings" t-value="False"/>
+                <t t-set="searchbar_filters" t-value="False"/>
+            </t>
+
+            <div class="oms_portal_orders_page dat-portal">
+                <!-- ============ TOOLBAR: state filter + sort ============ -->
+                <div t-if="quotations or filterby != 'all'" class="dat-orders-toolbar mb-3">
+                    <span class="dat-eyebrow">Báo giá của bạn</span>
+                    <div class="dat-orders-toolbar__right">
+                        <div t-if="searchbar_filters" class="btn-group dat-dropdown">
+                            <button data-bs-toggle="dropdown" class="btn btn-sm dat-btn btn-outline-secondary dropdown-toggle">
+                                <i class="fa fa-filter me-1"/><t t-esc="searchbar_filters.get(filterby, searchbar_filters.get('all')).get('label', 'Tất cả')"/>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <t t-foreach="searchbar_filters" t-as="option">
+                                    <a t-att-href="default_url + '?' + keep_query('*', filterby=option)"
+                                       t-attf-class="dropdown-item#{filterby == option and ' active' or ''}">
+                                        <span t-esc="searchbar_filters[option].get('label')"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                        <div t-if="searchbar_sortings" class="btn-group dat-dropdown">
+                            <button data-bs-toggle="dropdown" class="btn btn-sm dat-btn btn-outline-secondary dropdown-toggle">
+                                <i class="fa fa-sort me-1"/><t t-esc="searchbar_sortings.get(sortby, {}).get('label', 'Mới nhất')"/>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <t t-foreach="searchbar_sortings" t-as="option">
+                                    <a t-att-href="default_url + '?' + keep_query('*', sortby=option)"
+                                       t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                                        <span t-esc="searchbar_sortings[option].get('label')"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ EMPTY STATES ============ -->
+                <div t-if="not quotations and filterby == 'all'" class="dat-empty dat-card">
+                    <div class="dat-empty__icon"><i class="fa fa-file-text-o"/></div>
+                    <div class="dat-empty__title">Chưa có báo giá nào</div>
+                    <div class="dat-empty__text">Tài khoản của bạn hiện chưa có báo giá nào.</div>
+                </div>
+                <div t-if="not quotations and filterby != 'all'" class="dat-empty dat-card">
+                    <div class="dat-empty__icon dat-empty__icon--muted"><i class="fa fa-search"/></div>
+                    <div class="dat-empty__title">Không có báo giá nào khớp bộ lọc</div>
+                    <a t-att-href="default_url" class="btn dat-btn btn-outline-secondary mt-2"><i class="fa fa-times"/>Xóa bộ lọc</a>
+                </div>
+
+                <!-- ============ DESKTOP TABLE ============ -->
+                <div t-if="quotations" class="dat-card dat-orders-table-card d-none d-lg-block">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 dat-orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3 text-nowrap">Số báo giá</th>
+                                    <th class="text-nowrap">Ngày báo giá</th>
+                                    <th class="text-nowrap">Hiệu lực đến</th>
+                                    <th class="text-nowrap">Trạng thái</th>
+                                    <th class="text-end text-nowrap">Tổng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="quotations" t-as="quotation">
+                                    <tr class="dat-orders-row">
+                                        <td class="ps-3 text-nowrap">
+                                            <a t-att-href="quotation.get_portal_url()" class="dat-orders-row__id"><t t-out="quotation.name"/></a>
+                                        </td>
+                                        <td class="text-nowrap"><span t-field="quotation.date_order" t-options="{'widget': 'date'}"/></td>
+                                        <td class="text-nowrap"><span t-field="quotation.validity_date"/></td>
+                                        <td class="text-nowrap"><t t-call="sale_custom.portal_quote_badge"/></td>
+                                        <td class="text-end fw-bold text-nowrap dat-orders-row__amount"><span t-field="quotation.amount_total"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ============ MOBILE / TABLET CARD LIST ============ -->
+                <div t-if="quotations" class="dat-orders-cards d-lg-none">
+                    <t t-foreach="quotations" t-as="quotation">
+                        <div class="dat-card dat-order-card">
+                            <div class="dat-order-card__top">
+                                <a t-att-href="quotation.get_portal_url()" class="dat-order-card__id"><t t-out="quotation.name"/></a>
+                                <t t-call="sale_custom.portal_quote_badge"/>
+                            </div>
+                            <div class="dat-order-card__amount"><span t-field="quotation.amount_total"/></div>
+                            <div class="dat-order-card__meta">
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Ngày báo giá</span>
+                                    <span class="dat-order-card__v" t-field="quotation.date_order" t-options="{'widget': 'date'}"/>
+                                </div>
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Hiệu lực đến</span>
+                                    <span class="dat-order-card__v" t-field="quotation.validity_date"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- ============ PAGER ============ -->
+                <div t-if="pager" class="o_portal_pager d-flex justify-content-center my-4">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+        <!-- ===== Reusable: payment status badge (context: is_paid, pay_raw) ===== -->
+    <template id="portal_order_pay_badge" name="DAT order payment badge">
+        <t t-if="is_paid">
+            <span class="dat-badge dat-badge--paid"><i class="fa fa-check-circle"/>Đã thanh toán</span>
+        </t>
+        <t t-elif="pay_raw == 'partial'">
+            <span class="dat-badge dat-badge--partial"><i class="fa fa-adjust"/>Thanh toán một phần</span>
+        </t>
+        <t t-elif="pay_raw in (False, None, 0, '0', 'false', 'False', 'no', 'unpaid', 'none', '')">
+            <span class="dat-badge dat-badge--unpaid"><i class="fa fa-clock-o"/>Chưa thanh toán</span>
+        </t>
+        <t t-else="">
+            <span class="dat-badge dat-badge--other"><t t-out="pay_raw"/></span>
+        </t>
+    </template>
+
+    <!-- ===== Reusable: action buttons (context: order, can_pay_deposit, can_pay_remaining) ===== -->
+    <template id="portal_order_actions" name="DAT order action group">
+        <div class="dat-actions">
+            <a class="btn btn-sm dat-btn btn-outline-secondary"
+               t-attf-href="/my/orders/#{order.id}?access_token=#{order.access_token}"
+               title="Xem trạng thái/chi tiết">
+                <i class="fa fa-eye"/><span class="d-none d-md-inline">Xem</span>
+            </a>
+            <form t-att-action="'/my/orders/%s/reorder' % order.id" method="post" class="d-inline">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="access_token" t-att-value="order.access_token"/>
+                <button type="submit" class="btn btn-sm dat-btn btn-outline-primary text-nowrap"
+                        title="Mua lại (thêm lại sản phẩm vào giỏ)">
+                    <i class="fa fa-repeat"/><span class="d-none d-md-inline">Mua lại</span>
+                </button>
+            </form>
+            <t t-if="can_pay_deposit">
+                <a class="btn btn-sm dat-btn btn-outline-success text-nowrap"
+                   t-attf-href="/my/orders/#{order.id}/pay?access_token=#{order.access_token}&amp;pay_kind=deposit"
+                   title="Thanh toán phần cọc còn thiếu">
+                    <i class="fa fa-credit-card"/><span class="d-none d-md-inline">Thanh toán cọc</span>
+                </a>
+            </t>
+            <t t-if="can_pay_remaining">
+                <a class="btn btn-sm dat-btn dat-btn--primary text-nowrap"
+                   t-attf-href="/my/orders/#{order.id}/pay?access_token=#{order.access_token}&amp;pay_kind=remaining"
+                   title="Thanh toán phần còn lại">
+                    <i class="fa fa-credit-card"/><span class="d-none d-md-inline">Thanh toán phần còn lại</span>
+                </a>
+            </t>
+            <t t-if="order.can_portal_request_cancel">
+                <form t-attf-action="/my/orders/#{order.id}/cancel_request?access_token=#{order.access_token}"
+                      method="post" class="d-inline"
+                      data-confirm="Đơn sẽ được gửi yêu cầu hủy và chuyển sang trạng thái chờ duyệt. Bạn có chắc chắn?"
+                      data-confirm-title="Yêu cầu hủy đơn"
+                      data-confirm-label="Gửi yêu cầu hủy"
+                      data-confirm-variant="danger">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="access_token" t-att-value="order.access_token"/>
+                    <button type="submit" class="btn btn-sm dat-btn btn-outline-danger">
+                        <i class="fa fa-times"/><span class="d-none d-md-inline">Hủy</span>
+                    </button>
+                </form>
+            </t>
+            <t t-elif="order.cancel_request_state == 'requested'">
+                <span class="dat-badge dat-badge--warn"><i class="fa fa-hourglass-half"/>Đã gửi yêu cầu hủy</span>
+            </t>
+        </div>
+    </template>
+
+
+    <template id="portal_my_orders" name="My Sales Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Đơn hàng</t>
+                <!-- sort/filter are rendered in the branded toolbar below, not the navbar -->
+                <t t-set="searchbar_sortings" t-value="False"/>
+                <t t-set="searchbar_filters" t-value="False"/>
+            </t>
+
+            <t t-set="currency" t-value="portal_company_currency or (orders and orders[0].currency_id) or request.env.company.currency_id"/>
+
+            <div class="oms_portal_orders_page dat-portal">
+                <!-- ============ BRAND BANNER ============ -->
+                <div t-if="portal_customer_name" class="dat-banner dat-orders-banner mb-3">
+                    <div class="dat-orders-banner__grid">
+                        <div class="dat-orders-banner__main">
+                            <div class="dat-eyebrow dat-eyebrow--ondark">Khách hàng</div>
+                            <div class="dat-orders-banner__name">
+                                <t t-out="portal_customer_name or 'Khách lẻ'"/>
+                            </div>
+                            <div class="dat-orders-banner__updated">
+                                <i class="fa fa-refresh me-1"/>Cập nhật: <span t-esc="portal_view_date"/>
+                            </div>
+                        </div>
+                        <div class="dat-orders-banner__avail">
+                            <div class="dat-eyebrow dat-eyebrow--ondark">Hạn mức khả dụng</div>
+                            <div class="dat-orders-banner__avail-value">
+                                <span t-esc="portal_available_credit or 0.0"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </div>
+                            <div class="dat-orders-banner__avail-sub">Có thể đặt thêm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ COMPACT KPI STRIP ============ -->
+                <div t-if="portal_customer_name" class="dat-kpi-strip mb-3">
+                    <div class="dat-kpi dat-kpi--credit">
+                        <div class="dat-kpi__icon"><i class="fa fa-id-card-o"/></div>
+                        <div class="dat-kpi__body">
+                            <div class="dat-kpi__label">Hạn mức tín dụng</div>
+                            <div class="dat-kpi__value">
+                                <span t-esc="portal_credit_limit or 0.0"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dat-kpi dat-kpi--sales">
+                        <div class="dat-kpi__icon"><i class="fa fa-line-chart"/></div>
+                        <div class="dat-kpi__body">
+                            <div class="dat-kpi__label">Tổng doanh số</div>
+                            <div class="dat-kpi__value">
+                                <span t-esc="portal_total_sales or 0.0"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dat-kpi dat-kpi--debt">
+                        <div class="dat-kpi__icon"><i class="fa fa-exclamation-circle"/></div>
+                        <div class="dat-kpi__body">
+                            <div class="dat-kpi__label">Tổng công nợ</div>
+                            <div class="dat-kpi__value">
+                                <span t-esc="portal_total_debt or 0.0"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dat-kpi dat-kpi--advance">
+                        <div class="dat-kpi__icon"><i class="fa fa-arrow-circle-down"/></div>
+                        <div class="dat-kpi__body">
+                            <div class="dat-kpi__label">Tổng dư ứng</div>
+                            <div class="dat-kpi__value">
+                                <span t-esc="portal_total_advance or 0.0"
+                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ TOOLBAR: payment chips + state filter + sort ============ -->
+                <div t-if="orders or filterby != 'all'" class="dat-orders-toolbar mb-3">
+                    <div class="dat-chips" role="group" aria-label="Lọc theo thanh toán">
+                        <button type="button" class="dat-chip is-active" data-pay-filter="all">Tất cả</button>
+                        <button type="button" class="dat-chip" data-pay-filter="unpaid">Chưa thanh toán</button>
+                        <button type="button" class="dat-chip" data-pay-filter="partial">Một phần</button>
+                        <button type="button" class="dat-chip" data-pay-filter="paid">Đã thanh toán</button>
+                    </div>
+                    <div class="dat-orders-toolbar__right">
+                        <div t-if="searchbar_filters" class="btn-group dat-dropdown">
+                            <button data-bs-toggle="dropdown" class="btn btn-sm dat-btn btn-outline-secondary dropdown-toggle">
+                                <i class="fa fa-filter me-1"/><t t-esc="searchbar_filters.get(filterby, searchbar_filters.get('all')).get('label', 'Tất cả')"/>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <t t-foreach="searchbar_filters" t-as="option">
+                                    <a t-att-href="default_url + '?' + keep_query('*', filterby=option)"
+                                       t-attf-class="dropdown-item#{filterby == option and ' active' or ''}">
+                                        <span t-esc="searchbar_filters[option].get('label')"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                        <div t-if="searchbar_sortings" class="btn-group dat-dropdown">
+                            <button data-bs-toggle="dropdown" class="btn btn-sm dat-btn btn-outline-secondary dropdown-toggle">
+                                <i class="fa fa-sort me-1"/><t t-esc="searchbar_sortings.get(sortby, {}).get('label', 'Mới nhất')"/>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <t t-foreach="searchbar_sortings" t-as="option">
+                                    <a t-att-href="default_url + '?' + keep_query('*', sortby=option)"
+                                       t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                                        <span t-esc="searchbar_sortings[option].get('label')"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ EMPTY STATES ============ -->
+                <div t-if="not orders and filterby == 'all'" class="dat-empty dat-card">
+                    <div class="dat-empty__icon"><i class="fa fa-file-text-o"/></div>
+                    <div class="dat-empty__title">Chưa có đơn hàng nào</div>
+                    <div class="dat-empty__text">Tài khoản của bạn hiện chưa có đơn hàng. Hãy bắt đầu đặt hàng ngay.</div>
+                    <a href="/shop" class="btn dat-btn dat-btn--primary mt-2"><i class="fa fa-shopping-cart"/>Đặt hàng mới</a>
+                </div>
+                <div t-if="not orders and filterby != 'all'" class="dat-empty dat-card">
+                    <div class="dat-empty__icon dat-empty__icon--muted"><i class="fa fa-search"/></div>
+                    <div class="dat-empty__title">Không có đơn nào khớp bộ lọc</div>
+                    <div class="dat-empty__text">Thử đổi bộ lọc trạng thái để xem các đơn khác.</div>
+                    <a t-att-href="default_url" class="btn dat-btn btn-outline-secondary mt-2"><i class="fa fa-times"/>Xóa bộ lọc</a>
+                </div>
+
+                <!-- ============ DESKTOP TABLE ============ -->
+                <div t-if="orders" class="dat-card dat-orders-table-card d-none d-lg-block">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 dat-orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3 text-nowrap">Số báo giá</th>
+                                    <th class="text-nowrap">Ngày tạo</th>
+                                    <th class="d-none d-xl-table-cell text-nowrap">Số lệnh</th>
+                                    <th class="text-end text-nowrap">Doanh số</th>
+                                    <th class="d-none d-xl-table-cell text-nowrap">Trạng thái</th>
+                                    <th class="d-none d-xl-table-cell text-nowrap">Số hóa đơn</th>
+                                    <th class="text-nowrap">Thanh toán</th>
+                                    <th class="text-end text-nowrap dat-orders-table__actions">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="orders" t-as="order">
+                                    <t t-set="pay_raw" t-value="order.payment_status"/>
+                                    <t t-set="is_paid" t-value="pay_raw in (True, 1, '1', 'true', 'True', 'yes', 'paid', 'done')"/>
+                                    <t t-set="paid_amount" t-value="order.pay_accumulated if (order.pay_accumulated or 0.0) &gt; (order.amount_paid or 0.0) else order.amount_paid"/>
+                                    <t t-set="total_amount" t-value="order.amount_total or 0.0"/>
+                                    <t t-set="amount_due" t-value="total_amount - (paid_amount or 0.0) if total_amount &gt; (paid_amount or 0.0) else 0.0"/>
+                                    <t t-set="deposit_required" t-value="order._get_prepayment_required_amount() if order.prepayment_percent and order.prepayment_percent != 1.0 else 0.0"/>
+                                    <t t-set="deposit_due" t-value="deposit_required - (paid_amount or 0.0) if deposit_required &gt; (paid_amount or 0.0) else 0.0"/>
+                                    <t t-set="can_pay" t-value="not is_paid"/>
+                                    <t t-set="can_pay_deposit" t-value="can_pay and deposit_required and deposit_due &gt; 0.0"/>
+                                    <t t-set="can_pay_remaining" t-value="can_pay and amount_due &gt; 0.0"/>
+                                    <t t-set="pay_key" t-value="'paid' if is_paid else ('partial' if pay_raw == 'partial' else 'unpaid')"/>
+                                    <tr class="dat-orders-row" t-att-data-pay-key="pay_key">
+                                        <td class="ps-3 text-nowrap">
+                                            <a t-attf-href="/my/orders/#{order.id}?access_token=#{order.access_token}"
+                                               t-att-title="order.name" class="dat-orders-row__id">
+                                                <t t-out="order.name"/>
+                                            </a>
+                                        </td>
+                                        <td class="text-nowrap">
+                                            <span t-field="order.date_order" t-options="{'widget': 'date'}"/>
+                                            <span class="text-muted small ms-1 d-none d-xxl-inline"
+                                                  t-field="order.date_order" t-options="{'time_only': True}"/>
+                                        </td>
+                                        <td class="d-none d-xl-table-cell text-nowrap">
+                                            <t t-if="order.docnumber"><t t-out="order.docnumber"/></t>
+                                            <t t-else=""><span class="text-muted">—</span></t>
+                                        </td>
+                                        <td class="text-end fw-bold text-nowrap dat-orders-row__amount">
+                                            <span t-field="order.amount_total"/>
+                                        </td>
+                                        <td class="d-none d-xl-table-cell text-nowrap">
+                                            <t t-if="order.sap_status_name"><t t-out="order.sap_status_name"/></t>
+                                            <t t-elif="order.approval_step"><t t-out="order.approval_step"/></t>
+                                            <t t-else=""><span class="text-muted">Đang xử lý</span></t>
+                                        </td>
+                                        <td class="d-none d-xl-table-cell text-nowrap">
+                                            <t t-if="order.EL_Construction_Code"><t t-out="order.EL_Construction_Code"/></t>
+                                            <t t-else=""><span class="text-muted">—</span></t>
+                                        </td>
+                                        <td class="text-nowrap">
+                                            <t t-call="sale_custom.portal_order_pay_badge"/>
+                                        </td>
+                                        <td class="text-end dat-orders-table__actions">
+                                            <t t-call="sale_custom.portal_order_actions"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ============ MOBILE / TABLET CARD LIST ============ -->
+                <div t-if="orders" class="dat-orders-cards d-lg-none">
+                    <t t-foreach="orders" t-as="order">
+                        <t t-set="pay_raw" t-value="order.payment_status"/>
+                        <t t-set="is_paid" t-value="pay_raw in (True, 1, '1', 'true', 'True', 'yes', 'paid', 'done')"/>
+                        <t t-set="paid_amount" t-value="order.pay_accumulated if (order.pay_accumulated or 0.0) &gt; (order.amount_paid or 0.0) else order.amount_paid"/>
+                        <t t-set="total_amount" t-value="order.amount_total or 0.0"/>
+                        <t t-set="amount_due" t-value="total_amount - (paid_amount or 0.0) if total_amount &gt; (paid_amount or 0.0) else 0.0"/>
+                        <t t-set="deposit_required" t-value="order._get_prepayment_required_amount() if order.prepayment_percent and order.prepayment_percent != 1.0 else 0.0"/>
+                        <t t-set="deposit_due" t-value="deposit_required - (paid_amount or 0.0) if deposit_required &gt; (paid_amount or 0.0) else 0.0"/>
+                        <t t-set="can_pay" t-value="not is_paid"/>
+                        <t t-set="can_pay_deposit" t-value="can_pay and deposit_required and deposit_due &gt; 0.0"/>
+                        <t t-set="can_pay_remaining" t-value="can_pay and amount_due &gt; 0.0"/>
+                        <t t-set="pay_key" t-value="'paid' if is_paid else ('partial' if pay_raw == 'partial' else 'unpaid')"/>
+                        <div class="dat-card dat-order-card" t-att-data-pay-key="pay_key">
+                            <div class="dat-order-card__top">
+                                <a t-attf-href="/my/orders/#{order.id}?access_token=#{order.access_token}"
+                                   class="dat-order-card__id"><t t-out="order.name"/></a>
+                                <t t-call="sale_custom.portal_order_pay_badge"/>
+                            </div>
+                            <div class="dat-order-card__amount"><span t-field="order.amount_total"/></div>
+                            <div class="dat-order-card__meta">
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Ngày tạo</span>
+                                    <span class="dat-order-card__v" t-field="order.date_order" t-options="{'widget': 'date'}"/>
+                                </div>
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Trạng thái</span>
+                                    <span class="dat-order-card__v">
+                                        <t t-if="order.sap_status_name"><t t-out="order.sap_status_name"/></t>
+                                        <t t-elif="order.approval_step"><t t-out="order.approval_step"/></t>
+                                        <t t-else="">Đang xử lý</t>
+                                    </span>
+                                </div>
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Số lệnh</span>
+                                    <span class="dat-order-card__v"><t t-out="order.docnumber or '—'"/></span>
+                                </div>
+                                <div class="dat-order-card__cell">
+                                    <span class="dat-order-card__k">Số hóa đơn</span>
+                                    <span class="dat-order-card__v"><t t-out="order.EL_Construction_Code or '—'"/></span>
+                                </div>
+                            </div>
+                            <div class="dat-order-card__actions">
+                                <t t-call="sale_custom.portal_order_actions"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- ============ PAGER ============ -->
+                <div t-if="pager" class="o_portal_pager d-flex justify-content-center my-4">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    
+
+
+    <!-- Complete page of the sale_order -->
+    <template id="sale_order_portal_template" name="Sales Order" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                <!-- Uses backend_url provided in rendering values -->
+                <t t-call="portal.portal_back_in_edit_mode"/>
+            </t>
+            <div class="row o_portal_sale_sidebar dat-detail">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar" id="sale_order_portal_sidebar">
+                    <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'"/>
+                    <t t-set="title">
+                        <div class="dat-detail-total">
+                            <div class="dat-eyebrow">Tổng tiền đơn hàng</div>
+                            <h2 t-field="sale_order_custom.amount_total" data-id="total_amount" class="mb-0 text-break dat-detail-total__value"/>
+                        </div>
+                    </t>
+                    <t t-set="entries">
+                        <div class="d-flex flex-column gap-4 mt-3">
+                            <div class="d-flex flex-column gap-2" id="sale_order_sidebar_button">
+                                <a t-if="sale_order_custom._has_to_be_signed()" role="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/><t t-if="sale_order_custom._has_to_be_paid()"> Sign &amp; Pay</t><t t-else=""> Accept &amp; Sign</t>
+                                </a>
+                                <a t-elif="sale_order_custom._has_to_be_paid()" role="button" id="o_sale_portal_paynow" data-bs-toggle="modal" data-bs-target="#modalaccept" href="#" t-att-class="'%s' % ('btn btn-light' if sale_order_custom.transaction_ids else 'btn btn-primary')" >
+                                    <i class="fa fa-check"/> <t t-if="not sale_order_custom.signature">Accept &amp; Pay</t><t t-else="">Pay Now</t>
+                                </a>
+                                <div class="o_download_pdf d-flex gap-2 flex-lg-column flex-xl-row flex-wrap">
+                                    <a class="btn btn-success"
+                                       t-att-href="'/my/weasy_pdf?order_id=%s&amp;report_type=%s&amp;access_token=%s' % (sale_order_custom.id, sale_order_custom.report_type or 'co_tu', sale_order_custom.access_token or '')"
+                                       id="print_invoice_report"
+                                    title="Tải PDF"
+                                    role="button"
+                                    target="_blank">
+                                    <i class="fa fa-download me-1"></i> Tải PDF
+                                    </a>
+                                </div>
+                                
+                                <!-- <form id="change_report_type_form" method="post"
+                                    t-att-action="'/my/orders/%s/change_report_type' % sale_order_custom.id">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <select name="report_type"
+                                            id="quotation_template_select"
+                                            class="form-select"
+                                            onchange="this.form.submit()">
+                                        <option value="co_tu" t-att-selected="sale_order_custom.report_type == 'co_tu' and 'selected' or None">Có tủ</option>
+                                        <option value="khong_tu" t-att-selected="sale_order_custom.report_type == 'khong_tu' and 'selected' or None">Không tủ</option>
+                                        <option value="san_xuat" t-att-selected="sale_order_custom.report_type == 'san_xuat' and 'selected' or None">Sản xuất</option>
+                                    </select>
+                                </form>                                                     -->
+                            </div>
+                            <div class="navspy flex-grow-1 ps-0" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </div>
+                            <t t-if="not sale_order_custom.is_expired and sale_order_custom.state in ['draft', 'sent']">
+                                <div t-if="sale_order_custom.amount_undiscounted - sale_order_custom.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1" name="sale_order_advantage">
+                                    <small><b class="text-muted">Ưu đãi của bạn</b></small>
+                                    <small>
+                                        <b t-field="sale_order_custom.amount_undiscounted"
+                                            t-options='{"widget": "monetary", "display_currency": sale_order_custom.currency_id}'
+                                            style="text-decoration: line-through"
+                                            class="d-block mt-1"
+                                            data-id="amount_undiscounted" />
+                                    </small>
+                                    <t t-if="sale_order_custom.amount_untaxed == sale_order_custom.amount_total">
+                                        <h4 t-field="sale_order_custom.amount_total" class="text-success" data-id="total_amount"/>
+                                    </t>
+                                    <t t-else="">
+                                        <h4 t-field="sale_order_custom.amount_untaxed" class="text-success mb-0" data-id="total_untaxed"/>
+                                        <small>(<span t-field="sale_order_custom.amount_total" data-id="total_amount"/> Incl. tax)</small>
+                                    </t>
+                                </div>
+                            </t>
+                            <div t-if="sale_order_custom.user_id">
+                                <h6><small class="text-muted">Your contact</small></h6>
+                                <t t-call="portal.portal_my_contact">
+                                    <t t-set="_contactAvatar" t-value="image_data_uri(sale_order_custom.user_id.avatar_128)"/>
+                                    <t t-set="_contactName" t-value="sale_order_custom.user_id.name"/>
+                                    <t t-set="_contactLink" t-value="True"/>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+                <!-- Page content -->
+                <div id="quote_content" class="col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0">
+                    <!-- modal relative to the actions sign and pay -->
+                    <div role="dialog" class="modal fade" id="modalaccept" name="sale_order_modal_sign_and_pay">
+                        <div class="modal-dialog" t-if="sale_order_custom._has_to_be_signed()">
+                            <form id="accept" method="POST" t-att-data-order-id="sale_order_custom.id" t-att-data-token="sale_order_custom.access_token" class="js_accept_json modal-content js_website_submit_form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Validate Order</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </header>
+                                <main class="modal-body" id="sign-dialog">
+                                    <span>
+                                        By signing, you confirm acceptance on behalf of
+                                        <b t-field="sale_order_custom.partner_id.commercial_partner_id"/>
+                                        for the <b data-id="total_amount" t-field="sale_order_custom.amount_total"/> quote.
+                                    </span>
+                                    <b t-if="sale_order_custom.payment_term_id" t-field="sale_order_custom.payment_term_id.note"/>
+                                    <t t-call="portal.signature_form">
+                                        <t t-set="call_url" t-value="sale_order_custom.get_portal_url(suffix='/accept')"/>
+                                        <t t-set="default_name" t-value="sale_order_custom.partner_id.name or sale_order_custom.partner_id.commercial_partner_id.name"/>
+                                    </t>
+                                </main>
+                            </form>
+                        </div>
+                        <div class="modal-dialog" t-if="not sale_order_custom._has_to_be_signed() and sale_order_custom._has_to_be_paid()" name="sale_order_modal_validate">
+                            <div class="modal-content">
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Validate Order</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </header>
+                                <main class="modal-body" id="sign-dialog">
+                                    <t t-set="prepayment_amount" t-value="sale_order_custom._get_prepayment_required_amount()"/>
+                                    <t t-set="prepayment_available" t-value="sale_order_custom.prepayment_percent and sale_order_custom.prepayment_percent != 1.0"/>
+                                    <!-- Display choices only if a pre payment can confirm the order. -->
+                                    <div t-if="prepayment_available"
+                                        id="o_sale_portal_prepayment_buttons"
+                                        class="d-flex btn-group mb-3"
+                                        role="group"
+                                    >
+                                        <button name="o_sale_portal_amount_prepayment_button" class="btn btn-light active">
+                                            Down payment <br/>
+                                            <span t-esc="prepayment_amount" class="fw-bold"
+                                                t-options="{'widget': 'monetary', 'display_currency': sale_order_custom.currency_id}"/>
+                                        </button>
+                                        <button name="o_sale_portal_amount_total_button" class="btn btn-light">
+                                            Full amount <br/>
+                                            <span class="fw-bold" t-field="sale_order_custom.amount_total"/>
+                                        </button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <!-- The widget associated with this modal will hide and show divs in function of the amount selected. -->
+                                        <span t-if="prepayment_available">
+                                            <span id="o_sale_portal_use_amount_prepayment">
+                                                By paying a <u>down payment</u> of
+                                                <span
+                                                    t-esc="prepayment_amount"
+                                                    t-options="{'widget': 'monetary', 'display_currency': sale_order_custom.currency_id}"
+                                                    class="fw-bold"
+                                                />
+                                                (<b t-esc="sale_order_custom.prepayment_percent * 100"/>%),
+                                            </span>
+                                            <span id="o_sale_portal_use_amount_total">
+                                                By paying,
+                                            </span>
+                                        </span>
+                                        <span t-else="">
+                                            By paying,
+                                        </span>
+                                        you confirm acceptance on the behalf of <b t-field="sale_order_custom.partner_id.commercial_partner_id"/>
+                                        for the <b data-id="total_amount" t-field="sale_order_custom.amount_total"/> quote.
+                                        <b t-if="sale_order_custom.payment_term_id" t-field="sale_order_custom.payment_term_id.note" class="o_sale_payment_terms"/>
+                                    </div>
+                                    <div t-if="company_mismatch">
+                                        <t t-call="payment.company_mismatch_warning"/>
+                                    </div>
+                                    <div t-elif="not sale_order_custom._has_to_be_paid()" class="alert alert-danger">
+                                        The order is not in a state requiring customer payment.
+                                    </div>
+                                    <div t-else="" id="payment_method" class="text-start mt-0" >
+                                        <t t-call="payment.form">
+                                            <!-- Inject the order ID to allow Stripe to check if tokenization is required. -->
+                                            <t t-set="sale_order_id" t-value="sale_order_custom.id"/>
+                                        </t>
+                                    </div>
+                                </main>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- modal relative to the action reject -->
+                    <div role="dialog" class="modal fade" id="modaldecline">
+                        <div class="modal-dialog">
+                            <form id="decline" method="POST" t-attf-action="/my/orders/#{sale_order_custom.id}/decline?access_token=#{sale_order_custom.access_token}" class="modal-content">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <header class="modal-header">
+                                    <h4 class="modal-title">Reject This Quotation</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </header>
+                                <main class="modal-body">
+                                    <p>
+                                        Tell us why you are refusing this quotation, this will help us improve our services.
+                                    </p>
+                                    <textarea rows="4" name="decline_message" required="" placeholder="Your feedback..." class="form-control" />
+                                </main>
+                                <footer class="modal-footer">
+                                    <button type="submit" t-att-id="sale_order_custom.id" class="btn btn-danger">
+                                        <i class="fa fa-times"></i> Reject
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                </footer>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- status messages -->
+                    <div t-if="message == 'sign_ok'" class="alert alert-success alert-dismissible d-print-none" role="status">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thank You!</strong><br/>
+                        <t t-if="message == 'sign_ok' and sale_order_custom.state == 'sale'">
+                            Your order has been confirmed.
+                        </t>
+                        <t t-elif="message == 'sign_ok' and sale_order_custom._has_to_be_paid()">
+                            Your order has been signed but still needs to be paid to be confirmed.
+                        </t>
+                        <t t-else="">Your order has been signed.</t>
+                    </div>
+                    <div t-if="message == 'cant_reject'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        Your order is not in a state to be rejected.
+                    </div>
+                    <t t-if="sale_order_custom.get_portal_last_transaction()">
+                        <t t-call="payment.state_header">
+                            <t t-set="tx" t-value="sale_order_custom.get_portal_last_transaction()"/>
+                        </t>
+                    </t>
+                    <div t-if="sale_order_custom.state == 'cancel'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                        <strong>This quotation has been cancelled.</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+                    <div t-if="sale_order_custom.is_expired" class="alert alert-warning alert-dismissible d-print-none" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                        <strong>This offer expired!</strong> <a role="button" href="#discussion"><i class="fa fa-comment"/> Contact us to get a new quotation.</a>
+                    </div>
+                    <!-- main content -->
+                    <div t-attf-class="#{'pb-5' if report_type == 'html' else ''}" id="portal_sale_content">
+                        <t t-set="docs" t-value="sale_order_custom"/>
+                        <div t-call="#{sale_order_custom._get_name_portal_content_view()}"/>
+                    </div>
+                    <!-- bottom actions -->
+                    <div t-if="sale_order_custom._has_to_be_signed() or sale_order_custom._has_to_be_paid()" class="d-flex justify-content-center gap-1 d-print-none" name="sale_order_actions">
+                        <t t-if="sale_order_custom._has_to_be_signed()">
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalaccept" href="#"><i class="fa fa-check"/><t t-if="sale_order_custom._has_to_be_paid()"> Sign &amp; Pay</t><t t-else=""> Accept &amp; Sign</t></a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-light" href="#discussion"><i class="fa fa-comment"/> Feedback</a>
+                            </div>
+                            <div class="col-sm-auto mt8">
+                                <a role="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modaldecline" href="#"> <i class="fa fa-times"/> Reject</a>
+                            </div>
+                        </t>
+                        <div t-elif="sale_order_custom._has_to_be_paid()" class="col-sm-auto mt8">
+                            <a role="button" data-bs-toggle="modal" data-bs-target="#modalaccept" href="#" t-att-class="'%s' % ('btn btn-light' if sale_order_custom.transaction_ids else 'btn btn-primary')">
+                                <i class="fa fa-check"/> <t t-if="not sale_order_custom.signature">Accept &amp; Pay</t><t t-else="">Pay Now</t>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- chatter -->
+                    <hr/>
+                    <div id="sale_order_communication">
+                        <h3>Communication history</h3>
+                        <t t-call="portal.message_thread"/>
+                    </div>
+                </div><!-- // #quote_content -->
+            </div>
+        </xpath>
+    </template>
+    <!--
+    Sales Order content : intro, information, order lines, remarks, descriptions ....
+    This template should contain all the printable element of the SO. This is the
+    template rendered in PDF with the report engine.
+    -->
+    <template id="sale_order_portal_content" name="Sales Order Portal Content">
+        <t t-set="doc" t-value="docs[0]"/>
+        <main>
+            <!-- FONT / COMMON STYLE -->
+            <style>
+                body, table, div, span, td, th {
+                    font-family: 'DejaVu Sans', 'Noto Sans', 'Arial Unicode MS', Arial, sans-serif !important;
+                    font-size: 10px;
+                    color: #000000;
+                }
+                .q-quote-page {
+                    width: 210mm;
+                    max-width: 100%;
+                    margin: 0 auto;
+                    min-height: 297mm;
+                    background: #ffffff;
+                    color: #000000;
+                    box-sizing: border-box;
+                }
+                @media screen {
+                    .q-quote-page {
+                        padding: 0 10mm 10mm 10mm;
+                        box-shadow: 0 0 0 1px #e5e7eb;
+                    }
+                    .q-quote-page + .q-quote-page {
+                        margin-top: 18px;
+                    }
+                }
+                @media print {
+                    .q-quote-page {
+                        page-break-after: always;
+                    }
+                    .q-quote-page:last-child {
+                        page-break-after: auto;
+                    }
+                }
+                .q-title-main {
+                    font-size: 17px;
+                    font-weight: 700;
+                    color: #000000;
+                    text-transform: uppercase;
+                }
+                .q-title-sub {
+                    font-size: 11px;
+                    font-weight: 600;
+                    margin-top: 3px;
+                }
+                .q-section-title {
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    margin: 16px 0 6px 0;
+                }
+                .q-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    table-layout: fixed;
+                }
+                .q-table th,
+                .q-table td {
+                    border: 1px solid #000000;
+                    padding: 4px 5px;
+                    font-size: 9px;
+                    line-height: 1.25;
+                    vertical-align: middle;
+                }
+                .q-table th {
+                    text-align: center;
+                    background-color: #129ee5;
+                    color: #ffffff;
+                    font-weight: 700;
+                }
+            </style>
+    
+            <!-- HEADER DAT + CHI NHÁNH -->
+            <div class="q-quote-page">
+            <div style="width:100%;">
+                <table style="width:100%; border:none; border-collapse:collapse;">
+                    <tr>
+                        <!-- Logo + slogan -->
+                        <td style="width:180px; min-width:120px; text-align:center; vertical-align:top;">
+                            <img src="https://oms-ele.datgroup.com.vn/sale_custom/static/img/logo.png"
+                                 style="height:56px; margin-bottom:4px;" alt="DAT"/>
+                            <div style="color:#fa821c; font-size:1.08em; font-weight:bold; margin-top:2px;">
+                                Gia tăng hiệu quả
+                            </div>
+                        </td>
+                        <!-- Thông tin công ty & các chi nhánh -->
+                        <td style="vertical-align:top; padding-left:12px;">
+                            <div style="font-weight:bold; font-size:2em; color:#2196f3;
+                                        letter-spacing:1px; text-align:left; margin-bottom:0.1em;">
+                                CÔNG TY CỔ PHẦN TẬP ĐOÀN DAT
+                            </div>
+                            <table style="width:100%; border:none; font-size:1em; margin-bottom:6px;">
+                                <tr>
+                                    <td style="min-width:210px;">
+                                        <span style="color:#fa821c; font-weight:700;">TRỤ SỞ CHÍNH</span><br/>
+                                        <span style="color:#444;">12 Đường Hùng Thuận 10, KP3<br/>P. Đông Hưng Thuận, TP. HCM</span>
+                                    </td>
+                                    <td style="min-width:210px;">
+                                        <span style="color:#fa821c; font-weight:700;">CHI NHÁNH HÀ NỘI</span><br/>
+                                        <span style="color:#444;">Lô 05 - 10A, KCN Hoàng Mai,<br/>P. Hoàng Mai, Hà Nội</span>
+                                    </td>
+                                    <td style="min-width:210px;">
+                                        <span style="color:#fa821c; font-weight:700;">CHI NHÁNH CẦN THƠ</span><br/>
+                                        <span style="color:#444;">45 - 47 Bùi Quang Trinh,<br/>P. Hưng Phú, TP. Cần Thơ</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="border-bottom:1.2px solid #222; margin:9px 0 4px 0; width:100%;"></div>
+                            <table style="width:100%; border:none; font-size:1em; font-weight:400;">
+                                <tr>
+                                    <td style="width:33%;">
+                                        <span style="color:#444;">Website:</span>
+                                        <b style="color:#222;">www.datgroup.com.vn</b>
+                                    </td>
+                                    <td style="width:33%;">
+                                        <span style="color:#444;">Email:</span>
+                                        <b style="color:#222;">info@datgroup.com.vn</b>
+                                    </td>
+                                    <td style="width:33%;">
+                                        <span style="color:#444;">Hotline:</span>
+                                        <b style="color:#2196f3;">1800 6567</b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <div style="height:5px; width:100%; margin-top:8px;">
+                    <div style="background:#129ee5; height:5px; width:93%; float:left;"></div>
+                    <div style="background:#fa821c; height:5px; width:7%; float:left; border-radius:0 10px 10px 0;"></div>
+                    <div style="clear:both;"></div>
+                </div>
+            </div>
+    
+            <div style="padding: 0 28px;">
+                <!-- KHỐI GỬI / MST / ĐỊA CHỈ (KHÁCH HÀNG) -->
+                <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+                    <tr>
+                        <td style="width:80px;">Gửi :</td>
+                        <td>
+                            <span t-out="doc.cntct_code.name or (doc.partner_id.name or '')"/>
+                        </td>
+                        <td style="width:80px;">SDT :</td>
+                        <td>
+                            <span t-out="doc.cntct_code.cellolar or doc.partner_id.phone or ''"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email :</td>
+                        <td colspan="3">
+                            <span t-out="doc.cntct_code.email or doc.partner_id.email or ''"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Công ty :</td>
+                        <td colspan="3">
+                            <span t-out="doc.partner_id.parent_id.name if doc.partner_id.parent_id else doc.partner_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Địa chỉ :</td>
+                        <td colspan="3">
+                            <span t-out="doc.partner_id.contact_address or doc.Address or doc.EL_Construction_Address or ''"/>
+                        </td>
+                    </tr>
+                </table>
+    
+                <!-- ĐƯỜNG KẺ NGANG GIỮA 2 KHỐI -->
+                <div style="border-bottom:1px solid #555; margin:10px 0 6px 0; width:100%;"></div>
+    
+                <!-- GỬI TỪ + NGÀY + EMAIL (NVKD) -->
+                <table style="width:100%; border-collapse:collapse;">
+                    <tr>
+                        <td style="width:80px;">Gửi từ :</td>
+                        <td>
+                            <span t-out="doc.SlpCode.name or ''"/>
+                        </td>
+                        <td style="width:50px;">SDT :</td>
+                        <td style="width:120px;">
+                            <span t-out="doc.SlpCode.partner_id.phone or ''"/>
+                        </td>
+                        <td style="width:50px;">Ngày :</td>
+                        <td style="width:120px;">
+                            <span t-out="doc.quote_date_formatted or (doc.date_order and doc.date_order.strftime('%d/%m/%Y')) or ''"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email :</td>
+                        <td colspan="5">
+                            <span t-out="doc.SlpCode.partner_id.email or ''"/>
+                        </td>
+                    </tr>
+                </table>
+    
+                <!-- TIÊU ĐỀ BÁO GIÁ -->
+                <div style="text-align:center; margin-top:8px; margin-bottom:8px;">
+                    <div class="q-title-main">
+                        BÁO GIÁ ĐƠN HÀNG
+                    </div>
+                    <div class="q-title-sub">
+                        Số báo giá:
+                        <span t-out="doc.name"/>
+                    </div>
+                </div>
+    
+                <!-- KÍNH GỬI + ĐOẠN MỞ ĐẦU -->
+                <div style="margin-top:6px; font-weight:bold;">
+                    Kính gửi:
+                    <span t-out="doc.partner_id.parent_id.name if doc.partner_id.parent_id else doc.partner_id.name"/>
+                </div>
+    
+                <div style="margin-top:8px; line-height:1.5;">
+                    Công ty Cổ Phần Tập Đoàn DAT chuyên cung cấp các sản phẩm, thiết bị và giải pháp kỹ thuật tại Việt Nam,
+                    chúng tôi xin chân thành cảm ơn Quý Doanh nghiệp đã quan tâm đến sản phẩm và dịch vụ của DAT.
+                    Công ty DAT trân trọng gửi đến Quý doanh nghiệp báo giá hàng hóa tốt nhất như sau:
+                </div>
+    
+                <!-- I. SẢN PHẨM CUNG CẤP -->
+                <div class="q-section-title">
+                    I. SẢN PHẨM CUNG CẤP
+                </div>
+    
+                <table class="q-table">
+                    <thead>
+                        <tr>
+                            <th style="width:4%;">STT</th>
+                            <th style="width:22%;">Tên hàng hóa</th>
+                            <th style="width:8%;">Số lượng</th>
+                            <th style="width:8%;">Đơn vị tính</th>
+                            <th style="width:10%;">Đơn giá<br/>(VND)</th>
+                            <th style="width:7%;">Chiết khấu</th>
+                            <th style="width:10%;">Đơn giá sau CK<br/>(VND)</th>
+                            <th style="width:8%;">Bảo hành<br/>(tháng)</th>
+                            <th style="width:6%;">VAT<br/>(%)</th>
+                            <th style="width:15%;">Thành tiền sau VAT<br/>(VND)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Biến tính tổng + gom hoa hồng -->
+                        <t t-set="idx" t-value="0"/>
+                        <t t-set="hidden_codes" t-value="('HOAHONGKEGIA','HOAHONGKEGIACANHAN','HOAHONGKHACHHANG')"/>
+                        <t t-set="total_untaxed" t-value="0.0"/>
+                        <t t-set="total_tax" t-value="0.0"/>
+                        <t t-set="total_total" t-value="0.0"/>
+    
+                        <t t-set="buf_line" t-value="False"/>
+                        <t t-set="buf_extra_untaxed" t-value="0.0"/>
+                        <t t-set="buf_extra_total" t-value="0.0"/>
+    
+                        <t t-if="doc and doc.order_line">
+                            <t t-foreach="doc.order_line" t-as="line">
+                                <!-- Chuẩn hóa code & tên -->
+                                <t t-set="code_up" t-value="(line.product_id and (line.product_id.default_code or '').upper()) or ''"/>
+                                <t t-set="name_up" t-value="(line.name or '').upper()"/>
+                                <t t-set="is_commission" t-value="(not line.display_type) and (code_up in hidden_codes or 'HOA HỒNG' in name_up)"/>
+                                <t t-set="is_real" t-value="(not line.display_type) and not is_commission"/>
+    
+                                <!-- Nếu là dòng GHI CHÚ / SECTION -->
+                                <t t-if="line.display_type">
+                                    <!-- FLUSH buffer nếu còn -->
+                                    <t t-if="buf_line">
+                                        <t t-set="printed_untaxed" t-value="(buf_line.price_subtotal or 0.0) + buf_extra_untaxed"/>
+                                        <t t-set="printed_total" t-value="(buf_line.price_total if buf_line.price_total is not None else (buf_line.price_subtotal or 0.0)) + buf_extra_total"/>
+    
+                                        <t t-set="total_untaxed" t-value="total_untaxed + printed_untaxed"/>
+                                        <t t-set="total_total" t-value="total_total + printed_total"/>
+                                        <t t-set="total_tax" t-value="total_tax + (printed_total - printed_untaxed)"/>
+    
+                                        <t t-set="idx" t-value="idx + 1"/>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <span t-out="idx"/>
+                                            </td>
+                                            <td>
+                                                <span t-if="buf_line.product_id and buf_line.product_id.name"
+                                                      t-out="buf_line.product_id.name"/><br/>
+                                                <span t-if="buf_line.name" t-out="buf_line.name"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="buf_line.product_uom_qty is not None">
+                                                    <t t-esc="('{:,.1f}'.format(buf_line.product_uom_qty)).replace('.', ',')"/>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-out="buf_line.product_uom.name if buf_line.product_uom else ''"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(buf_line.price_unit or 0.0)).replace(',', '.')"/> đ
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(buf_line.discount or 0.0)).replace(',', '.')"/> %
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-set="disc" t-value="buf_line.discount or 0.0"/>
+                                                <t t-set="unit_after_disc"
+                                                   t-value="(buf_line.price_unit or 0.0) * (1.0 - disc/100.0)"/>
+                                                <t t-esc="('{:,.0f}'.format(unit_after_disc)).replace(',', '.')"/> đ
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-out="doc._get_warr_time_by_code(buf_line.product_id.default_code or '') or ''"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <t t-if="buf_line.tax_id">
+                                                    <t t-set="vat_list"
+                                                       t-value="['{}%'.format(int(tax.amount)) for tax in buf_line.tax_id]"/>
+                                                    <t t-esc="', '.join(vat_list)"/>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(printed_total)).replace(',', '.')"/> đ
+                                            </td>
+                                        </tr>
+    
+                                        <t t-set="buf_line" t-value="False"/>
+                                        <t t-set="buf_extra_untaxed" t-value="0.0"/>
+                                        <t t-set="buf_extra_total" t-value="0.0"/>
+                                    </t>
+                                    <!-- Dòng ghi chú -->
+                                    <tr>
+                                        <td/>
+                                        <td colspan="9" style="font-style:italic;">
+                                            <span t-out="line.name or ''"/>
+                                        </td>
+                                    </tr>
+                                </t>
+    
+                                <!-- Dòng hoa hồng: cộng dồn vào buffer -->
+                                <t t-elif="is_commission">
+                                    <t t-set="buf_extra_untaxed"
+                                       t-value="buf_extra_untaxed + (line.price_subtotal or 0.0)"/>
+                                    <t t-set="buf_extra_total"
+                                       t-value="buf_extra_total + (line.price_total if line.price_total is not None else (line.price_subtotal or 0.0))"/>
+                                </t>
+    
+                                <!-- Dòng sản phẩm thực -->
+                                <t t-elif="is_real">
+                                    <!-- FLUSH buffer cũ trước khi set buffer mới -->
+                                    <t t-if="buf_line">
+                                        <t t-set="printed_untaxed" t-value="(buf_line.price_subtotal or 0.0) + buf_extra_untaxed"/>
+                                        <t t-set="printed_total"
+                                           t-value="(buf_line.price_total if buf_line.price_total is not None else (buf_line.price_subtotal or 0.0)) + buf_extra_total"/>
+    
+                                        <t t-set="total_untaxed" t-value="total_untaxed + printed_untaxed"/>
+                                        <t t-set="total_total" t-value="total_total + printed_total"/>
+                                        <t t-set="total_tax" t-value="total_tax + (printed_total - printed_untaxed)"/>
+    
+                                        <t t-set="idx" t-value="idx + 1"/>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <span t-out="idx"/>
+                                            </td>
+                                            <td>
+                                                <span t-if="buf_line.product_id and buf_line.product_id.name"
+                                                      t-out="buf_line.product_id.name"/><br/>
+                                                <span t-if="buf_line.name" t-out="buf_line.name"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-if="buf_line.product_uom_qty is not None">
+                                                    <t t-esc="('{:,.1f}'.format(buf_line.product_uom_qty)).replace('.', ',')"/>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-out="buf_line.product_uom.name if buf_line.product_uom else ''"/>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(buf_line.price_unit or 0.0)).replace(',', '.')"/> đ
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(buf_line.discount or 0.0)).replace(',', '.')"/> %
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-set="disc" t-value="buf_line.discount or 0.0"/>
+                                                <t t-set="unit_after_disc"
+                                                   t-value="(buf_line.price_unit or 0.0) * (1.0 - disc/100.0)"/>
+                                                <t t-esc="('{:,.0f}'.format(unit_after_disc)).replace(',', '.')"/> đ
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-out="doc._get_warr_time_by_code(buf_line.product_id.default_code or '') or ''"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <t t-if="buf_line.tax_id">
+                                                    <t t-set="vat_list"
+                                                       t-value="['{}%'.format(int(tax.amount)) for tax in buf_line.tax_id]"/>
+                                                    <t t-esc="', '.join(vat_list)"/>
+                                                </t>
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <t t-esc="('{:,.0f}'.format(printed_total)).replace(',', '.')"/> đ
+                                            </td>
+                                        </tr>
+    
+                                        <t t-set="buf_line" t-value="False"/>
+                                        <t t-set="buf_extra_untaxed" t-value="0.0"/>
+                                        <t t-set="buf_extra_total" t-value="0.0"/>
+                                    </t>
+                                    <!-- Gán buffer = dòng hiện tại -->
+                                    <t t-set="buf_line" t-value="line"/>
+                                    <t t-set="buf_extra_untaxed" t-value="0.0"/>
+                                    <t t-set="buf_extra_total" t-value="0.0"/>
+                                </t>
+                            </t>
+    
+                            <!-- FLUSH dòng cuối cùng -->
+                            <t t-if="buf_line">
+                                <t t-set="printed_untaxed" t-value="(buf_line.price_subtotal or 0.0) + buf_extra_untaxed"/>
+                                <t t-set="printed_total"
+                                   t-value="(buf_line.price_total if buf_line.price_total is not None else (buf_line.price_subtotal or 0.0)) + buf_extra_total"/>
+    
+                                <t t-set="total_untaxed" t-value="total_untaxed + printed_untaxed"/>
+                                <t t-set="total_total" t-value="total_total + printed_total"/>
+                                <t t-set="total_tax" t-value="total_tax + (printed_total - printed_untaxed)"/>
+    
+                                <t t-set="idx" t-value="idx + 1"/>
+                                <tr>
+                                    <td style="text-align:center;">
+                                        <span t-out="idx"/>
+                                    </td>
+                                    <td>
+                                        <span t-if="buf_line.product_id and buf_line.product_id.name"
+                                              t-out="buf_line.product_id.name"/><br/>
+                                        <span t-if="buf_line.name" t-out="buf_line.name"/>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <t t-if="buf_line.product_uom_qty is not None">
+                                            <t t-esc="('{:,.1f}'.format(buf_line.product_uom_qty)).replace('.', ',')"/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <span t-out="buf_line.product_uom.name if buf_line.product_uom else ''"/>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <t t-esc="('{:,.0f}'.format(buf_line.price_unit or 0.0)).replace(',', '.')"/> đ
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <t t-esc="('{:,.0f}'.format(buf_line.discount or 0.0)).replace(',', '.')"/> %
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <t t-set="disc" t-value="buf_line.discount or 0.0"/>
+                                        <t t-set="unit_after_disc"
+                                           t-value="(buf_line.price_unit or 0.0) * (1.0 - disc/100.0)"/>
+                                        <t t-esc="('{:,.0f}'.format(unit_after_disc)).replace(',', '.')"/> đ
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <span t-out="doc._get_warr_time_by_code(buf_line.product_id.default_code or '') or ''"/>
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <t t-if="buf_line.tax_id">
+                                            <t t-set="vat_list"
+                                               t-value="['{}%'.format(int(tax.amount)) for tax in buf_line.tax_id]"/>
+                                            <t t-esc="', '.join(vat_list)"/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <t t-esc="('{:,.0f}'.format(printed_total)).replace(',', '.')"/> đ
+                                    </td>
+                                </tr>
+    
+                                <t t-set="buf_line" t-value="False"/>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+    
+                <!-- TỔNG CỘNG -->
+                <div style="margin-top:14px;">
+                    <b>Tổng giá trị (tạm tính, đã bao gồm thuế GTGT):</b>
+                    <span t-esc="('{:,.0f}'.format(total_total)).replace(',', '.')"/> đ
+                </div>
+                <div style="margin-top:4px; font-style:italic;">
+                    <t t-if="doc.currency_id">
+                        Thành tiền (bằng chữ):
+                        <span t-out="(doc.currency_id.amount_to_text(total_total).replace('\n','').replace('Dong','Đồng').strip())"/>
+                    </t>
+                </div>
+    
+                <!-- II. ĐIỀU KIỆN THƯƠNG MẠI -->
+                <div class="q-section-title">
+                    II. ĐIỀU KIỆN THƯƠNG MẠI
+                </div>
+    
+                <ul style="margin:0; padding-left:18px; line-height:1.5;">
+                    <li>Chất lượng hàng hóa: Hàng mới 100% từ nhà sản xuất.</li>
+                    <li>
+                        Địa điểm giao hàng:
+                        <span
+                            t-out="(doc.partner_shipping_id and doc.partner_shipping_id.contact_address)
+                                   or doc.Address
+                                   or doc.EL_Construction_Address
+                                   or (doc.partner_id and doc.partner_id.contact_address)
+                                   or ''"
+                        />
+                    </li>
+                </ul>
+            </div>
+            </div>
+
+            <div class="q-quote-page">
+            <div style="padding: 18mm 28px 0 28px;">
+                <t t-set="bank_account" t-value="'105 131 8386' if doc.SlpCode and doc.SlpCode.branch == 'HNI' else '103 693 6868'"/>
+                <t t-set="bank_branch" t-value="'Vietcombank - CN Kỳ Đồng' if doc.SlpCode and doc.SlpCode.branch == 'HNI' else 'Vietcombank - CN Kỳ Đồng - HCM'"/>
+                <t t-set="bank_company" t-value="'CÔNG TY CỔ PHẦN TẬP ĐOÀN DAT - CHI NHÁNH HÀ NỘI' if doc.SlpCode and doc.SlpCode.branch == 'HNI' else 'CÔNG TY CỔ PHẦN TẬP ĐOÀN DAT'"/>
+
+                <div style="margin:0 0 10px 0;">
+                    <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                        <colgroup>
+                            <col style="width:62%;"/>
+                            <col style="width:38%;"/>
+                        </colgroup>
+                        <tr style="vertical-align:top; page-break-inside:avoid;">
+                            <td style="border:none; padding:0 18px 0 0; word-break:break-word;">
+                                <div><b>Phương thức thanh toán</b></div>
+                                <div style="line-height:1.6; margin-top:4px;">
+                                    Khách hàng thanh toán bằng chuyển khoản vào tài khoản sau:<br/>
+                                    <b t-out="bank_company"/><br/>
+                                    STK: <b t-out="bank_account"/> - <span t-out="bank_branch"/>
+                                    <br/>
+                                    <b>Nội dung chuyển khoản (bắt buộc):</b><br/>
+                                    <span t-out="doc._qr_desc() or ''"/>
+                                </div>
+                            </td>
+
+                            <td style="border:none; padding:0; text-align:right;">
+                                <div style="width:54mm; margin:0 0 0 auto; border:1px solid #d8e3f0; border-radius:5mm; overflow:hidden; text-align:center;">
+                                    <div style="background:#1f6fb6; color:#ffffff; padding:4mm 2mm 3mm 2mm;">
+                                        <div style="font-size:13px; font-weight:800; color:#ffffff;">QR THANH TOÁN</div>
+                                        <div style="font-size:7.5px; margin-top:1.5mm; color:#ffffff;">Dùng camera ngân hàng hoặc ví điện tử để quét mã</div>
+                                    </div>
+                                    <div style="padding:4mm 3mm 3mm 3mm;">
+                                        <div style="font-weight:800; font-size:8.5px; line-height:1.25;" t-out="bank_branch"/>
+                                        <div style="font-size:6.8px; color:#5f6f86; margin-top:1mm; line-height:1.2;" t-out="bank_company"/>
+                                        <div style="width:34mm; height:34mm; margin:3mm auto 1.5mm auto; border:1px solid #d8e3f0; border-radius:3mm; padding:2mm; background:#ffffff;">
+                                            <t t-if="doc.sepay_qr_url">
+                                                <img t-att-src="doc.sepay_qr_url" alt="QR"
+                                                     style="width:30mm; height:30mm; object-fit:contain; display:block; margin:0 auto;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <img src="/custom_weasy_pdf/static/img/qr.png" alt="QR"
+                                                     style="width:30mm; height:30mm; object-fit:contain; display:block; margin:0 auto;"/>
+                                            </t>
+                                        </div>
+                                        <div style="font-size:11px; font-weight:800; letter-spacing:.4px;" t-out="bank_account.replace(' ', '')"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+    
+                <ul style="margin:0; padding-left:18px; line-height:1.5;">
+                    <li>Chứng từ: Hóa đơn, CO, CQ (bản sao) &amp; Phiếu xuất kho (kiêm bảo hành).</li>
+                    <li>Hiệu lực báo giá: Có hiệu lực trong vòng 15 ngày kể từ ngày báo giá.</li>
+                </ul>
+    
+                <div style="margin-top:14px; line-height:1.5;">
+                    Công ty DAT chân thành cảm ơn Quý Công Ty đã cho phép chúng tôi được phục vụ.
+                    Chúng tôi cam kết luôn mang đến sản phẩm, giải pháp và dịch vụ tốt nhất cho Quý Công ty.
+                </div>
+                <div style="margin-top:4px; font-weight:bold;">
+                    Trân trọng kính chào!
+                </div>
+    
+                <!-- CHỮ KÝ -->
+                <table style="width:100%; margin-top:30px;">
+                    <tr>
+                        <td style="width:50%; text-align:center; vertical-align:top;">
+                            <b>Xác nhận của bên mua</b><br/>
+                            (Ký tên và đóng dấu)
+                        </td>
+                        <td style="width:50%; text-align:center; vertical-align:top;">
+                            <b>Xác nhận của bên bán</b><br/>
+                            (Ký tên và đóng dấu)<br/><br/><br/>
+                            <span t-out="doc.SlpCode.name"
+                                  style="margin-top:2.5em;display:inline-block;"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </div>
+        </main>
+    </template>
+    
+    
+    
+    <template id="sale_order_portal_content_totals_table">
+        <table class="table table-sm" name="sale_order_totals_table">
+            <t t-call="#{doc._get_name_tax_totals_view()}">
+                <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                <t t-set="currency" t-value="sale_order_custom.currency_id"/>
+            </t>
+        </table>
+    </template>
+</odoo>

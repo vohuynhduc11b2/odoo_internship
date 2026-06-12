@@ -1,0 +1,90 @@
+<odoo>
+    <!-- List view -->
+    <record id="view_oms_pricelist_list" model="ir.ui.view">
+        <field name="name">oms.price.list.list</field>
+        <field name="model">oms.price.list</field>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="business_unit"/>
+                <field name="level_code"/>
+                <field name="group_code_solar"/>
+                <field name="from_date"/>
+                <field name="to_date"/>
+                <field name="note"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_oms_pricelist_form" model="ir.ui.view">
+        <field name="name">oms.price.list.form</field>
+        <field name="model">oms.price.list</field>
+        <field name="priority" eval="99"/>
+        <field name="arch" type="xml">
+            <form string="OMS Price List">
+                <header>
+                    <button name="%(action_oms_price_list_import_export)d"
+                        type="action"
+                        string="Import/Export"
+                        class="btn-primary"/>
+                    <button name="action_publish_to_odoo_pricelist"
+                        type="object"
+                        string="Publish sang Pricelist Odoo"
+                        class="btn-success"/>
+                </header>
+                <group>
+                    <field name="name"/>
+                    <field name="business_unit"/>
+                    <field name="level_code"/>
+                    <field name="group_code_solar"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                    <field name="note"/>
+                </group>
+                <notebook>
+                    <page string="Chi tiết bảng giá">
+                        <field name="line_ids">
+                            <list>
+                                <field name="item_code" string="ItemCode" readonly="1"/>
+                                <field name="api_price_list_id" string="PriceList" readonly="1"/>
+                                <field name="price" string="Price" readonly="1"/>
+                                <field name="price_frame_name" string="ListName" readonly="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Giá theo SP gốc">
+                        <field name="base_product_price_ids">
+                            <list editable="bottom">
+                                <field name="base_product_id"/>
+                                <field name="base_item_code" readonly="1"/>
+                                <field name="child_product_ids" widget="many2many_tags"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Nhóm thẻ khách hàng">
+                        <field name="card_group_ids">
+                            <list editable="bottom">
+                                <field name="card_group_from"/>
+                                <field name="card_group_to"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_pricelist" model="ir.actions.act_window">
+        <field name="name">Bảng giá OMS</field>
+        <field name="res_model">oms.price.list</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_oms_pricelist_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Quản lý bảng giá OMS.
+            </p>
+        </field>
+    </record>
+</odoo>

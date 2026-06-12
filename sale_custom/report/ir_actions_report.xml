@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_saleorder" model="ir.actions.report">
+        <field name="name">Quotation / Order</field>
+        <field name="model">sale_custom.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_custom.sale_order_portal_content</field>
+        <field name="report_file">sale_custom.sale_order_portal_content</field>
+        <field name="print_report_name">
+            (object.state in ('draft','sent') and 'BG-%s-%s-%s-%s' % (
+                object.name or '',
+                object.partner_id.name or '',
+                object.EL_Construction_Code or '',
+                object.EL_QuantityStops or ''
+            )) or 'DH-%s' % (object.name or '')
+        </field>
+        <field name="binding_model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_pro_forma_invoice" model="ir.actions.report">
+        <field name="name">PRO-FORMA Invoice</field>
+        <field name="model">sale_custom.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_custom.report_saleorder_pro_forma</field>
+        <field name="report_file">sale_custom.report_saleorder_pro_forma</field>
+        <field name="print_report_name">'PRO-FORMA - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="binding_type">report</field>
+        <field name="groups_id" eval="[(4, ref('sale_custom.group_proforma_sales'))]"/>
+    </record>
+
+</odoo>

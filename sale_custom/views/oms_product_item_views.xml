@@ -1,0 +1,104 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_oms_product_item_list" model="ir.ui.view">
+        <field name="name">oms.product.item.list</field>
+        <field name="model">oms.product.item</field>
+        <field name="arch" type="xml">
+            <list string="Danh sách sản phẩm OMS">
+                <field name="item_code"/>
+                <field name="item_name"/>
+                <field name="frgn_name"/>
+                <field name="valid_for"/>
+                <field name="u_is_hidden"/>
+                <field name="itms_grp_cod"/>
+                <field name="u_business_unit"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_oms_product_item_form" model="ir.ui.view">
+        <field name="name">oms.product.item.form</field>
+        <field name="model">oms.product.item</field>
+        <field name="arch" type="xml">
+            <form string="OMS Product Item">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="item_code"/>
+                            <field name="item_name"/>
+                            <field name="frgn_name"/>
+                            <field name="itms_grp_cod"/>
+                            <field name="u_business_unit"/>
+                            <field name="valid_for"/>
+                            <field name="u_is_hidden"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="u_warr_time_vendor"/>
+                            <field name="u_warr_time"/>
+                            <field name="u_warr_time_dist"/>
+                            <field name="u_min_stock"/>
+                            <field name="u_max_stock"/>
+                            <field name="country_org"/>
+                            <field name="lead_time"/>
+                            <field name="toleran_day"/>
+                            <field name="u_item_power"/>
+                        </group>
+                        <group>
+                            <field name="vat_group_pu"/>
+                            <field name="b_height1"/>
+                            <field name="b_width1"/>
+                            <field name="b_length1"/>
+                            <field name="b_weight1"/>
+                            <field name="vat_gourp_sa"/>
+                            <field name="s_height1"/>
+                            <field name="s_width1"/>
+                            <field name="s_length1"/>
+                            <field name="s_weight1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="u_info_text"/>
+                        <field name="u_vis_order"/>
+                    </group>
+                    <group>
+                        <field name="firm_code"/>
+                        <field name="man_ser_num"/>
+                        <field name="man_btch_num"/>
+                        <field name="qry_group32"/>
+                        <field name="qry_group33"/>
+                        <field name="qry_group34"/>
+                        <field name="qry_group35"/>
+                        <field name="qry_group36"/>
+                        <field name="qry_group37"/>
+                        <field name="qry_group24"/>
+                        <field name="qry_group29"/>
+                        <field name="qry_group30"/>
+                        <field name="prcrmnt_mtd"/>
+                    </group>
+                    <group>
+                        <field name="buy_unit_msr"/>
+                        <field name="sal_unit_msr"/>
+                        <field name="invntry_uom"/>
+                    </group>
+                    <group>
+                        <field name="create_date"/>
+                        <field name="update_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_oms_product_item" model="ir.actions.act_window">
+        <field name="name">OMS Product Items</field>
+        <field name="res_model">oms.product.item</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    
+</odoo>

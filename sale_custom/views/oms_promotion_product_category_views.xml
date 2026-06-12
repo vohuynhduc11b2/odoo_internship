@@ -1,0 +1,56 @@
+<odoo>
+    <!-- FORM VIEW -->
+    <record id="view_oms_promotion_product_category_form" model="ir.ui.view">
+        <field name="name">oms.promotion.product.category.form</field>
+        <field name="model">oms.promotion.product.category</field>
+        <field name="arch" type="xml">
+            <form string="Danh mục sản phẩm khuyến mãi">
+                <group col="2">
+                    <field name="itms_grp_cod"/>
+                    <field name="name"/>
+                </group>
+                <group col="2">
+                    <field name="itms_grp_nam"/>
+                    <field name="u_brand"/>
+                </group>
+                <group col="2">
+                    <field name="u_product_line"/>
+                    <field name="u_product_family"/>
+                </group>
+                <group>
+                    <field name="note"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW -->
+    <record id="view_oms_promotion_product_category_list" model="ir.ui.view">
+        <field name="name">oms.promotion.product.category.list</field>
+        <field name="model">oms.promotion.product.category</field>
+        <field name="arch" type="xml">
+            <list string="Danh mục sản phẩm khuyến mãi">
+                <field name="itms_grp_cod"/>
+                <field name="name"/>
+                <field name="itms_grp_nam"/>
+                <field name="u_brand"/>
+                <field name="u_product_line"/>
+                <field name="u_product_family"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_oms_promotion_product_category" model="ir.actions.act_window">
+        <field name="name">Danh mục SP khuyến mãi</field>
+        <field name="res_model">oms.promotion.product.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_oms_promotion_product_category_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo mới danh mục sản phẩm khuyến mãi
+            </p>
+        </field>
+    </record>
+
+</odoo>

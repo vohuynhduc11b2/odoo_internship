@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_form_inherit_sepay" model="ir.ui.view">
+        <field name="name">payment.provider.form.inherit.sepay</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="SePay" name="sepay_page" invisible="code != 'sepay'">
+                    <group string="QR (VietQR)">
+                        <field name="sepay_bank_code" placeholder="VD: VCB"/>
+                        <field name="sepay_bank_account" placeholder="VD: 1036936868"/>
+                        <field name="sepay_account_name" placeholder="(optional)"/>
+                        <field name="sepay_qr_base_url"/>
+                    </group>
+
+                    <group string="API (Optional)">
+                        <field name="sepay_use_api"/>
+                        <field name="sepay_base_url" invisible="not sepay_use_api"/>
+                        <field name="sepay_api_key" password="True" invisible="not sepay_use_api"/>
+                        <field name="sepay_api_secret" password="True" invisible="not sepay_use_api"/>
+
+                        <field name="sepay_webhook_secret" password="True"/>
+                        <field name="sepay_return_url"/>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

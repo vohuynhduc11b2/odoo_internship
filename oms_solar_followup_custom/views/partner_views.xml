@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_partner_form_oms_solar_deep_fix" model="ir.ui.view">
+        <field name="name">res.partner.form.oms.solar.deep.fix</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="OMS Solar">
+                    <group>
+                        <group>
+                            <field name="x_oms_portal_enabled"/>
+                            <field name="x_oms_portal_ready"/>
+                        </group>
+                        <group>
+                            <field name="x_oms_portal_deadline"/>
+                            <field name="x_oms_go_live_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="x_oms_portal_note"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_res_partner_oms_portal_tracking" model="ir.actions.act_window">
+        <field name="name">Đối tác OMS</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('x_oms_portal_enabled', '=', True), ('is_company', '=', True)]</field>
+        <field name="context">{'search_default_customer': 1}</field>
+    </record>
+
+    <menuitem id="menu_res_partner_oms_portal_tracking"
+              name="Đối tác OMS"
+              parent="sale_custom.sale_order_menu"
+              action="action_res_partner_oms_portal_tracking"
+              sequence="104"
+              groups="sales_team.group_sale_manager"/>
+</odoo>

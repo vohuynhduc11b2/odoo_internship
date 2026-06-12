@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_template_oms_solar_tree" model="ir.ui.view">
+        <field name="name">product.template.oms.solar.tree</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="default_code"/>
+                <field name="name"/>
+                <field name="categ_id"/>
+                <field name="oms_solar_scope_status"/>
+                <field name="oms_available_qty"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_template_oms_solar_form" model="ir.ui.view">
+        <field name="name">product.template.oms.solar.form</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="default_code"/>
+                            <field name="name"/>
+                            <field name="categ_id"/>
+                        </group>
+                        <group>
+                            <field name="oms_solar_scope_status"/>
+                            <field name="oms_available_qty" readonly="1"/>
+                            <field name="oms_show_low_stock_warning" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="oms_solar_scope_note" placeholder="Ghi chú thống nhất danh sách sản phẩm áp dụng với anh/chị Đoan Ngọc..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_template_oms_solar" model="ir.actions.act_window">
+        <field name="name">Danh sách sản phẩm OMS Solar</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_product_template_oms_solar_tree"/>
+    </record>
+</odoo>

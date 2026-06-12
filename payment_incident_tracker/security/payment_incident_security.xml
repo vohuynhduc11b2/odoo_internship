@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_payment_incident_user" model="res.groups">
+        <field name="name">Payment Incident User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_payment_incident_manager" model="res.groups">
+        <field name="name">Payment Incident Manager</field>
+        <field name="implied_ids" eval="[(4, ref('payment_incident_tracker.group_payment_incident_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>

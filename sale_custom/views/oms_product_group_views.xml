@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- LIST VIEW -->
+  <record id="view_oms_product_group_list" model="ir.ui.view">
+    <field name="name">oms.product.group.list</field>
+    <field name="model">oms.product.group</field>
+    <field name="arch" type="xml">
+      <list string="Product Groups">
+        <field name="itms_grp_cod"/>
+        <field name="itms_grp_nam"/>
+        <field name="u_product_line"/>
+        <field name="u_product_family"/>
+        <field name="u_brand"/>
+        <field name="odoo_category_id"/>
+        <field name="active"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- FORM VIEW -->
+  <record id="view_oms_product_group_form" model="ir.ui.view">
+    <field name="name">oms.product.group.form</field>
+    <field name="model">oms.product.group</field>
+    <field name="arch" type="xml">
+      <form string="Product Group">
+        <header>
+          <button name="action_open_items"
+                  type="object"
+                  class="oe_stat_button"
+                  icon="fa-cubes"
+                  help="Xem các sản phẩm đã map vào nhóm này">
+            <div class="o_stat_info">
+              <span class="o_stat_text">Sản phẩm</span>
+            </div>
+          </button>
+        </header>
+
+        <sheet>
+          <group>
+            <group>
+              <field name="itms_grp_cod"/>
+              <field name="itms_grp_nam"/>
+              <field name="odoo_category_id"/>
+              <field name="active"/>
+            </group>
+            <group>
+              <field name="u_cost_act1"/>
+              <field name="u_product_line"/>
+              <field name="u_product_family"/>
+              <field name="u_brand"/>
+            </group>
+          </group>
+
+          <notebook>
+            <page string="Sản phẩm (OMS)">
+              <field name="product_item_ids">
+                <list>
+                  <field name="item_code"/>
+                  <field name="item_name"/>
+                  <field name="itms_grp_cod"/>
+                  <field name="u_business_unit"/>
+                  <field name="active"/>
+                </list>
+                <form>
+                  <group>
+                    <field name="item_code"/>
+                    <field name="item_name"/>
+                    <field name="itms_grp_cod" readonly="1"/>
+                    <field name="product_group_id" readonly="1"/>
+                    <field name="u_business_unit"/>
+                    <field name="active"/>
+                  </group>
+                </form>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <!-- SEARCH VIEW (TỐI GIẢN, TRÁNH LỖI) -->
+  <record id="view_oms_product_group_search" model="ir.ui.view">
+    <field name="name">oms.product.group.search</field>
+    <field name="model">oms.product.group</field>
+    <field name="arch" type="xml">
+      <search string="Search Product Groups">
+        <field name="itms_grp_cod"/>
+        <field name="itms_grp_nam"/>
+        <field name="u_product_line"/>
+        <field name="u_product_family"/>
+        <field name="u_brand"/>
+        <field name="odoo_category_id"/>
+        <filter string="Đang hoạt động" name="active_true" domain="[('active','=',True)]"/>
+      </search>
+    </field>
+  </record>
+
+  <!-- ACTION -->
+  <record id="action_oms_product_group" model="ir.actions.act_window">
+    <field name="name">Product Groups OMS</field>
+    <field name="res_model">oms.product.group</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_oms_product_group_search"/>
+  </record>
+
+</odoo>

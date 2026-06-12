@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_promotion_oms_solar_tree" model="ir.ui.view">
+        <field name="name">oms.promotion.oms.solar.tree</field>
+        <field name="model">oms.promotion</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="oms_has_gift_combo"/>
+                <field name="oms_allow_customer_select_gift_combo" readonly="1" invisible="1"/>
+                <field name="oms_gift_qty_limit"/>
+                <field name="oms_apply_main_product_price"/>
+                <field name="oms_main_product_price"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_promotion_oms_solar_form" model="ir.ui.view">
+        <field name="name">oms.promotion.oms.solar.form</field>
+        <field name="model">oms.promotion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="gift_combo_ids" widget="many2many_tags" options="{'no_create': False}"/>
+                        </group>
+                        <group>
+                            <field name="oms_allow_customer_select_gift_combo" readonly="1" invisible="1"/>
+                            <field name="oms_force_gift_qty_by_combo_qty"/>
+                            <field name="oms_gift_qty_limit"/>
+                        </group>
+                    </group>
+                    <group string="Giá áp dụng cho sản phẩm chính">
+                        <group>
+                            <field name="oms_apply_main_product_price"/>
+                            <field name="oms_main_product_price" required="oms_apply_main_product_price"/>
+                        </group>
+                        <group>
+                            <field name="oms_gift_combo_note"/>
+                            <div class="o_form_label" colspan="2">Nghiệp vụ: 1 CTKM chỉ lấy 1 combo quà hợp lệ đầu tiên trong gift_combo_ids. Nếu cần Combo A / Combo B thì tạo 2 CTKM riêng.</div>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_promotion_oms_solar" model="ir.actions.act_window">
+        <field name="name">Khuyến mãi combo quà OMS</field>
+        <field name="res_model">oms.promotion</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_oms_promotion_oms_solar_tree"/>
+    </record>
+</odoo>

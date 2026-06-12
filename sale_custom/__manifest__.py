@@ -1,0 +1,157 @@
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
+{
+    'name': 'Sales Custom',
+    'version': '1.2',
+    'category': 'Sales/Sales',
+    'summary': 'Sales internal machinery',
+    'description': """
+This module contains all the common features of Sales Management and eCommerce.
+    """,
+    'depends': [
+        'sales_team',
+        'account_payment',  # -> account, payment, portal
+        'product',
+        'utm',
+        'contacts',
+        'website',
+    ],
+    'data': [
+        'security/sale_custom_security.xml',
+        'security/sale_custom_rules.xml',
+        'security/ir.model.access.csv',
+        'security/res_groups.xml',
+        'security/ir_rules.xml',
+        
+        'report/account_invoice_report_views.xml',
+        'report/ir_actions_report_templates.xml',
+        'report/ir_actions_report.xml',
+        'report/sale_report_views.xml',
+
+        'data/ir_cron.xml',
+        'data/ir_sequence_data.xml',
+        'data/mail_activity_type_data.xml',
+        'data/mail_message_subtype_data.xml',
+        'data/mail_template_data.xml',
+        'data/sale_tour.xml',
+        'data/ir_config_parameter.xml', # Needs mail_template_data
+        
+
+
+        'data/oms_sync_cron.xml',
+
+        'wizard/account_accrued_orders_wizard_views.xml',
+        'wizard/mass_cancel_orders_views.xml',
+        'wizard/payment_link_wizard_views.xml',
+        'wizard/res_config_settings_views.xml',
+        'wizard/sale_make_invoice_advance_views.xml',
+        'wizard/sale_order_cancel_views.xml',
+        'wizard/sale_order_discount_views.xml',
+        'wizard/promotion_multi_apply_wizard_views.xml',
+        'wizard/oms_price_list_import_export_views.xml',
+        'wizard/oms_special_price_import_export_views.xml',
+        'wizard/oms_promo_apply_product_ie_views.xml',
+
+        # Define sale order views before their references
+        'views/sale_order_views.xml',
+
+        'views/account_views.xml',
+        'views/crm_team_views.xml',
+        'views/mail_activity_views.xml',
+        'views/mail_activity_plan_views.xml',
+        'views/payment_views.xml',
+        'views/product_document_views.xml',
+        'views/product_packaging_views.xml',
+        'views/product_template_views.xml',
+        'views/product_views.xml',
+        'views/res_partner_views.xml',
+        'views/sale_order_line_views.xml',
+        'views/sale_portal_templates.xml',
+        'views/utm_campaign_views.xml',
+
+        'views/oms_promotion_views.xml',
+        'views/oms_special_price_views.xml',
+        'views/oms_pricelist_cardgroup_views.xml',
+        'views/oms_pricelist_commission_views.xml',
+        'views/oms_price_list_views.xml',
+        'views/oms_taxgroup_views.xml',
+        'views/oms_product_group_views.xml',
+        'views/oms_product_item_views.xml',
+        'views/oms_customer_views.xml',
+        'views/oms_promotion_product_category_views.xml',
+        'views/oms_approval_workflow_views.xml',
+        'views/oms_payment_terms_views.xml',
+        'views/oms_prjinfo_views.xml',
+        'views/oms_warehouse_views.xml',
+        'views/oms_marketing_campaign_view.xml',
+        'views/oms_sales_blanket_agreement_views.xml',
+        'views/res_users_views.xml',
+        'views/oms_warehouse_order_preparation_views.xml',
+        'views/oms_inventory_views.xml',
+        'views/oms_transport_views.xml', 
+        'views/oms_group_price_list_views.xml',
+        'views/oms_qr_payment_views.xml',
+        'views/oms_pricelist_frame_views.xml', 
+        
+        'views/sale_menus.xml',  # Last because referencing actions defined in previous files
+    ],
+    'demo': [
+        'data/product_demo.xml',
+        'data/sale_demo.xml',
+    ],
+    'installable': True,
+    'assets': {
+        'web.assets_backend': [
+            'sale_custom/static/src/scss/sale_onboarding.scss',
+            'sale_custom/static/src/js/badge_extra_price/*',
+            'sale_custom/static/src/js/sale_action_helper/*',
+            'sale_custom/static/src/js/combo_configurator_dialog/*',
+            'sale_custom/static/src/js/models/*',
+            'sale_custom/static/src/js/product/*',
+            'sale_custom/static/src/js/product_card/*',
+            'sale_custom/static/src/js/product_configurator_dialog/*',
+            'sale_custom/static/src/js/product_list/*',
+            'sale_custom/static/src/js/product_template_attribute_line/*',
+            'sale_custom/static/src/js/quantity_buttons/*',
+            'sale_custom/static/src/js/sale_order_line_field/*',
+            #'sale_custom/static/src/js/sale_progressbar_field.js',
+            #'sale_custom/static/src/js/tours/sale.js',
+            #'sale_custom/static/src/js/sale_product_field.js',
+            #'sale_custom/static/src/js/sale_product_field.scss',
+            'sale_custom/static/src/js/sale_utils.js',
+            'sale_custom/static/src/xml/**/*',
+            'sale_custom/static/src/views/**/*',
+        ],
+        'web.assets_frontend': [
+            'sale_custom/static/src/scss/_portal_brand.scss',
+            'sale_custom/static/src/scss/_portal_orders.scss',
+            'sale_custom/static/src/scss/_portal_detail.scss',
+            'sale_custom/static/src/scss/sale_portal.scss',
+            'sale_custom/static/src/js/sale_portal_sidebar.js',
+            'sale_custom/static/src/js/sale_portal_prepayment.js',
+            'sale_custom/static/src/js/sale_portal_filters.js',
+            'sale_custom/static/src/js/sale_portal_confirm.js',
+            'sale_custom/static/src/js/sale_portal.js',
+        ],
+        'web.assets_tests': [
+            #'sale_custom/static/tests/tours/**/*',
+            'sale_custom/static/src/js/tours/combo_configurator_tour_utils.js',
+            'sale_custom/static/src/js/tours/product_configurator_tour_utils.js',
+            'sale_custom/static/src/js/tours/tour_utils.js',
+        ],
+        'web.assets_unit_tests': [
+            'sale_custom/static/tests/mock_server/**/*',
+        ],
+        'web.qunit_suite_tests': [
+            'sale_custom/static/tests/**/*',
+            ('remove', 'sale_custom/static/tests/tours/**/*'),
+            ('remove', 'sale_custom/static/tests/mock_server/**/*'),
+        ],
+        'web.report_assets_common': [
+            'sale_custom/static/src/scss/sale_report.scss',
+        ],
+    },
+    'post_init_hook': '_post_init_hook',
+    'post_init_hook_2': 'post_init_hook_2',
+    'license': 'LGPL-3',
+}

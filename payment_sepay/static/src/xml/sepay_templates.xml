@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <template id="sepay_payment_page" name="SePay Payment Page">
+      <t t-call="website.layout">
+        <main class="oms_sepay_page">
+          <section class="oms_sepay_shell container">
+            <header class="oms_sepay_header">
+              <div>
+                <span class="oms_sepay_kicker">Thanh toán bảo mật</span>
+                <h1>Thanh toán qua SePay</h1>
+                <p>Quét mã QR, giữ nguyên nội dung chuyển khoản để hệ thống tự đối soát.</p>
+              </div>
+              <div class="oms_sepay_summary">
+                <span>Mã đơn</span>
+                <strong t-esc="tx.reference"/>
+                <small>
+                  <t t-esc="'{:,.0f}'.format(amount or 0).replace(',', '.')"/>
+                  <t t-esc="currency"/>
+                </small>
+              </div>
+            </header>
+
+            <div class="oms_sepay_grid">
+              <article class="oms_sepay_qr_card">
+                <input id="sepay_reference" type="hidden" t-att-value="tx.reference"/>
+                <input id="sepay_access_token" type="hidden" t-att-value="access_token"/>
+
+                <div class="oms_sepay_card_head">
+                  <div>
+                    <span class="oms_sepay_step">01</span>
+                    <h2>Quét QR để thanh toán</h2>
+                  </div>
+                  <span id="sepay_state_badge" class="oms_sepay_status" t-esc="tx.state"/>
+                </div>
+
+                <div class="oms_sepay_qr_wrap">
+                  <img t-att-src="sepay_qr_url" alt="QR thanh toán SePay"/>
+                </div>
+
+                <div class="oms_sepay_transfer_note" t-if="sepay_description">
+                  <span>Nội dung chuyển khoản</span>
+                  <strong t-esc="sepay_description"/>
+                </div>
+
+                <div id="sepay_done_box" class="oms_sepay_alert oms_sepay_alert_success d-none">
+                  Hệ thống đã ghi nhận thanh toán, đang chuyển sang trang xác nhận.
+                </div>
+                <div id="sepay_cancel_box" class="oms_sepay_alert oms_sepay_alert_warning d-none">
+                  Giao dịch đã bị hủy hoặc không còn hiệu lực.
+                </div>
+
+                <div class="oms_sepay_actions">
+                  <a class="btn oms_sepay_btn_primary" t-att-href="'/payment/sepay/return?reference=%s&amp;access_token=%s' % (tx.reference, access_token)">Tôi đã thanh toán</a>
+                  <a class="btn oms_sepay_btn_secondary" t-att-href="sepay_qr_download_url">Tải QR xuống</a>
+                  <a class="btn oms_sepay_btn_ghost" href="/my/orders">Xem xác nhận đơn</a>
+                </div>
+              </article>
+
+              <aside class="oms_sepay_side">
+                <div class="oms_sepay_notice_card">
+                  <span class="oms_sepay_step">02</span>
+                  <h2>Lưu ý</h2>
+                  <ul>
+                    <li>Trang tự kiểm tra trạng thái sau mỗi vài giây.</li>
+                    <li>Khi thanh toán thành công, hệ thống chuyển sang xác nhận đơn.</li>
+                    <li>Nếu ngân hàng phản hồi chậm, bấm “Tôi đã thanh toán”.</li>
+                  </ul>
+                </div>
+                <div class="oms_sepay_secure_card">
+                  <span>Đối soát tự động</span>
+                  <strong>SePay · VietQR</strong>
+                  <p>Kiểm tra theo mã giao dịch và nội dung chuyển khoản.</p>
+                </div>
+              </aside>
+            </div>
+          </section>
+        </main>
+      </t>
+    </template>
+
+  </data>
+</odoo>

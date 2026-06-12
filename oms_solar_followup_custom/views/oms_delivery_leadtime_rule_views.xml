@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_delivery_leadtime_rule_tree" model="ir.ui.view">
+        <field name="name">oms.delivery.leadtime.rule.tree</field>
+        <field name="model">oms.delivery.leadtime.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="state_id"/>
+                <field name="delivery_days"/>
+                <field name="company_id" optional="show"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_delivery_leadtime_rule_form" model="ir.ui.view">
+        <field name="name">oms.delivery.leadtime.rule.form</field>
+        <field name="model">oms.delivery.leadtime.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="state_id"/>
+                            <field name="delivery_days"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="company_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_delivery_leadtime_rule" model="ir.actions.act_window">
+        <field name="name">Rule ngày giao dự kiến</field>
+        <field name="res_model">oms.delivery.leadtime.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="sepay_credit_page" name="SePay Credit Pending Page">
+    <t t-call="website.layout">
+      <div class="container my-5">
+        <h2 class="mb-3">Chờ duyệt thanh toán công nợ</h2>
+
+        <div class="alert alert-info">
+          Yêu cầu thanh toán sau (công nợ) của bạn đã được ghi nhận. Bộ phận phụ trách sẽ kiểm tra và phê duyệt trong thời gian sớm nhất.
+        </div>
+
+        <div class="card p-3">
+          <div><b>Mã giao dịch:</b> <t t-esc="tx.reference"/></div>
+          <div><b>Số tiền:</b> <t t-esc="tx.amount"/> <t t-esc="tx.currency_id.name if tx.currency_id else ''"/></div>
+          <div><b>Trạng thái giao dịch:</b> <t t-esc="tx.state"/></div>
+          <t t-if="order and order.exists()">
+            <div><b>Đơn hàng:</b> <t t-esc="order.name"/></div>
+          </t>
+        </div>
+
+        <div class="mt-3">
+          <a class="btn btn-primary" href="/my/orders">Xem xác nhận đơn</a>
+          <a class="btn btn-secondary ms-2" href="/shop">Tiếp tục mua hàng</a>
+        </div>
+      </div>
+    </t>
+  </template>
+
+</odoo>

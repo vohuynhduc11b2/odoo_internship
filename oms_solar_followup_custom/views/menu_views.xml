@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_oms_solar_followup_root" name="OMS Solar" sequence="90"/>
+
+    <menuitem id="menu_oms_solar_followup_incidents" name="Sự cố thanh toán" parent="menu_oms_solar_followup_root" action="action_oms_payment_incident" sequence="20"/>
+
+    <menuitem id="menu_oms_solar_followup_config_root" name="Cấu hình" parent="menu_oms_solar_followup_root" sequence="90"/>
+    <menuitem id="menu_oms_solar_followup_partner_groups" name="Nhóm KH / cấp tài khoản" parent="menu_oms_solar_followup_config_root" action="action_res_partner_oms_group" sequence="10"/>
+    <menuitem id="menu_oms_solar_followup_categories" name="Nhóm SP cảnh báo tồn kho" parent="menu_oms_solar_followup_config_root" action="action_product_category_oms" sequence="20"/>
+    <menuitem id="menu_oms_solar_followup_rules" name="Rule ngày giao dự kiến" parent="menu_oms_solar_followup_config_root" action="action_oms_delivery_leadtime_rule" sequence="30"/>
+    <menuitem id="menu_oms_solar_followup_outstation" name="Cấu hình giao ngoại tỉnh" parent="menu_oms_solar_followup_config_root" action="action_oms_outstation_option" sequence="40"/>
+    <menuitem id="menu_oms_solar_followup_products" name="Danh sách sản phẩm OMS Solar" parent="menu_oms_solar_followup_config_root" action="action_product_template_oms_solar" sequence="25"/>
+    <menuitem id="menu_oms_solar_followup_promotions" name="Khuyến mãi combo quà" parent="menu_oms_solar_followup_config_root" action="action_oms_promotion_oms_solar" sequence="50"/>
+    <menuitem id="menu_oms_solar_followup_gift_selections" name="Lựa chọn combo quà" parent="menu_oms_solar_followup_root" action="action_oms_gift_combo_selection" sequence="40"/>
+</odoo>

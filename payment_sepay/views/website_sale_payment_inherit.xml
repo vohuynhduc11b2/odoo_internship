@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="payment_payment_mode_block"
+            name="Payment Mode Block (Payment Page)"
+            inherit_id="website_sale_custom.payment"
+            priority="70">
+
+    <xpath expr="//div[@id='payment_method']" position="before">
+
+      <div class="mt-3 mb-3 o_ws_payment_mode_box">
+        <div class="card p-3">
+          <div class="fw-bold mb-2">Hình thức thanh toán</div>
+
+          <t t-set="oms_selected_payment_mode"
+             t-value="request.session.get('oms_payment_mode') or request.session.get('website_payment_type') or 'full'"/>
+
+          <label class="form-check">
+            <input class="form-check-input" type="radio" name="oms_payment_mode" value="full" t-att-checked="oms_selected_payment_mode == 'full'"/>
+            <span class="oms_payment_mode_content">
+              <span>Thanh toán toàn bộ</span>
+              <small>Qua SePay, xác nhận đơn nhanh nhất.</small>
+            </span>
+          </label>
+
+          <label class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="oms_payment_mode" value="deposit" t-att-checked="oms_selected_payment_mode == 'deposit'"/>
+            <span class="oms_payment_mode_content">
+              <span>Thanh toán một phần (cọc)</span>
+              <small>Giữ đơn, phần còn lại xử lý sau.</small>
+            </span>
+          </label>
+
+          <label class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="oms_payment_mode" value="unc" t-att-checked="oms_selected_payment_mode == 'unc'"/>
+            <span class="oms_payment_mode_content">
+              <span>Phiếu ủy nhiệm chi</span>
+              <small>Tải chứng từ để kế toán đối soát.</small>
+            </span>
+          </label>
+
+          <label class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="oms_payment_mode" value="credit" t-att-checked="oms_selected_payment_mode == 'credit'"/>
+            <span class="oms_payment_mode_content">
+              <span>Thanh toán sau (công nợ)</span>
+              <small>Gửi duyệt theo điều khoản đã thỏa thuận.</small>
+            </span>
+          </label>
+
+          <div class="form-text mt-2">
+            - Toàn bộ/Cọc: thanh toán qua SePay.<br/>
+            - UNC: tải lên chứng từ.<br/>
+            - Công nợ: xác nhận công nợ để gửi duyệt.
+          </div>
+        </div>
+      </div>
+
+      <div id="o_ws_unc_box"
+           class="mt-3 mb-3 d-none"
+           t-att-data-order-id="sale_order.id if sale_order else ''"
+           t-att-data-access-token="access_token or ''">
+          <div class="card p-3">
+              <div class="fw-bold mb-2">Tải lên phiếu ủy nhiệm chi</div>
+      
+              <input type="hidden" id="o_ws_sale_order_id" t-att-value="sale_order.id if sale_order else ''"/>
+              <input type="hidden" id="o_ws_access_token" t-att-value="access_token or ''"/>
+      
+              <input id="o_ws_unc_files"
+                     type="file"
+                     name="oms_unc_files"
+                     class="form-control"
+                     multiple="multiple"/>
+      
+              <div class="form-text mt-2">
+                  File sẽ được đính kèm vào đơn hàng khi bạn xác nhận.
+              </div>
+      
+              <div id="o_ws_unc_error" class="text-danger small mt-2 d-none"></div>
+              <div id="o_ws_unc_success" class="text-success small mt-2 d-none"></div>
+          </div>
+      </div>
+      <div id="o_ws_credit_box" class="mt-3 mb-3 d-none">
+        <div class="card p-3">
+          <div class="fw-bold mb-2">Xác nhận thanh toán sau</div>
+          <label class="form-check">
+            <input class="form-check-input" type="checkbox" id="oms_credit_confirm"/>
+            Tôi xác nhận thanh toán theo công nợ/điều khoản đã thỏa thuận.
+          </label>
+        </div>
+      </div>
+
+      <!-- Customer note (stored to Sale Order: field `Comments`, max 240 chars) -->
+      <div class="mt-3 mb-3 o_ws_order_note_box">
+        <div class="card p-3">
+          <div class="fw-bold mb-2">Ghi chú</div>
+          <!-- Textarea nằm ngoài o_payment_form => sync vào hidden trong form -->
+          <textarea id="oms_comments_input"
+                    class="form-control"
+                    rows="3"
+                    maxlength="240"
+                    placeholder="Nhập ghi chú (tối đa 240 ký tự)"></textarea>
+          <div class="form-text mt-2">Tối đa 240 ký tự.</div>
+        </div>
+      </div>
+
+      <script type="text/javascript"><![CDATA[
+      (function () {
+        function jsonrpc(url, params) {
+          return fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              method: "call",
+              params: params || {},
+              id: Date.now()
+            }),
+            credentials: "same-origin",
+          }).then(function (r) { return r.json(); })
+            .then(function (r) { return r.result; });
+        }
+
+        function getMode() {
+          var el = document.querySelector("input[name='oms_payment_mode']:checked");
+          return el ? (el.value || "").toLowerCase() : "full";
+        }
+
+        function ensureHidden() {
+          var form = document.getElementById("o_payment_form");
+          if (!form) return null;
+          var hidden = form.querySelector("input[name='oms_payment_mode_hidden']");
+          if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "oms_payment_mode";
+            hidden.value = "full";
+            hidden.setAttribute("name", "oms_payment_mode");
+            hidden.setAttribute("data-oms", "1");
+            hidden.id = "oms_payment_mode_hidden";
+            form.appendChild(hidden);
+          }
+          return hidden;
+        }
+
+        function ensureCommentHidden() {
+          var form = document.getElementById("o_payment_form");
+          if (!form) return null;
+          var hidden = form.querySelector("input[name='Comments']#oms_comments_hidden");
+          if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "Comments"; // map to sale_custom.order.Comments
+            hidden.value = "";
+            hidden.setAttribute("data-oms", "1");
+            hidden.id = "oms_comments_hidden";
+            form.appendChild(hidden);
+          }
+          return hidden;
+        }
+
+        function getComment() {
+          var el = document.getElementById("oms_comments_input");
+          return el ? (el.value || "").toString() : "";
+        }
+
+        function syncComment() {
+          var comment = getComment();
+          if (comment && comment.length > 240) comment = comment.slice(0, 240);
+
+          var hidden = ensureCommentHidden();
+          if (hidden) hidden.value = comment;
+
+          // store to session as backend fallback
+          return jsonrpc("/payment/sepay/set_comment", {comment: comment}).catch(function () {});
+        }
+
+        function toggleBoxes(mode) {
+          var uncBox = document.getElementById("o_ws_unc_box");
+          var creditBox = document.getElementById("o_ws_credit_box");
+          if (uncBox) uncBox.classList.toggle("d-none", mode !== "unc");
+          if (creditBox) creditBox.classList.toggle("d-none", mode !== "credit");
+        }
+
+        function syncMode() {
+          var mode = getMode();
+          toggleBoxes(mode);
+
+          var hidden = ensureHidden();
+          if (hidden) hidden.value = mode;
+
+          // lưu session để backend fallback được (không phụ thuộc hidden)
+          return jsonrpc("/payment/sepay/set_mode", {mode: mode}).then(function (result) {
+            if (result && result.pricelist_changed && !window.__omsStrategicPriceReloading) {
+              window.__omsStrategicPriceReloading = true;
+              window.location.reload();
+            }
+            return result;
+          }).catch(function () {});
+        }
+
+        document.addEventListener("change", function (e) {
+          if (e.target && e.target.name === "oms_payment_mode") {
+            syncMode();
+          }
+        });
+
+        document.addEventListener("input", function (e) {
+          if (e.target && e.target.id === "oms_comments_input") {
+            syncComment();
+          }
+        });
+
+        document.addEventListener("submit", function (e) {
+          var form = e.target;
+          if (!form || form.id !== "o_payment_form") return;
+
+          var mode = getMode();
+          if (mode === "credit") {
+            var cb = document.getElementById("oms_credit_confirm");
+            if (!cb || !cb.checked) {
+              e.preventDefault();
+              e.stopPropagation();
+              alert("Vui lòng xác nhận điều khoản công nợ trước khi tiếp tục.");
+              return false;
+            }
+          }
+          // Sync both before submitting payment
+          syncComment();
+          syncMode();
+          return true;
+        }, true);
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", function () {
+            ensureHidden();
+            ensureCommentHidden();
+            syncComment();
+            syncMode();
+          });
+        } else {
+          ensureHidden();
+          ensureCommentHidden();
+          syncComment();
+          syncMode();
+        }
+      })();
+      ]]></script>
+
+    </xpath>
+
+  </template>
+
+</odoo>

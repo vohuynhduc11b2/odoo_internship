@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="website_sale_custom.cartNotification">
+        <div t-attf-class="toast show o_cc1 position-relative start-0 mt-2 {{props.className}}"
+             t-attf-style="top: {{positionOffset}};"
+             role="alert"
+             aria-live="assertive"
+             aria-atomic="true">
+
+            <div class="toast-header justify-content-between">
+                <strong t-if="props.message" t-out="props.message"/>
+                <button class="btn-close"
+                        type="button"
+                        t-on-click="props.close"
+                        aria-label="Close"/>
+            </div>
+
+            <div class="toast-body">
+                <WarningNotification t-if="props.warning" warning="props.warning"/>
+
+                <AddToCartNotification
+                    t-elif="props.lines &amp;&amp; props.lines.length"
+                    lines="props.lines"
+                    currency_id="props.currency_id"/>
+
+                <!-- ✅ Fallback: không có lines vẫn không trống -->
+                <div t-else="" class="small">
+                    <t t-out="props.message"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

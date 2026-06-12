@@ -1,0 +1,49 @@
+<odoo>
+    <!-- LIST VIEW (Odoo 18+ dùng list, không dùng tree) -->
+    <record id="view_oms_pricelist_commission_list" model="ir.ui.view">
+        <field name="name">oms.price.list.commission.list</field>
+        <field name="model">oms.price.list.commission</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="business_unit"/>
+                <field name="level_code"/>
+                <field name="pricelist_code"/>
+                <field name="commission"/>
+                <field name="valid_from"/>
+                <field name="valid_to"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW -->
+    <record id="view_oms_pricelist_commission_form" model="ir.ui.view">
+        <field name="name">oms.price.list.commission.form</field>
+        <field name="model">oms.price.list.commission</field>
+        <field name="arch" type="xml">
+            <form string="Hoa hồng bảng giá OMS">
+                <group>
+                    <field name="business_unit"/>
+                    <field name="level_code"/>
+                    <field name="pricelist_code"/>
+                    <field name="commission"/>
+                    <field name="valid_from"/>
+                    <field name="valid_to"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_oms_pricelist_commission" model="ir.actions.act_window">
+        <field name="name">Hoa hồng bảng giá OMS</field>
+        <field name="res_model">oms.price.list.commission</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_oms_pricelist_commission_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo và quản lý các mức hoa hồng cho bảng giá OMS.<br/>
+                Sử dụng để tính tự động hoa hồng bán hàng theo từng bảng giá.
+            </p>
+        </field>
+    </record>
+</odoo>

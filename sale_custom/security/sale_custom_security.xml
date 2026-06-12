@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <record id="group_sale_user" model="res.groups">
+        <field name="name">Sales User</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Nhân viên Sale, chỉ có quyền tạo và xem báo giá của chính mình.</field>
+    </record>
+
+    <record id="group_sale_manager" model="res.groups">
+        <field name="name">Sales Manager</field>
+        <field name="implied_ids" eval="[(4, ref('sale_custom.group_sale_user'))]"/>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Quản lý nhóm sales, có quyền xem và duyệt báo giá của nhóm mình phụ trách.</field>
+    </record>
+
+    <record id="group_sale_pm" model="res.groups">
+        <field name="name">Sales Project Manager (PM)</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">PM, có quyền tạo và quản lý khuyến mãi, chính sách giá.</field>
+    </record>
+
+    <record id="group_sale_head" model="res.groups">
+        <field name="name">Sales Head</field>
+        <field name="implied_ids" eval="[(4, ref('sale_custom.group_sale_manager')), (4, ref('sale_custom.group_sale_pm'))]"/>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Head Sales, toàn quyền: xem, duyệt, tạo khuyến mãi, báo giá, giá đặc biệt.</field>
+    </record>
+
+    <record id="group_accountant" model="res.groups">
+        <field name="name">Accountant</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Kế toán, có quyền duyệt bước công nợ.</field>
+    </record>
+
+    <record id="group_bod" model="res.groups">
+        <field name="name">Board of Directors (BOD)</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Ban giám đốc, có quyền duyệt cuối cùng (role bop).</field>
+    </record>
+
+    <!-- Logistics -->
+    <record id="group_logistics" model="res.groups">
+        <field name="name">Kho/Điều vận</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+        <field name="comment">Chỉ đọc Sales Order; được tick 'Đã chuẩn bị' trên dòng (giới hạn field ở Python).</field>
+    </record>
+</odoo>

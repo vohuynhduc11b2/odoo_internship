@@ -1,0 +1,10 @@
+# Python cache folders
+__pycache__/
+**/__pycache__/
+
+# Python compiled/cache files
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class

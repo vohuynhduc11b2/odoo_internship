@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_oms_strategic_pricing" model="ir.ui.view">
+        <field name="name">res.partner.form.oms.strategic.pricing</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='property_product_pricelist']" position="after">
+                <separator string="Giá chiến lược OMS"
+                           colspan="2"
+                           groups="product.group_product_pricelist"/>
+                <field name="oms_is_strategic_customer"
+                       groups="product.group_product_pricelist"/>
+                <field name="oms_debt_pricelist_id"
+                       groups="product.group_product_pricelist"
+                       invisible="not oms_is_strategic_customer"/>
+                <field name="oms_prepaid_pricelist_id"
+                       groups="product.group_product_pricelist"
+                       invisible="not oms_is_strategic_customer"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="oms_solar_followup_payment_address_note" inherit_id="website_sale_custom.address_on_payment" name="OMS Solar Invoice Partner On Payment">
+        <xpath expr="//div[@id='delivery_and_billing']" position="inside">
+            <div t-if="order and order.oms_invoice_customer_id" class="mt-2">
+                <b>Xuất hóa đơn theo lựa chọn: </b>
+                <span t-esc="order.oms_invoice_customer_id.commercial_partner_id.display_name"/>
+                <t t-if="order.oms_invoice_customer_id.vat">
+                    <span> - MST: <t t-esc="order.oms_invoice_customer_id.vat"/></span>
+                </t>
+            </div>
+            <div t-if="order and order.oms_outstation_option_id and order._oms_is_outstation_selected()" class="mt-2 text-muted small">
+                <b>Vận chuyển ngoại tỉnh: </b>
+                <span t-esc="order.oms_outstation_option_id.name"/>
+                <t t-if="order.oms_transport_address">
+                    <span> - </span>
+                    <span t-esc="order.oms_transport_address"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="oms_solar_followup_checkout_invoice_note" inherit_id="website_sale_custom.checkout" name="OMS Solar Invoice Partner On Checkout">
+        <xpath expr="//div[@id='shop_checkout']" position="inside">
+            <div class="card mb-3" t-if="order and (order.oms_invoice_customer_id or (order.oms_outstation_option_id and order._oms_is_outstation_selected()))">
+                <div class="card-body py-3">
+                    <div class="row g-3 align-items-start">
+                        <div class="col-12 col-lg-6" t-if="order and order.oms_invoice_customer_id">
+                            <div class="fw-bold mb-1">Thông tin xuất hóa đơn đã chọn</div>
+                            <div><span t-esc="order.oms_invoice_customer_id.commercial_partner_id.display_name"/></div>
+                            <div t-if="order.oms_invoice_customer_id.vat" class="small text-muted mt-1">MST: <span t-esc="order.oms_invoice_customer_id.vat"/></div>
+                        </div>
+                        <div class="col-12 col-lg-6" t-if="order and order.oms_outstation_option_id and order._oms_is_outstation_selected()">
+                            <div class="fw-bold mb-1">Thông tin giao hàng ngoại tỉnh</div>
+                            <div><span t-esc="order.oms_outstation_option_id.name"/></div>
+                            <div t-if="order.oms_transport_address" class="small text-muted mt-1"><span t-esc="order.oms_transport_address"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

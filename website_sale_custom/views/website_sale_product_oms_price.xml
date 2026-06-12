@@ -1,0 +1,22 @@
+<odoo>
+  <template id="website_sale_product_oms_price"
+            inherit_id="website_sale_custom.product"
+            name="OMS Price Tiers">
+    <xpath expr="//div[@id='product_details']" position="inside">
+      <div class="oms-price-tiers mt-3"
+           t-att-data-product-id="product_variant.id or combination_info['product_id']"
+           t-att-data-template-id="product.id">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Số lượng</th>
+              <th>Khung giá</th>
+              <th>Giá (VND)</th>
+            </tr>
+          </thead>
+          <tbody id="oms_price_table"></tbody>
+        </table>
+      </div>
+    </xpath>
+  </template>
+</odoo>

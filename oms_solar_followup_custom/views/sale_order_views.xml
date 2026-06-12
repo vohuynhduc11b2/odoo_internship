@@ -1,0 +1,49 @@
+<odoo>
+    <record id="view_order_form_oms_solar_deep_fix" model="ir.ui.view">
+        <field name="name">sale_custom.order.form.oms.solar.deep.fix</field>
+        <field name="model">sale_custom.order</field>
+        <field name="inherit_id" ref="sale_custom.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box' and @name='button_box']" position="inside">
+                <button name="action_open_payment_incidents"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-exclamation-triangle">
+                    <span class="o_stat_text">Sự cố thanh toán</span>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='CardCode2']" position="after">
+                <field name="x_invoice_partner_id" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='trnsp_id']" position="after">
+                <field name="x_is_outstation"/>
+                <field name="x_outstation_transport_need" invisible="not x_is_outstation"/>
+                <field name="x_outstation_delivery_address" invisible="not x_is_outstation"/>
+                <field name="x_outstation_note" invisible="not x_is_outstation"/>
+                <field name="x_delivery_rule_id" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_warehouse_order_preparation_list_oms_solar_deep_fix" model="ir.ui.view">
+        <field name="name">oms.warehouse.order.preparation.list.oms.solar.deep.fix</field>
+        <field name="model">oms.warehouse.order.preparation</field>
+        <field name="inherit_id" ref="sale_custom.view_warehouse_order_preparation_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='is_prepared']" position="before">
+                <field name="x_locked_from_sale_order"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_warehouse_order_preparation_form_oms_solar_deep_fix" model="ir.ui.view">
+        <field name="name">oms.warehouse.order.preparation.form.oms.solar.deep.fix</field>
+        <field name="model">oms.warehouse.order.preparation</field>
+        <field name="inherit_id" ref="sale_custom.view_warehouse_order_preparation_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <field name="x_locked_from_sale_order" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

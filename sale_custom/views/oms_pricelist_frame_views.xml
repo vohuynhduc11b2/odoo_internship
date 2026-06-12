@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action -->
+    <record id="action_oms_pricelist_frame" model="ir.actions.act_window">
+        <field name="name">UC PriceList Frame</field>
+        <field name="res_model">oms.pricelist.frame</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p>Danh sách khung bảng giá lấy từ API OMS/PriceListFrame.</p>
+        </field>
+    </record>
+
+    
+
+
+    <!-- List -->
+    <record id="view_oms_pricelist_frame_list" model="ir.ui.view">
+        <field name="name">oms.pricelist.frame.list</field>
+        <field name="model">oms.pricelist.frame</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="api_id"/>
+                <field name="category_id"/>
+                <field name="category_name"/>
+                <field name="price_list_name"/>
+                <field name="publish_pricelist_ids" widget="many2many_tags" options="{'no_create_edit': False}"/>
+                <field name="pm"/>
+                <field name="sup"/>
+                <field name="sale"/>
+                <field name="cc_tech"/>
+                <field name="min_qty"/>
+                <field name="max_qty"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_oms_pricelist_frame_form" model="ir.ui.view">
+        <field name="name">oms.pricelist.frame.form</field>
+        <field name="model">oms.pricelist.frame</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="api_id" readonly="1"/>
+                            <field name="price_list_name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="category_id" readonly="1"/>
+                            <field name="category_name" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Roles">
+                        <field name="pm"/>
+                        <field name="sup"/>
+                        <field name="sale"/>
+                        <field name="cc_tech"/>
+                    </group>
+
+                    <group string="Quantity Range">
+                        <field name="min_qty"/>
+                        <field name="max_qty"/>
+                    </group>
+
+                    <group string="Publish">
+                        <field name="publish_pricelist_ids" widget="many2many_tags" options="{'no_create_edit': False}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search -->
+    <record id="view_oms_pricelist_frame_search" model="ir.ui.view">
+        <field name="name">oms.pricelist.frame.search</field>
+        <field name="model">oms.pricelist.frame</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="price_list_name"/>
+                <field name="category_name"/>
+                <filter string="Active" name="active" domain="[('active','=',True)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="grp_cat" context="{'group_by':'category_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

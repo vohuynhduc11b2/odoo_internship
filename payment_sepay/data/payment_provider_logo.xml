@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <!-- Ép set logo provider (bỏ qua noupdate external id) -->
+    <function model="payment.provider" name="_sepay_apply_checkout_logo">
+        <value eval="[ref('payment_sepay.payment_provider_sepay')]"/>
+    </function>
+
+    <!-- Ép set logo payment method (cái này thường là cái trang /shop/payment đang dùng) -->
+    <function model="payment.method" name="_sepay_apply_checkout_logo">
+        <value eval="[ref('payment_sepay.payment_method_sepay')]"/>
+    </function>
+
+</odoo>

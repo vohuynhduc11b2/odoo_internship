@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_payment_incident_wizard_form" model="ir.ui.view">
+        <field name="name">oms.payment.incident.wizard.form</field>
+        <field name="model">oms.payment.incident.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ghi nhận sự cố thanh toán">
+                <group>
+                    <group>
+                        <field name="title"/>
+                        <field name="scope"/>
+                        <field name="incident_type"/>
+                        <field name="severity"/>
+                        <field name="category_id"/>
+                    </group>
+                    <group>
+                        <field name="transaction_id"/>
+                        <field name="sale_order_id"/>
+                        <field name="partner_id"/>
+                        <field name="currency_id"/>
+                        <field name="amount"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Phân tích nguyên nhân">
+                        <group>
+                            <field name="symptom" placeholder="Mô tả hiện tượng xảy ra ở bước thanh toán..."/>
+                            <field name="root_cause" placeholder="Ghi nhận nguyên nhân gốc..."/>
+                            <field name="prevention_action" placeholder="Ghi rõ cách phòng tránh để không lặp lại..."/>
+                            <field name="correction_action" placeholder="Ghi hướng xử lý/khắc phục..."/>
+                            <field name="technical_note" placeholder="Ghi chú kỹ thuật, log, endpoint, webhook..."/>
+                            <field name="is_repeat_issue"/>
+                        </group>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_create_incident" type="object" string="Lưu sự cố" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

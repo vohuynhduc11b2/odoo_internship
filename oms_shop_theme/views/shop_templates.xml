@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="oms_shop_products_rebuild" name="OMS Shop Rebuild"
+        inherit_id="website_sale_custom.products" priority="9999">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oms_prime_shop">
+                <section class="oms_top_categories">
+                    <div class="container">
+                        <h2>Categories</h2>
+                        <div class="oms_category_strip">
+                            <button type="button" t-attf-class="oms_category_chip #{not category and 'active' or ''}"
+                                data-filter-value=""><i class="fa fa-battery-full" /> All</button>
+                            <t t-foreach="categories" t-as="c">
+                                <button type="button"
+                                    t-attf-class="oms_category_chip #{category and category.id == c.id and 'active' or ''}"
+                                    t-att-data-filter-value="c.name">
+                                    <i class="fa fa-cubes" /> <t t-out="c.name" />
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="oms_shop_content">
+                    <div class="container">
+                        <div class="oms_shop_header">
+                            <div class="oms_header_left">
+                                <h1>Shop</h1>
+                                <p><strong>All Products</strong> - <span class="oms_header_total_count"><t
+                                        t-out="search_count or len(products)" /></span> items</p>
+                            </div>
+                            <div class="oms_shop_controls">
+                                <div class="dropdown oms_sort_dropdown">
+                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Sort By : <strong>
+                                            <t t-if="isSortingBy" t-out="isSortingBy[0][1]" />
+                                            <span t-else="" t-field="website.shop_default_sort" />
+                                        </strong>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end" role="menu">
+                                        <t t-foreach="website_sale_sortable" t-as="sortby">
+                                            <a role="menuitem" rel="noindex,nofollow" t-att-href="keep('/shop', order=sortby[0])" t-attf-class="dropdown-item #{request.params.get('order', '') == sortby[0] and 'active' or ''}">
+                                                <span t-out="sortby[1]" />
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div class="oms_view_toggle">
+                                    <button class="active" type="button">
+                                        <i class="fa fa-th" />
+                                    </button>
+                                    <button type="button">
+                                        <i class="fa fa-list" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oms_shop_layout">
+                            <aside class="oms_filter_sidebar">
+                                <section class="oms_filter_box expanded">
+                                    <button type="button">Categories <i class="fa fa-angle-up" /></button>
+                                    <ul>
+                                        <li>
+                                            <label>
+                                                <input name="category" type="radio" value="0" data-filter-value="" t-att-checked="'checked' if not category else None" />
+                                                All Products
+                                            </label>
+                                        </li>
+                                        <t t-foreach="categories" t-as="c">
+                                            <li>
+                                                <label>
+                                                    <input name="category" type="radio" t-att-value="c.id"
+                                                        t-att-data-filter-value="c.name"
+                                                        t-att-checked="'checked' if category and category.id == c.id else None" />
+                                                    <t t-out="c.name" />
+                                                </label>
+                                                <i t-if="c.child_id" class="fa fa-angle-down" />
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </section>
+                                <t t-set="brand_tags" t-value="request.env['product.tag'].sudo().search([('visible_on_ecommerce', '=', True)], order='name')" />
+                                <t t-set="selected_tag_ids" t-value="[int(tag_id) for tag_id in request.httprequest.args.getlist('tags') if tag_id.isnumeric()]" />
+                                <section t-if="brand_tags" class="oms_filter_box expanded">
+                                    <button type="button">Thương hiệu <i class="fa fa-angle-up" /></button>
+                                    <ul>
+                                        <t t-foreach="brand_tags" t-as="tag">
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox"
+                                                        name="tags"
+                                                        t-att-value="tag.id"
+                                                        t-att-data-filter-value="tag.name"
+                                                        t-att-checked="'checked' if tag.id in selected_tag_ids else None" />
+                                                    <t t-out="tag.name" />
+                                                </label>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </section>
+                                <section class="oms_filter_box oms_excel_cart_box expanded">
+                                    <button type="button">Nhập giỏ hàng bằng Excel <i class="fa fa-angle-up" /></button>
+                                    <div class="oms_excel_cart_panel">
+                                        <p>Tải file mẫu, nhập mã SP và số lượng, rồi import để thêm hàng loạt vào giỏ.</p>
+                                        <a href="/shop/import_cart_template.xlsx" class="btn oms_excel_template_btn">
+                                            <i class="fa fa-file-excel-o" /> Xuất file mẫu
+                                        </a>
+                                        <label class="oms_excel_file_label">
+                                            <input type="file" class="oms_excel_cart_file" accept=".xlsx" />
+                                            <span class="oms_excel_file_trigger">
+                                                <span class="oms_excel_file_icon"><i class="fa fa-cloud-upload" /></span>
+                                                <span class="oms_excel_file_main">Bấm để chọn file hoặc kéo file vào đây</span>
+                                                <span class="oms_excel_file_text">Chưa chọn file</span>
+                                            </span>
+                                        </label>
+                                        <button type="button" class="btn oms_excel_import_btn">
+                                            <i class="fa fa-upload" /> Import vào giỏ
+                                        </button>
+                                        <div class="oms_quick_cart_import">
+                                            <div class="oms_quick_cart_title">
+                                                <i class="fa fa-keyboard-o" /> Nhập nhanh mã SP
+                                            </div>
+                                            <textarea class="oms_quick_cart_textarea" rows="4" placeholder="VD: SP001, 2; SP002, 5; SP003, 1"></textarea>
+                                            <small>Mỗi cặp gồm mã SP, số lượng. Cách nhau bằng dấu ;</small>
+                                            <button type="button" class="btn oms_quick_cart_import_btn">
+                                                <i class="fa fa-cart-plus" /> Thêm từ nội dung nhập
+                                            </button>
+                                        </div>
+                                        <div class="oms_excel_import_result" hidden="hidden" aria-live="polite" />
+                                    </div>
+                                </section>
+                            </aside>
+
+                            <main class="oms_products_area">
+                                <div class="oms_search_row">
+                                    <form method="get" action="/shop" class="oms_search_form">
+                                        <button type="submit" class="oms_search_icon" style="border: none; background: none; cursor: pointer; padding: 0;">
+                                            <i class="fa fa-search" />
+                                        </button>
+                                        <input type="search" name="search" t-att-value="search"
+                                            placeholder="Tìm kiếm sản phẩm..." autocomplete="off" />
+                                        <input type="hidden" name="category" t-att-value="category and category.id" />
+                                    </form>
+                                </div>
+
+                                <div class="oms_active_filters" hidden="hidden" aria-live="polite">
+                                    <button type="button" class="oms_clear_filters">Clear Filters <i class="fa fa-times" /></button>
+                                    <span class="oms_filter_tags" />
+                                </div>
+
+                                <div t-if="not products" class="oms_empty_state">
+                                    <div class="oms_empty_icon"><i class="fa fa-search" /></div>
+                                    <h3>Không tìm thấy sản phẩm</h3>
+                                    <p>Thử đổi từ khóa tìm kiếm hoặc bỏ bớt bộ lọc để xem thêm sản phẩm phù hợp.</p>
+                                    <a href="/shop" class="btn oms_empty_action">Xem tất cả sản phẩm</a>
+                                </div>
+                                <div class="oms_empty_state oms_client_empty" hidden="hidden">
+                                    <div class="oms_empty_icon"><i class="fa fa-filter" /></div>
+                                    <h3>Không tìm thấy sản phẩm phù hợp</h3>
+                                    <p>Thử đổi từ khóa tìm kiếm hoặc bỏ bớt bộ lọc đang chọn.</p>
+                                    <button type="button" class="btn oms_empty_action oms_empty_clear_filters">Xóa bộ lọc</button>
+                                </div>
+
+                                <style>
+                                    .oms_product_image { display: block !important; position: relative !important; }
+                                    .oms_product_image_link { align-items: center !important; display: flex !important; height: 100% !important; justify-content: center !important; width: 100% !important; }
+                                    .oms_product_image .o_ribbon,
+                                    .oms_product_card .o_ribbon,
+                                    .oms_product_card .oms_stock_warning_badge {
+                                        align-items: center !important;
+                                        background: #ffca2c !important;
+                                        border: 0 !important;
+                                        border-radius: 0 !important;
+                                        bottom: 0 !important;
+                                        box-shadow: none !important;
+                                        color: #fff !important;
+                                        display: flex !important;
+                                        font-size: 13px !important;
+                                        font-weight: 900 !important;
+                                        justify-content: center !important;
+                                        left: 0 !important;
+                                        letter-spacing: .18em !important;
+                                        line-height: 1 !important;
+                                        min-height: 42px !important;
+                                        padding: 0 14px !important;
+                                        position: absolute !important;
+                                        right: 0 !important;
+                                        text-align: center !important;
+                                        text-transform: uppercase !important;
+                                        top: auto !important;
+                                        transform: translateY(0) !important;
+                                        transition: transform .22s ease !important;
+                                        width: 100% !important;
+                                        z-index: 2 !important;
+                                    }
+                                    .oms_product_card:hover .oms_stock_warning_badge,
+                                    .oms_product_card:hover .o_ribbon { transform: translateY(42px) !important; }
+                                    .oms_product_card:hover .oms_add_to_cart_form,
+                                    .oms_product_card:hover .oms_contact_sales_btn { opacity: 1 !important; transform: translateY(0) !important; }
+                                </style>
+                                <div t-if="products" class="oms_product_grid">
+                                    <t t-foreach="products" t-as="product">
+                                        <t t-set="product_price_info" t-value="get_product_prices(product)"/>
+                                        <t t-set="product_display_price" t-value="product_price_info.get('price_reduce') if product_price_info and (product_price_info.get('price_reduce') or 0) > 1 else product.list_price"/>
+                                        <article class="oms_product_card"
+                                            t-att-data-product-template-id="product.id"
+                                            t-att-data-search-text="product.name"
+                                            t-att-data-category="' '.join(product.public_categ_ids.mapped('name'))">
+                                            <div class="oms_product_image" style="display:block;position:relative;overflow:hidden;">
+                                                <a t-att-href="product.website_url" class="oms_product_image_link" style="align-items:center;display:flex;height:100%;justify-content:center;width:100%;">
+                                                    <img
+                                                        t-att-src="product.image_512 and ('/web/image/product.template/%s/image_512' % product.id) or '/oms_shop_theme/static/src/img/noimage.svg'"
+                                                        t-att-alt="product.name"
+                                                        style="height:100% !important;object-fit:cover !important;padding:0 !important;width:100% !important;"
+                                                        onerror="this.onerror=null;this.src='/oms_shop_theme/static/src/img/noimage.svg';" />
+                                                </a>
+                                                <div t-if="(('oms_show_low_stock_warning' in product._fields and product.oms_show_low_stock_warning) or product.website_ribbon_id)" class="oms_stock_warning_badge" style="align-items:center;background:#ffca2c;border:0;bottom:0 !important;color:#fff;display:flex;font-size:13px;font-weight:900;justify-content:center;left:0 !important;letter-spacing:.18em;line-height:1;min-height:42px;padding:0 14px;position:absolute;right:0 !important;text-align:center;text-transform:uppercase;top:auto !important;transform:none !important;transition:transform .18s ease !important;width:100%;z-index:30 !important;">
+                                                    <span t-out="product.website_ribbon_id.name if product.website_ribbon_id else 'Sắp hết hàng'"/>
+                                                </div>
+                                                <form t-if="product._is_add_to_cart_possible()" action="/shop/cart/update" method="post" class="oms_add_to_cart_form">
+                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date." />
+                                                    <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id" />
+                                                    <input type="hidden" name="product_template_id" t-att-value="product.id" />
+                                                    <input type="hidden" name="add_qty" value="1" />
+                                                    <button type="submit" class="oms_add_to_cart_btn">
+                                                        <i class="fa fa-shopping-cart" />
+                                                        Thêm vào giỏ hàng
+                                                    </button>
+                                                </form>
+                                                <a t-att-href="product.website_url" class="oms_contact_sales_btn">
+                                                    <i class="fa fa-phone" />
+                                                    Liên hệ NVKD
+                                                </a>
+                                            </div>
+                                            <div class="oms_product_body o_wsale_product_information">
+                                                <p class="oms_product_category">Battery</p>
+                                                <a t-att-href="product.website_url"
+                                                    class="oms_product_name">
+                                                    <t t-out="product.name" />
+                                                </a>
+                                                <div class="oms_product_price">
+                                                    <t t-if="website.currency_id.name == 'VND' and product_display_price and product_display_price &lt;= 1">
+                                                        <span>Giá liên hệ nvkd</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-out="product_display_price"
+                                                            t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" />
+                                                    </t>
+                                                </div>
+                                                <div class="oms_list_actions">
+                                                    <form action="/shop/cart/update" method="post" class="oms_list_add_to_cart_form">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date." />
+                                                        <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id" />
+                                                        <input type="hidden" name="product_template_id" t-att-value="product.id" />
+                                                        <input type="hidden" name="add_qty" value="1" />
+                                                        <button type="submit" class="oms_add_to_cart_btn">
+                                                            <i class="fa fa-shopping-cart" />
+                                                            Thêm vào giỏ hàng
+                                                        </button>
+                                                    </form>
+                                                    <a t-att-href="product.website_url" class="oms_contact_sales_btn oms_contact_sales_btn_list">
+                                                        <i class="fa fa-phone" />
+                                                        Liên hệ NVKD
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </t>
+                                </div>
+
+                                <div t-if="products and pager" class="oms_pagination">
+                                    <p>Showing <span class="oms_visible_count"><t t-out="len(products)" /></span> of <span class="oms_total_count"><t t-out="search_count or len(products)" /></span> results</p>
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+    <template id="oms_products_item_stock_ribbon_fix" name="OMS Products Item Stock Ribbon Fix" inherit_id="website_sale_custom.products_item" priority="10000">
+        <xpath expr="//span[contains(@t-attf-class, 'o_ribbon')]" position="attributes">
+            <attribute name="t-attf-class">o_ribbon o_not_editable oms_shop_stock_ribbon</attribute>
+            <attribute name="t-attf-style">align-items:center !important; background:#ffca2c !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; color:#fff !important; display:flex !important; font-size:13px !important; font-weight:900 !important; justify-content:center !important; left:0 !important; letter-spacing:.18em !important; line-height:1 !important; min-height:42px !important; padding:0 14px !important; position:absolute !important; right:0 !important; bottom:0 !important; text-align:center !important; text-transform:uppercase !important; top:auto !important; transform:none !important; transition:none !important; width:100% !important; z-index:30 !important;</attribute>
+        </xpath>
+    </template>
+    <template id="oms_products_grid_inline_stock_ribbon_hover" name="OMS Products Grid Stock Ribbon Hover" inherit_id="website_sale_custom.products_item" priority="10000">
+        <xpath expr="//span[contains(@t-attf-class, 'o_ribbon')]" position="before">
+            <style>
+                .oe_product:hover .oms_shop_stock_ribbon,
+                .oms_product_card:hover .oms_shop_stock_ribbon {
+                    transform: translateY(42px) !important;
+                }
+            </style>
+        </xpath>
+    </template>
+</odoo>

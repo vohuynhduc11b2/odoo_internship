@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="sepay_unc_page" name="SePay Pending Page (UNC/Credit)">
+    <t t-call="website.layout">
+      <div class="container my-5">
+
+        <!-- Title -->
+        <h2 class="mb-2">
+          <t t-if="sepay_mode == 'credit'">Chờ kế toán duyệt Công nợ</t>
+          <t t-else="">Chờ kế toán duyệt Ủy nhiệm chi</t>
+        </h2>
+
+        <!-- Info box -->
+        <div class="alert alert-info">
+          <t t-if="sepay_mode == 'credit'">
+            Yêu cầu thanh toán sau (công nợ) của bạn đã được ghi nhận. Kế toán sẽ kiểm tra hạn mức/điều khoản và xác nhận sớm nhất.
+          </t>
+          <t t-else="">
+            Yêu cầu thanh toán UNC của bạn đã được ghi nhận. Kế toán sẽ kiểm tra chứng từ và xác nhận sớm nhất.
+          </t>
+        </div>
+
+        <!-- UNC missing attachment warning -->
+        <t t-if="sepay_mode == 'unc' and not att_ok">
+          <div class="alert alert-warning">
+            Chưa có file UNC đính kèm trong đơn hàng. Vui lòng tải lên chứng từ trước khi gửi yêu cầu.
+          </div>
+        </t>
+
+        <!-- Transaction / Order info -->
+        <div class="card p-3 mb-3">
+          <t t-if="tx">
+            <div>
+              Mã giao dịch:
+              <b t-esc="tx.reference"/>
+            </div>
+
+            <div>
+              Số tiền:
+              <b>
+                <t t-esc="'{:,.0f}'.format(tx.amount or 0).replace(',', '.')"/>
+                <span t-if="tx.currency_id" t-esc="tx.currency_id.name"/>
+              </b>
+            </div>
+
+            <div>
+              Trạng thái giao dịch:
+              <b t-esc="tx.state"/>
+            </div>
+          </t>
+
+          <t t-if="order">
+            <div>
+              Đơn hàng:
+              <b t-esc="order.name"/>
+            </div>
+          </t>
+
+          <t t-if="sepay_mode == 'credit'">
+            <div class="mt-2 text-muted">
+              Ghi chú: Đây là yêu cầu thanh toán sau (công nợ). Vui lòng chờ kế toán phê duyệt.
+            </div>
+          </t>
+
+          <t t-if="sepay_mode == 'unc'">
+            <div class="mt-2 text-muted">
+              File UNC hiện có:
+              <b t-esc="att_count"/> file.
+            </div>
+          </t>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <button type="button" class="btn btn-success" disabled="1">Đã gửi duyệt</button>
+          <a class="btn btn-primary" href="/my/orders">Xem xác nhận đơn</a>
+          <a class="btn btn-outline-secondary" href="/shop">Tiếp tục mua hàng</a>
+        </div>
+
+      </div>
+    </t>
+  </template>
+</odoo>

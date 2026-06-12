@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_oms_price_list_import_export_wizard_form" model="ir.ui.view">
+        <field name="name">oms.price.list.import.export.wizard.form</field>
+        <field name="model">oms.price.list.import.export.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import/Export bảng giá OMS">
+                <group>
+                    <field name="pricelist_id" readonly="1" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_export_template" type="object" string="Export bảng giá" class="btn-primary"/>
+                    <field name="file" filename="filename"/>
+                    <button name="action_import_file" type="object" string="Import bảng giá" class="btn-success"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_oms_price_list_import_export" model="ir.actions.act_window">
+        <field name="name">Import/Export bảng giá OMS</field>
+        <field name="res_model">oms.price.list.import.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_pricelist_id': active_id}</field>
+    </record>
+</odoo>

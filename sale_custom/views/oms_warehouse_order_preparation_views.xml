@@ -1,0 +1,69 @@
+<odoo>
+    <!-- List view chính cho danh sách đơn chờ giao -->
+    <record id="view_warehouse_order_preparation_list" model="ir.ui.view">
+        <field name="name">oms.warehouse.order.preparation.list</field>
+        <field name="model">oms.warehouse.order.preparation</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="late_delivery_status == 'warning' and not is_prepared"
+                  decoration-danger="late_delivery_status == 'danger' and not is_prepared">
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="date_order"/>
+                <field name="minutes_waiting"/>
+                <field name="whs_code"/>
+                <field name="delivery_method"/>
+                <field name="ship_to"/>
+                <field name="late_delivery_status"/>
+                <field name="state"/>
+                <field name="is_prepared"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view tối giản, có bảng sản phẩm -->
+    <record id="view_warehouse_order_preparation_form" model="ir.ui.view">
+        <field name="name">oms.warehouse.order.preparation.form</field>
+        <field name="model">oms.warehouse.order.preparation</field>
+        <field name="arch" type="xml">
+            <form string="Chi tiết đơn cần chuẩn bị" readonly="1">
+                <sheet>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="partner_id"/>
+                        <field name="date_order"/>
+                        <field name="whs_code"/>
+                        <field name="delivery_method"/>
+                        <field name="ship_to"/>
+                        <field name="minutes_waiting"/>
+                        <field name="late_delivery_status"/>
+                        <field name="state"/>
+                        <field name="is_prepared"/>
+                    </group>
+                    <group string="Danh sách sản phẩm lên đơn">
+                        <field name="order_line_ids" readonly="1">
+                            <list>
+                                <field name="product_id"/>
+                                <field name="name"/>
+                                <field name="product_uom_qty" string="Số lượng"/>
+                                <field name="product_uom"/>
+                                <field name="fixed_discount"/>
+                                <field name="discount"/>
+                                <field name="price_unit"/>
+                                <field name="is_gift"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action và menu -->
+    <record id="action_warehouse_order_preparation" model="ir.actions.act_window">
+        <field name="name">Đơn hàng chuẩn bị đi giao</field>
+        <field name="res_model">oms.warehouse.order.preparation</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_warehouse_order_preparation_list"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

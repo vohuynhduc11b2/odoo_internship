@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="sepay_redirect_form" name="SePay Redirect Form">
+    <form id="o_payment_redirect_form"
+          t-att-action="api_url"
+          method="post">
+      <input t-if="reference" type="hidden" name="reference" t-att-value="reference"/>
+      <input t-if="access_token" type="hidden" name="access_token" t-att-value="access_token"/>
+      <input t-if="sepay_mode" type="hidden" name="sepay_mode" t-att-value="sepay_mode"/>
+      <input t-if="sepay_description" type="hidden" name="sepay_description" t-att-value="sepay_description"/>
+      <input t-if="oms_payment_mode" type="hidden" name="oms_payment_mode" t-att-value="oms_payment_mode"/>
+      <input t-if="website_payment_type" type="hidden" name="website_payment_type" t-att-value="website_payment_type"/>
+      <input t-if="uc_is_deposit is not None" type="hidden" name="uc_is_deposit" t-att-value="'1' if uc_is_deposit else '0'"/>
+      <input t-if="uc_deposit_percent" type="hidden" name="uc_deposit_percent" t-att-value="uc_deposit_percent"/>
+
+      <noscript>
+        <button type="submit" class="btn btn-primary">Continue</button>
+      </noscript>
+    </form>
+  </template>
+</odoo>

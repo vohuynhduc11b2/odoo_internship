@@ -1,0 +1,31 @@
+<odoo>
+    <!-- Sales chỉ thấy báo giá của mình -->
+    <record id="rule_sale_order_sales_own" model="ir.rule">
+        <field name="name">Sales: Chỉ thấy báo giá của mình</field>
+        <field name="model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('sale_custom.group_sale_user'))]"/>
+    </record>
+
+    <!-- Sales Manager chỉ thấy báo giá của nhóm mình -->
+    <record id="rule_sale_order_sales_manager" model="ir.rule">
+        <field name="name">Sales Manager: Thấy báo giá nhóm mình</field>
+        <field name="model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="domain_force">
+            [
+                '|',
+                ('team_id.member_ids', 'in', [user.id]),
+                ('team_id.user_id', '=', user.id)
+            ]
+        </field>
+        <field name="groups" eval="[(4, ref('sale_custom.group_sale_manager'))]"/>
+    </record>
+
+    <!-- PM/Head thấy tất cả -->
+    <record id="rule_sale_order_pm_head" model="ir.rule">
+        <field name="name">PM/Head: Full quyền</field>
+        <field name="model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('sale_custom.group_sale_pm')), (4, ref('sale_custom.group_sale_head'))]"/>
+    </record>
+</odoo>

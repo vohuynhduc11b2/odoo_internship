@@ -1,0 +1,59 @@
+<odoo>
+    <record id="view_sales_blanket_agreement_list" model="ir.ui.view">
+        <field name="name">oms.sales.blanket.agreement.list</field>
+        <field name="model">oms.sales.blanket.agreement</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="bp_code"/>
+                <field name="card_name"/>
+                <field name="num_at_card"/>
+                <field name="status"/>
+                <field name="u_total_value"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="pymnt_group"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sales_blanket_agreement_form" model="ir.ui.view">
+        <field name="name">oms.sales.blanket.agreement.form</field>
+        <field name="model">oms.sales.blanket.agreement</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="bp_code"/>
+                        <field name="card_name"/>
+                        <field name="num_at_card"/>
+                        <field name="status"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="sign_date"/>
+                        <field name="voucher_type"/>
+                        <field name="method"/>
+                        <field name="bp_curr"/>
+                        <field name="descript"/>
+                        <field name="u_slp_code"/>
+                        <field name="slp_name"/>
+                        <field name="u_bplid"/>
+                        <field name="u_detail_entry"/>
+                        <field name="u_total_value"/>
+                        <field name="u_check_limit_amount"/>
+                        <field name="u_check_by"/>
+                        <field name="u_debt_line"/>
+                        <field name="store"/>
+                        <field name="group_num"/>
+                        <field name="pymnt_group"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_blanket_agreement" model="ir.actions.act_window">
+        <field name="name">Hợp đồng nguyên tắc bán hàng</field>
+        <field name="res_model">oms.sales.blanket.agreement</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

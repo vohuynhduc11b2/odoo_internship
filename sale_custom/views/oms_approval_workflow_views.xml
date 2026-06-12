@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FORM: Quy trình duyệt -->
+    <record id="view_approval_workflow_form" model="ir.ui.view">
+        <field name="name">approval.workflow.form</field>
+        <field name="model">approval.workflow</field>
+        <field name="arch" type="xml">
+            <form string="Quy trình duyệt">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+
+                    <group string="Các bước duyệt">
+                        <field name="step_ids">
+                            <list editable="bottom" default_order="sequence asc" string="Các bước duyệt">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="approver_type"/>
+                                <!-- cột theo loại (dùng invisible=) -->
+                                <field name="role_code"     invisible="approver_type != 'role'"/>
+                                <field name="approver_id"   invisible="approver_type != 'user'"/>
+                                <field name="group_id"      invisible="approver_type != 'group'"/>
+                                <field name="approver_ids"  invisible="approver_type != 'custom'"/>
+                                <field name="next_sequence"/>
+                                <field name="conditions_json" widget="code" options="{'mode': 'javascript'}"/>
+                            </list>
+
+                            <!-- Popup form chỉnh từng bước -->
+                            <form string="Bước duyệt">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="workflow_id" readonly="1"/>
+                                            <field name="sequence"/>
+                                            <field name="name"/>
+                                        </group>
+                                        <group string="Người duyệt">
+                                            <field name="approver_type"/>
+                                            <!-- user/group/department/custom/leader/role -->
+                                            <field name="approver_id"
+                                                   invisible="approver_type != 'user'"
+                                                   required="approver_type == 'user'"/>
+                                            <field name="group_id"
+                                                   invisible="approver_type != 'group'"
+                                                   required="approver_type == 'group'"/>
+                                            
+                                            <field name="approver_ids"
+                                                   invisible="approver_type != 'custom'"
+                                                   required="approver_type == 'custom'"/>
+                                            <field name="role_code"
+                                                   invisible="approver_type != 'role'"
+                                                   required="approver_type == 'role'"/>
+                                            <!-- leader: suy ra từ order.user_id.parent_id, không cần chọn -->
+                                        </group>
+                                    </group>
+                                    <group string="Điều hướng bước">
+                                        <field name="next_sequence"
+                                               help="Nếu không dùng conditions_json thì đi thẳng tới bước này (0 = kết thúc)."/>
+                                        <field name="conditions_json"
+                                               widget="code"
+                                               options="{'mode': 'application/json'}"
+                                               placeholder='[{"if":{"diff_percent":{"$gt":10}},"next_sequence":5}]'
+                                               nolabel="0"
+                                               help="Khai báo điều kiện chuyển bước. Nếu không điều kiện nào khớp và next_sequence=0 thì kết thúc quy trình."/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST: Quy trình duyệt -->
+    <record id="view_approval_workflow_list" model="ir.ui.view">
+        <field name="name">approval.workflow.list</field>
+        <field name="model">approval.workflow</field>
+        <field name="arch" type="xml">
+            <list string="Quy trình duyệt">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM: Bước duyệt -->
+    <record id="view_approval_workflow_step_form" model="ir.ui.view">
+        <field name="name">approval.workflow.step.form</field>
+        <field name="model">approval.workflow.step</field>
+        <field name="arch" type="xml">
+            <form string="Bước duyệt">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workflow_id" options="{'no_create': True}"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                        </group>
+                        <group string="Người duyệt">
+                            <field name="approver_type"/>
+                            <field name="approver_id"
+                                   invisible="approver_type != 'user'"
+                                   required="approver_type == 'user'"/>
+                            <field name="group_id"
+                                   invisible="approver_type != 'group'"
+                                   required="approver_type == 'group'"/>
+                        
+                            <field name="approver_ids"
+                                   invisible="approver_type != 'custom'"
+                                   required="approver_type == 'custom'"/>
+                            <field name="role_code"
+                                   invisible="approver_type != 'role'"
+                                   required="approver_type == 'role'"/>
+                            <!-- leader: tự xác định từ order.user_id.parent_id -->
+                        </group>
+                    </group>
+                    <group string="Điều hướng bước">
+                        <field name="next_sequence" help="0 = kết thúc (Approved) nếu không có điều kiện thoả mãn."/>
+                        <field name="conditions_json" widget="code" options="{'mode':'application/json'}"
+                               placeholder='[{"if":{"diff_amount":{"$gt":100000000}},"next_sequence":4}]'/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST: Bước duyệt -->
+    <record id="view_approval_workflow_step_list" model="ir.ui.view">
+        <field name="name">approval.workflow.step.list</field>
+        <field name="model">approval.workflow.step</field>
+        <field name="arch" type="xml">
+            <list string="Các bước duyệt" editable="bottom" default_order="sequence asc">
+                <field name="workflow_id"/>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="approver_type"/>
+                <field name="role_code"     invisible="approver_type != 'role'"/>
+                <field name="approver_id"   invisible="approver_type != 'user'"/>
+                <field name="group_id"      invisible="approver_type != 'group'"/>
+                <field name="approver_ids"  invisible="approver_type != 'custom'"/>
+                <field name="next_sequence"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTIONS -->
+    <record id="action_approval_workflow" model="ir.actions.act_window">
+        <field name="name">Quy trình duyệt</field>
+        <field name="res_model">approval.workflow</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_approval_workflow_step" model="ir.actions.act_window">
+        <field name="name">Các bước duyệt</field>
+        <field name="res_model">approval.workflow.step</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

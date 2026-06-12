@@ -1,0 +1,112 @@
+<odoo>
+    <record id="view_oms_solar_delivery_rule_list" model="ir.ui.view">
+        <field name="name">oms.solar.delivery.rule.list</field>
+        <field name="model">oms.solar.delivery.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="state_id"/>
+                <field name="city_name"/>
+                <field name="transport_name"/>
+                <field name="outstation_only"/>
+                <field name="days_to_add"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_solar_delivery_rule_form" model="ir.ui.view">
+        <field name="name">oms.solar.delivery.rule.form</field>
+        <field name="model">oms.solar.delivery.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="days_to_add"/>
+                        </group>
+                        <group>
+                            <field name="state_id"/>
+                            <field name="city_name"/>
+                            <field name="transport_name"/>
+                            <field name="outstation_only"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_solar_delivery_rule" model="ir.actions.act_window">
+        <field name="name">Rule ngày giao dự kiến</field>
+        <field name="res_model">oms.solar.delivery.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_oms_solar_low_stock_rule_list" model="ir.ui.view">
+        <field name="name">oms.solar.low.stock.rule.list</field>
+        <field name="model">oms.solar.low.stock.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="product_group_id"/>
+                <field name="threshold"/>
+                <field name="website_message"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_solar_low_stock_rule_form" model="ir.ui.view">
+        <field name="name">oms.solar.low.stock.rule.form</field>
+        <field name="model">oms.solar.low.stock.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="product_group_id"/>
+                            <field name="threshold"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="website_message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_solar_low_stock_rule" model="ir.actions.act_window">
+        <field name="name">Rule cảnh báo tồn kho thấp</field>
+        <field name="res_model">oms.solar.low.stock.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_oms_solar_delivery_rule"
+              name="Rule ngày giao dự kiến"
+              parent="sale_custom.sale_order_menu"
+              action="action_oms_solar_delivery_rule"
+              sequence="102"
+              groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_solar_low_stock_rule"
+              name="Rule cảnh báo tồn kho thấp"
+              parent="sale_custom.sale_order_menu"
+              action="action_oms_solar_low_stock_rule"
+              sequence="103"
+              groups="sales_team.group_sale_manager"/>
+</odoo>

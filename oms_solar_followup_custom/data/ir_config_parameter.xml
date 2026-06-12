@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="oms_solar_followup_param_auto_warning" model="ir.config_parameter">
+        <field name="key">oms_solar_followup_custom.auto_warning</field>
+        <field name="value">True</field>
+    </record>
+    <record id="oms_solar_followup_param_pending_minutes" model="ir.config_parameter">
+        <field name="key">oms_solar_followup_custom.pending_minutes</field>
+        <field name="value">30</field>
+    </record>
+</odoo>

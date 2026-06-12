@@ -1,0 +1,48 @@
+<odoo>
+    <!-- ACTION OMS Warehouse -->
+    <record id="action_oms_warehouse" model="ir.actions.act_window">
+        <field name="name">Danh sách kho OMS</field>
+        <field name="res_model">oms.warehouse</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p>Quản lý danh sách kho (warehouse) đồng bộ từ hệ thống DAT.</p>
+        </field>
+    </record>
+
+    <!-- LIST VIEW (tree) OMS Warehouse -->
+    <record id="view_oms_warehouse_list" model="ir.ui.view">
+        <field name="name">oms.warehouse.list</field>
+        <field name="model">oms.warehouse</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="whs_code"/>
+                <field name="name"/>
+                <field name="store_id"/>
+                <field name="store_name"/>
+                <field name="u_whs_type"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM VIEW OMS Warehouse -->
+    <record id="view_oms_warehouse_form" model="ir.ui.view">
+        <field name="name">oms.warehouse.form</field>
+        <field name="model">oms.warehouse</field>
+        <field name="arch" type="xml">
+            <form string="Kho OMS">
+                <sheet>
+                    <group>
+                        <field name="whs_code"/>
+                        <field name="name"/>
+                        <field name="whs_name"/>
+                        <field name="store_id"/>
+                        <field name="store_name"/>
+                        <field name="u_whs_type"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

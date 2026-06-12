@@ -1,0 +1,86 @@
+<odoo>
+    <record id="view_oms_payment_incident_list" model="ir.ui.view">
+        <field name="name">oms.payment.incident.list</field>
+        <field name="model">oms.payment.incident</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="detected_on"/>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="severity"/>
+                <field name="state"/>
+                <field name="order_id"/>
+                <field name="payment_transaction_id"/>
+                <field name="payment_state"/>
+                <field name="partner_id"/>
+                <field name="q1_2026"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_payment_incident_form" model="ir.ui.view">
+        <field name="name">oms.payment.incident.form</field>
+        <field name="model">oms.payment.incident</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="severity"/>
+                            <field name="state"/>
+                            <field name="detected_on"/>
+                        </group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="payment_transaction_id"/>
+                            <field name="partner_id"/>
+                            <field name="provider_id"/>
+                            <field name="payment_state"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="root_cause"/>
+                        <field name="prevention"/>
+                        <field name="resolution"/>
+                        <field name="resolution_result"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_oms_payment_incident_search" model="ir.ui.view">
+        <field name="name">oms.payment.incident.search</field>
+        <field name="model">oms.payment.incident</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="payment_transaction_id"/>
+                <filter name="open" string="Chưa xử lý" domain="[('state', 'in', ['open', 'doing'])]"/>
+                <filter name="q12026" string="Q1/2026" domain="[('q1_2026', '=', True)]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Mức độ" name="group_severity" context="{'group_by':'severity'}"/>
+                    <filter string="Trạng thái" name="group_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_oms_payment_incident" model="ir.actions.act_window">
+        <field name="name">Sự cố thanh toán</field>
+        <field name="res_model">oms.payment.incident</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_oms_payment_incident_search"/>
+    </record>
+
+    <menuitem id="menu_oms_payment_incident"
+              name="Sự cố thanh toán"
+              parent="sale_custom.sale_order_menu"
+              action="action_oms_payment_incident"
+              sequence="101"
+              groups="sales_team.group_sale_manager"/>
+</odoo>

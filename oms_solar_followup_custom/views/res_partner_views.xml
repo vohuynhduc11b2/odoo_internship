@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_partner_oms_group_tree" model="ir.ui.view">
+        <field name="name">res.partner.oms.group.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="oms_group_parent_id"/>
+                <field name="oms_allow_buyer_selection"/>
+                <field name="oms_allow_invoice_selection"/>
+                <field name="oms_ready_for_portal"/>
+                <field name="oms_portal_deadline"/>
+                <field name="oms_portal_prepared"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_res_partner_oms_group_form" model="ir.ui.view">
+        <field name="name">res.partner.oms.group.form</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_type"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <group>
+                            <field name="oms_group_parent_id"/>
+                            <field name="oms_allow_buyer_selection"/>
+                            <field name="oms_allow_invoice_selection"/>
+                            <field name="oms_effective_group_root_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Chuẩn bị tài khoản OMS">
+                        <group>
+                            <field name="oms_ready_for_portal"/>
+                            <field name="oms_portal_deadline"/>
+                            <field name="oms_portal_prepared"/>
+                        </group>
+                        <group>
+                            <field name="oms_portal_note" nolabel="1"/>
+                        </group>
+                    </group>
+                    <group string="Thành viên nhóm">
+                        <field name="oms_group_child_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="oms_allow_buyer_selection"/>
+                                <field name="oms_allow_invoice_selection"/>
+                                <field name="oms_ready_for_portal"/>
+                                <field name="oms_portal_deadline"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_res_partner_oms_group" model="ir.actions.act_window">
+        <field name="name">Nhóm KH OMS / cấp tài khoản</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_company', '=', True)]</field>
+    </record>
+</odoo>

@@ -1,0 +1,240 @@
+<odoo>
+    <record id="model_oms_sync_job" model="ir.model">
+        <field name="name">oms.sync.job</field>
+        <field name="model">oms.sync.job</field>
+        <field name="state">base</field>
+    </record>
+
+    <!-- Thuế: 1 lần/ngày -->
+    <record id="ir_cron_sync_taxgroup" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ thuế từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_taxgroup('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Nhóm SP: 1 lần/ngày -->
+    <record id="ir_cron_sync_product_group" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ nhóm sản phẩm từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_product_group('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Sản phẩm: 2 giờ/lần (nặng) -->
+    <record id="ir_cron_sync_product_item" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ sản phẩm từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_product_item('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">hours</field>
+        <field name="interval_number">2</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Khách hàng: 15 phút/lần -->
+    <record id="ir_cron_sync_customer" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ khách hàng từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_customer_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">15</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Địa chỉ: 30 phút/lần -->
+    <record id="ir_cron_sync_address" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ địa chỉ khách hàng từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_address_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">15</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Liên hệ: 30 phút/lần -->
+    <record id="ir_cron_sync_contact" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ liên hệ khách hàng từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_contact_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">15</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Payment Terms: 1 lần/ngày -->
+    <record id="ir_cron_sync_payment_terms" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ điều khoản thanh toán từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_payment_terms_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- PRJInfo: 60 phút/lần -->
+    <record id="ir_cron_sync_prjinfo" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ dự án OMS từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_prjinfo_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">hours</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Kho: 1 lần/ngày -->
+    <record id="ir_cron_sync_warehouse" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ kho từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_warehouse_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Marketing Campaign: 60 phút/lần -->
+    <record id="ir_cron_sync_marketing_campaign" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ chiến dịch Marketing từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_marketing_campaign_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">hours</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Sales Blanket Agreement: 60 phút/lần -->
+    <record id="ir_cron_sync_sales_blanket_agreement" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ hợp đồng bán hàng nguyên tắc từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_sales_blanket_agreement_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">hours</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Sales Users: 60 phút/lần -->
+    <record id="ir_cron_sync_sales_user" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ Sales Users từ API SalesMasterData</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_sales_user_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">hours</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- OAUGRUPS Users: 30 phút/lần -->
+    <record id="ir_cron_sync_oaugrups_user" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ user OAUGRUPS từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_oaugrups_users('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">30</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Đơn chờ giao cho kho: 5 phút/lần (ngắn) -->
+    <!-- <record id="ir_cron_sync_warehouse_order_preparation" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ đơn chờ giao cho kho</field>
+        <field name="model_id" ref="sale_custom.model_oms_warehouse_order_preparation"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_preparation_orders()</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">5</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record> -->
+
+    <!-- Tồn kho: 10 phút/lần -->
+    <record id="ir_cron_sync_inventory" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ tồn kho từ API ItemsWarehouse</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_inventory_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">10</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Phương thức vận chuyển: 1 lần/ngày -->
+    <record id="ir_cron_sync_transport" model="ir.cron">
+        <field name="name">[OMS] Đồng bộ phương thức vận chuyển từ API</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_transport_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Trạng thái đơn: 10 phút/lần -->
+   
+    <record id="ir_cron_update_so_status" model="ir.cron">
+        <field name="name">[OMS] Update SO Status from SAP</field>
+        <field name="model_id" ref="sale_custom.model_sale_custom_order"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_update_sap_status()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">15</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+    <!-- PriceListFrame: 30 phút/lần -->
+
+    <!-- PriceListFrame: 15 phút/lần -->
+    <record id="ir_cron_sync_pricelist_frame" model="ir.cron">
+        <field name="name">[OMS] Sync PriceListFrame</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_pricelist_frame_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">minutes</field>
+        <field name="interval_number">15</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- ItemPriceAUT: 1 time/day -->
+    <record id="ir_cron_sync_item_price_aut" model="ir.cron">
+        <field name="name">[OMS] Sync ItemPriceAUT</field>
+        <field name="model_id" ref="sale_custom.model_oms_sync_job"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_item_price_aut_api('trungtq', 'Trung@2025')</field>
+        <field name="interval_type">days</field>
+        <field name="interval_number">1</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active" eval="False"/>
+    </record>
+    
+
+</odoo>

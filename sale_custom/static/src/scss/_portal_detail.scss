@@ -1,0 +1,58 @@
+/* ============================================================
+   DAT — order detail page (/my/orders/<id>) brand polish
+   Additive styling scoped to .dat-detail — does not change the
+   sign / pay / prepayment logic.
+   ============================================================ */
+
+.o_portal .dat-detail {
+    /* ---- Branded total panel (sidebar header) ---- */
+    .dat-detail-total {
+        background: var(--dat-grad-header);
+        border-radius: var(--dat-radius);
+        box-shadow: var(--dat-shadow);
+        color: #fff;
+        margin-bottom: 0.25rem;
+        padding: 1.1rem 1.25rem;
+        width: 100%;
+
+        .dat-eyebrow { color: rgba(255, 255, 255, 0.8); }
+    }
+
+    .dat-detail-total__value {
+        color: #fff;
+        font-size: 1.7rem;
+        font-variant-numeric: tabular-nums;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-top: 0.2rem;
+    }
+
+    /* ---- Sticky branded sidebar on desktop ---- */
+    @include media-breakpoint-up(lg) {
+        #sidebar_content {
+            position: sticky;
+            top: 1rem;
+        }
+    }
+
+    /* ---- Branded action buttons ---- */
+    #sale_order_sidebar_button {
+        .btn {
+            border-radius: var(--dat-radius-sm);
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: var(--dat-primary);
+            border-color: var(--dat-primary);
+            box-shadow: var(--dat-shadow-cta);
+
+            &:hover { background: var(--dat-primary-700); border-color: var(--dat-primary-700); }
+        }
+    }
+
+    /* ---- "Your contact" + advantage card harmonised ---- */
+    .list-group-item[name="sale_order_advantage"] {
+        border-radius: var(--dat-radius-sm);
+    }
+}

@@ -1,0 +1,180 @@
+<odoo>
+    <!-- List -->
+    <record id="view_oms_promotion_list" model="ir.ui.view">
+        <field name="name">oms.promotion.list</field>
+        <field name="model">oms.promotion</field>
+        <field name="arch" type="xml">
+            <list string="Chương trình khuyến mãi OMS/UC">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="apply_method"/>
+                <field name="state"/>
+                <field name="valid_from"/>
+                <field name="valid_to"/>
+                <field name="discount_type"/>
+                <field name="discount_percent"/>
+                <field name="discount_value" widget="monetary"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_oms_promotion_form" model="ir.ui.view">
+        <field name="name">oms.promotion.form</field>
+        <field name="model">oms.promotion</field>
+        <field name="arch" type="xml">
+            <form string="Chương trình khuyến mãi OMS/UC">
+                <header>
+                    <button name="%(action_oms_promo_apply_product_ie)d"
+                            type="action"
+                            string="Import/Export"
+                            class="btn-primary"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="state" readonly="1"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="bu"/>
+                            <field name="channel"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="code"/>
+                        <field name="name" colspan="2"/>
+
+                        <!-- NEW -->
+                        <field name="apply_method"/>
+                        <field name="customer_scope"/>
+
+                        <field name="valid_from"/>
+                        <field name="valid_to"/>
+
+                        <field name="discount_type"/>
+
+                        <!-- % khi chọn Tỷ lệ % -->
+                        <field name="discount_percent"
+                               invisible="discount_type != 'percent'"/>
+
+                        <!-- tiền khi chọn Giảm cố định -->
+                        <field name="discount_value" widget="monetary"
+                               invisible="discount_type != 'fixed'"/>
+
+                        <field name="currency_id" invisible="1"/>
+                        <!-- giữ field cũ nhưng ẩn để tránh user thao tác sai -->
+                        <field name="use_coupon" invisible="1"/>
+                    </group>
+
+                    <group string="Điều kiện đơn hàng" col="3">
+                        <field name="min_total_amount" widget="monetary"/>
+                        <field name="max_uses_per_order" invisible="1"/>
+                        <field name="max_uses_overall" invisible="1"/>
+                    </group>
+
+                    <group string="Khách hàng áp dụng"
+                           invisible="customer_scope != 'specific'">
+                        <field name="partner_ids"
+                               widget="many2many_tags"
+                               options="{'no_create_edit': True}"
+                               string="Khách hàng"
+                               colspan="2"/>
+                    </group>
+
+                    <group string="Phạm vi áp dụng giảm giá">
+                        <field name="apply_scope" widget="radio" string="Giảm giá áp dụng cho"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Sản phẩm áp dụng">
+                            <field name="apply_product_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_tmpl_id" domain="[('sale_ok','=',True)]"/>
+                                    <field name="product_category_id"/>
+                                    <field name="qty_from" string="Số lượng từ"/>
+                                    <field name="qty_to" string="Đến số lượng"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Combo mua kèm">
+                            <field name="bundle_combo_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="product_tmpl_ids" widget="many2many_tags"
+                                           domain="[('sale_ok','=',True)]"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Combo quà tặng">
+                            <field name="gift_combo_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="product_tmpl_ids" widget="many2many_tags"
+                                           domain="[('sale_ok','=',True)]"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Hợp đồng, Thanh toán">
+                            <group>
+                                <field name="contract_code"/>
+                                <field name="contract_deposit"/>
+                                <field name="contract_commitment_qty"/>
+                            </group>
+                            <group>
+                                <field name="payment_type"/>
+                                <field name="payment_percent"/>
+                            </group>
+                        </page>
+
+                        <!-- Coupon: chỉ hiện khi apply_method = coupon -->
+                        <page string="Coupon" invisible="apply_method != 'coupon'">
+                            <group>
+                                <field name="coupon_code" required="apply_method == 'coupon'"/>
+                            </group>
+                            <group>
+                                <field name="coupon_valid_from"/>
+                                <field name="coupon_valid_to"/>
+                                <field name="max_uses_per_customer"/>
+                            </group>
+                        </page>
+
+                        <page string="Kết hợp KM">
+                            <group>
+                                <field name="can_be_combined"/>
+                                <field name="restrict_combination"/>
+                            </group>
+                            <field name="allowed_promotion_ids" widget="many2many_tags"/>
+                        </page>
+
+                        <page string="Lưu ý &amp; Mô tả">
+                            <field name="note"/>
+                            <field name="promo_description" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action & Menu -->
+    <record id="action_oms_promotion" model="ir.actions.act_window">
+        <field name="name">Khuyến mãi OMS/UC</field>
+        <field name="res_model">oms.promotion</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_oms_root" name="OMS" sequence="10"/>
+    <menuitem id="menu_oms_promotion" name="Khuyến mãi"
+              parent="menu_oms_root" action="action_oms_promotion" sequence="10"/>
+</odoo>

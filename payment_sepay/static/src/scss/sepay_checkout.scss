@@ -1,0 +1,395 @@
+.oms_sepay_page {
+  background:
+    radial-gradient(circle at 16% 12%, rgba(37, 99, 235, .12), rgba(37, 99, 235, 0) 30%),
+    radial-gradient(circle at 86% 0%, rgba(14, 165, 233, .10), rgba(14, 165, 233, 0) 28%),
+    #f5f8fc;
+  color: #0f172a;
+  min-height: calc(100vh - 80px);
+  padding: 42px 0 64px;
+
+  &,
+  * {
+    box-sizing: border-box;
+  }
+
+  img {
+    display: block;
+  }
+}
+
+.oms_sepay_shell {
+  max-width: 1120px;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 100%;
+}
+
+.oms_sepay_header {
+  align-items: end;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  margin-bottom: 24px;
+}
+
+.oms_sepay_kicker,
+.oms_sepay_step {
+  color: #2563eb;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.oms_sepay_header h1 {
+  color: #0b1220;
+  font-size: 56px;
+  font-weight: 950;
+  letter-spacing: -.055em;
+  line-height: .94;
+  margin: 10px 0 12px;
+  text-wrap: balance;
+}
+
+.oms_sepay_header p {
+  color: #526075;
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 560px;
+}
+
+.oms_sepay_summary {
+  background: rgba(255, 255, 255, .86);
+  border: 1px solid rgba(215, 226, 240, .9);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, .08);
+  padding: 20px;
+}
+
+.oms_sepay_summary span,
+.oms_sepay_transfer_note span,
+.oms_sepay_secure_card span {
+  color: #64748b;
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.oms_sepay_summary strong {
+  color: #0f172a;
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+  margin-top: 8px;
+  word-break: break-word;
+}
+
+.oms_sepay_summary small {
+  color: #2563eb;
+  display: block;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -.03em;
+  margin-top: 8px;
+}
+
+.oms_sepay_grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+}
+
+.oms_sepay_qr_card,
+.oms_sepay_notice_card,
+.oms_sepay_secure_card {
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid rgba(214, 226, 240, .95);
+  border-radius: 28px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, .09);
+}
+
+.oms_sepay_qr_card {
+  padding: 34px;
+}
+
+.oms_sepay_card_head {
+  align-items: start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.oms_sepay_card_head h2,
+.oms_sepay_notice_card h2 {
+  color: #111827;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -.035em;
+  margin: 6px 0 0;
+}
+
+.oms_sepay_status {
+  background: #eef2ff;
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 11px;
+  text-transform: uppercase;
+}
+
+.oms_sepay_qr_wrap {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .95), rgba(248, 250, 252, .9)),
+    repeating-linear-gradient(45deg, rgba(37, 99, 235, .05) 0 1px, transparent 1px 12px);
+  border: 1px solid #e2e8f0;
+  border-radius: 26px;
+  display: flex;
+  justify-content: center;
+  min-height: 470px;
+  overflow: hidden;
+  padding: 30px;
+}
+
+.oms_sepay_qr_wrap img {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, .14);
+  height: auto;
+  max-width: 440px;
+  width: 100%;
+}
+
+.oms_sepay_transfer_note {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  margin-top: 18px;
+  padding: 14px 16px;
+}
+
+.oms_sepay_transfer_note strong {
+  color: #0f172a;
+  display: block;
+  font-size: 15px;
+  font-weight: 900;
+  margin-top: 5px;
+  word-break: break-word;
+}
+
+.oms_sepay_alert {
+  border-radius: 16px;
+  font-weight: 700;
+  margin-top: 16px;
+  padding: 14px 16px;
+}
+
+.oms_sepay_alert_success {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.oms_sepay_alert_warning {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.oms_sepay_actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.oms_sepay_actions .btn {
+  border-radius: 14px;
+  font-weight: 900;
+  padding: 12px 16px;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.oms_sepay_actions .btn:hover {
+  transform: translateY(-1px);
+}
+
+.oms_sepay_btn_primary,
+.oms_sepay_btn_primary:hover,
+.oms_sepay_btn_primary:focus,
+.oms_sepay_btn_primary:active {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 14px 32px rgba(37, 99, 235, .25);
+  color: #fff !important;
+}
+
+.oms_sepay_btn_secondary,
+.oms_sepay_btn_secondary:hover,
+.oms_sepay_btn_secondary:focus,
+.oms_sepay_btn_secondary:active {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8 !important;
+}
+
+.oms_sepay_btn_ghost,
+.oms_sepay_btn_ghost:hover,
+.oms_sepay_btn_ghost:focus,
+.oms_sepay_btn_ghost:active {
+  background: #fff;
+  border-color: #e2e8f0;
+  color: #334155 !important;
+}
+
+.oms_sepay_side {
+  display: grid;
+  gap: 18px;
+}
+
+.oms_sepay_notice_card,
+.oms_sepay_secure_card {
+  padding: 24px;
+}
+
+.oms_sepay_notice_card ul {
+  color: #475569;
+  display: grid;
+  gap: 12px;
+  line-height: 1.55;
+  margin: 18px 0 0;
+  padding-left: 18px;
+}
+
+.oms_sepay_notice_card li::marker {
+  color: #2563eb;
+}
+
+.oms_sepay_secure_card {
+  background: #0f172a;
+  border-color: #172554;
+  color: #dbeafe;
+  overflow: hidden;
+  position: relative;
+}
+
+.oms_sepay_secure_card::after {
+  background: radial-gradient(circle, rgba(59, 130, 246, .34), rgba(59, 130, 246, 0) 62%);
+  content: '';
+  height: 180px;
+  position: absolute;
+  right: -70px;
+  top: -70px;
+  width: 180px;
+}
+
+.oms_sepay_secure_card strong {
+  color: #fff;
+  display: block;
+  font-size: 24px;
+  font-weight: 950;
+  letter-spacing: -.04em;
+  margin-top: 10px;
+}
+
+.oms_sepay_secure_card p {
+  color: #bfdbfe;
+  line-height: 1.6;
+  margin: 10px 0 0;
+  max-width: 260px;
+}
+
+@media (max-width: 991.98px) {
+  .oms_sepay_header,
+  .oms_sepay_grid {
+    grid-template-columns: 1fr;
+  }
+
+  .oms_sepay_summary {
+    max-width: 420px;
+  }
+
+  .oms_sepay_header h1 {
+    font-size: 42px;
+  }
+
+  .oms_sepay_qr_card {
+    padding: 24px;
+  }
+
+  .oms_sepay_qr_wrap {
+    min-height: 360px;
+    padding: 22px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .oms_sepay_page {
+    padding: 24px 0 42px;
+  }
+
+  .oms_sepay_header h1 {
+    font-size: 34px;
+  }
+
+  .oms_sepay_qr_card {
+    padding: 22px;
+  }
+
+  .oms_sepay_qr_wrap {
+    padding: 16px;
+  }
+
+  .oms_sepay_qr_wrap img {
+    max-width: 100%;
+  }
+
+  .oms_sepay_actions .btn {
+    width: 100%;
+  }
+}
+
+/* SePay - enlarge logo on /shop/payment (checkout) */
+body.o_wsale_checkout {
+
+  /* 1) Nới khung brand/icon bên phải (thường bị max-width nhỏ) */
+  .o_payment_option_card .o_payment_option_card_brand,
+  .payment_option_card .o_payment_option_card_brand {
+    flex: 0 0 220px !important;      /* tăng bề ngang khu vực logo */
+    max-width: 220px !important;
+    width: 220px !important;
+    min-height: 64px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px;
+  }
+
+  /* 2) Nếu theme render logo bằng IMG */
+  .o_payment_option_card .o_payment_option_card_brand img,
+  .payment_option_card .o_payment_option_card_brand img {
+    height: 56px !important;         /* bạn chỉnh 56/64/72 tùy ý */
+    max-height: 56px !important;
+    width: auto !important;
+    max-width: none !important;
+    object-fit: contain !important;
+  }
+
+  /* 3) Nếu theme render logo bằng background-image (div/span) */
+  .o_payment_option_card .o_payment_option_card_brand .o_payment_icon,
+  .payment_option_card .o_payment_option_card_brand .o_payment_icon,
+  .o_payment_option_card .o_payment_icon,
+  .payment_option_card .o_payment_icon {
+    height: 56px !important;
+    width: 140px !important;         /* rộng hơn để logo không bị “lọt thỏm” */
+    max-width: none !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center right !important;
+  }
+}

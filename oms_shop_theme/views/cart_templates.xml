@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="oms_cart_page_upgrade" name="OMS Cart Page Upgrade" inherit_id="website_sale_custom.cart" priority="9999">
+        <xpath expr="//div[hasclass('col')][.//t[@t-call='website_sale_custom.cart_lines']]" position="attributes">
+            <attribute name="class">col oms_cart_main</attribute>
+        </xpath>
+        <xpath expr="//h3" position="replace">
+            <section class="oms_cart_hero">
+                <div class="oms_cart_hero_icon">
+                    <i class="fa fa-shopping-basket" />
+                </div>
+                <div>
+                    <span class="oms_cart_eyebrow">DAT Solar Mart</span>
+                    <h1>Giỏ hàng của bạn</h1>
+                    <p>Trải nghiệm mua sắm gọn gàng như siêu thị 5*: rõ sản phẩm, rõ số lượng, rõ thanh toán.</p>
+                </div>
+                <div class="oms_cart_hero_badge" t-if="website_sale_order">
+                    <strong t-out="len(website_sale_order.website_order_line)" />
+                    <span>mặt hàng</span>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//t[@t-call='website_sale_custom.cart_lines']" position="before">
+            <div t-if="website_sale_order and website_sale_order.website_order_line" class="oms_cart_shelf_head oms_cart_shelf_head_static">
+                <div>
+                    <span>Danh sách sản phẩm</span>
+                    <strong>Kiểm tra giỏ hàng</strong>
+                </div>
+                <a href="/shop" class="oms_cart_add_more">
+                    <i class="fa fa-plus" />
+                    Thêm sản phẩm
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-call='website_sale_custom.cart_lines']" position="after">
+            <div class="oms_cart_delete_modal" aria-hidden="true">
+                <div class="oms_cart_delete_modal_backdrop"></div>
+                <div class="oms_cart_delete_dialog" role="dialog" aria-modal="true" aria-labelledby="oms_cart_delete_title">
+                    <div class="oms_cart_delete_icon">
+                        <i class="fa fa-trash-o"/>
+                    </div>
+                    <h4 id="oms_cart_delete_title">Xóa sản phẩm?</h4>
+                    <p>Sản phẩm sẽ được xóa khỏi giỏ hàng. Bạn có chắc muốn tiếp tục?</p>
+                    <strong class="oms_cart_delete_name"></strong>
+                    <div class="oms_cart_delete_actions">
+                        <button type="button" class="oms_cart_delete_cancel">Giữ lại</button>
+                        <button type="button" class="oms_cart_delete_confirm">Xóa sản phẩm</button>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='oe_structure_website_sale_cart_1']" position="before">
+            <div class="oms_cart_service_grid">
+                <div class="oms_cart_service_item">
+                    <i class="fa fa-shield" />
+                    <span>Hàng chính hãng</span>
+                </div>
+                <div class="oms_cart_service_item">
+                    <i class="fa fa-truck" />
+                    <span>Giao hàng dự án</span>
+                </div>
+                <div class="oms_cart_service_item">
+                    <i class="fa fa-headphones" />
+                    <span>Sales hỗ trợ giá</span>
+                </div>
+            </div>
+            <div class="oms_cart_support_note">
+                <i class="fa fa-info-circle" />
+                <span>Có sản phẩm đang để giá liên hệ: Sales cần nhập giá mong muốn mới hiển thị nút thanh toán.</span>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_oe_cart_cols" name="OMS Cart Main Column Width" inherit_id="website_sale_custom.checkout_layout" priority="10000">
+        <xpath expr="//div[contains(@t-attf-class, 'oe_cart')]" position="attributes">
+            <attribute name="t-attf-class">oe_cart col-12 col-lg-7 col-xl-7</attribute>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_summary_upgrade" name="OMS Cart Summary Upgrade" inherit_id="website_sale_custom.checkout_layout" priority="9999">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class">oms_cart_page_wrap</attribute>
+        </xpath>
+        <xpath expr="//div[@id='o_cart_summary']" position="replace">
+            <div t-if="show_shorter_cart_summary"
+                 class="oms_cart_summary_col col-lg-5 col-xl-4 order-2"
+                 id="o_cart_summary">
+                <div class="o_total_card oms_cart_summary_card card"
+                     t-if="website_sale_order and website_sale_order.website_order_line">
+                    <div class="oms_cart_summary_head">
+                        <span>Thanh toán</span>
+                        <strong>Tóm tắt đơn hàng</strong>
+                    </div>
+                    <div class="card-body p-0 p-lg-4">
+                        <t t-call="website_sale_custom.total" />
+                        <t t-if="(website.account_on_checkout != 'mandatory' or not website.is_public_user()) and not website_sale_order._uc_has_wait_sales_price()"
+                           t-call="payment.express_checkout" />
+                        <t t-call="website_sale_custom.navigation_buttons" />
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_navigation_upgrade" name="OMS Cart Navigation Upgrade" inherit_id="website_sale_custom.navigation_buttons" priority="9999">
+        <xpath expr="//a[@name='website_sale_main_button']" position="attributes">
+            <attribute name="class" add="oms_cart_checkout_btn" separator=" " />
+        </xpath>
+        <xpath expr="//a[not(@name='website_sale_main_button')][.//t[@t-out=&quot;step_specific_values['back_button']&quot;]]" position="attributes">
+            <attribute name="class">oms_cart_continue_btn text-center</attribute>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_lines_upgrade" name="OMS Cart Lines Upgrade" inherit_id="website_sale_custom.cart_lines" priority="9999">
+        <xpath expr="//div[hasclass('js_cart_lines')][hasclass('alert-info')]" position="replace">
+            <div t-if="not website_sale_order or not website_sale_order.website_order_line"
+                 class="js_cart_lines oms_cart_empty">
+                <div class="oms_cart_empty_icon">
+                    <i class="fa fa-shopping-basket" />
+                </div>
+                <h3>Giỏ hàng đang trống</h3>
+                <p>Bạn chưa thêm sản phẩm nào. Khám phá danh mục để bắt đầu đơn hàng dự án của bạn.</p>
+                <a href="/shop" class="oms_cart_empty_btn">
+                    <i class="fa fa-arrow-left" />
+                    Tiếp tục mua sắm
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='cart_products']" position="attributes">
+            <attribute name="class">js_cart_lines oms_cart_products d-flex flex-column</attribute>
+        </xpath>
+        <xpath expr="//div[@t-foreach='website_sale_order.website_order_line']" position="attributes">
+            <attribute name="t-attf-class">o_cart_product oms_cart_product d-flex align-items-stretch #{line.linked_line_id and 'optional_product info'}</attribute>
+        </xpath>
+        <xpath expr="//div[@style='width: 64px']" position="attributes">
+            <attribute name="class">oms_cart_product_media</attribute>
+            <attribute name="style" />
+        </xpath>
+        <xpath expr="//div[@style='width: 64px']" position="before">
+            <div class="oms_cart_line_index">
+                <t t-out="line_index + 1" />
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('flex-grow-1')][.//div[@name='o_wsale_cart_line_button_container']]" position="attributes">
+            <attribute name="class">oms_cart_product_info flex-grow-1</attribute>
+        </xpath>
+        <xpath expr="//div[@name='o_wsale_cart_line_button_container']" position="attributes">
+            <attribute name="class">oms_cart_remove_wrap</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('d-flex', 'flex-column', 'align-items-end')][.//div[@name='website_sale_cart_line_quantity']]" position="attributes">
+            <attribute name="class">oms_cart_product_actions d-flex flex-column align-items-end</attribute>
+        </xpath>
+        <xpath expr="//div[@name='website_sale_cart_line_quantity']" position="attributes">
+            <attribute name="t-attf-class">css_quantity input-group oms_cart_quantity</attribute>
+        </xpath>
+        <xpath expr="//div[@name='website_sale_cart_line_price']" position="attributes">
+            <attribute name="class">oms_cart_line_price mb-0 text-end</attribute>
+        </xpath>
+        <xpath expr="//div[@name='website_sale_cart_line_price']/t[@t-if='line.discount']" position="replace"/>
+        <xpath expr="//div[@name='website_sale_cart_line_price']//small[hasclass('cart_product_base_unit_price')]" position="replace"/>
+        <xpath expr="//div[@name='website_sale_cart_line_quantity']//a[hasclass('js_add_cart_json')]" position="attributes">
+            <attribute name="class" add="oms_cart_qty_btn d-inline-flex align-items-center justify-content-center flex-shrink-0" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='website_sale_cart_line_quantity']//a[hasclass('js_add_cart_json')][.//i[hasclass('fa-minus')]]" position="attributes">
+            <attribute name="t-attf-class">js_add_cart_json btn btn-link d-inline-block border-end-0 oms_cart_qty_btn oms_cart_qty_decrease #{line._get_displayed_quantity() &lt;= 1 and 'oms_cart_qty_delete' or ''}</attribute>
+            <attribute name="t-att-data-oms-confirm-delete">line._get_displayed_quantity() &lt;= 1 and '1' or '0'</attribute>
+            <attribute name="t-att-data-oms-product-name">line.product_id.display_name</attribute>
+            <attribute name="t-att-title">line._get_displayed_quantity() &lt;= 1 and 'Xóa sản phẩm' or 'Giảm số lượng'</attribute>
+            <attribute name="t-att-aria-label">line._get_displayed_quantity() &lt;= 1 and 'Xóa sản phẩm' or 'Giảm số lượng'</attribute>
+        </xpath>
+        <xpath expr="//div[@name='website_sale_cart_line_quantity']//a[hasclass('js_add_cart_json')][.//i[hasclass('fa-minus')]]/i" position="replace">
+            <i t-attf-class="position-relative z-1 fa #{line._get_displayed_quantity() &lt;= 1 and 'fa-trash-o' or 'fa-minus'}"/>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_suggested_upgrade" name="OMS Suggested Products Upgrade" inherit_id="website_sale_custom.suggested_products_list" priority="9999">
+        <xpath expr="//h5[@t-if='suggested_products']" position="attributes">
+            <attribute name="class">oms_cart_suggest_title</attribute>
+        </xpath>
+        <xpath expr="//div[@id='suggested_products']" position="attributes">
+            <attribute name="class">oms_cart_suggest_grid</attribute>
+        </xpath>
+        <xpath expr="//div[@id='suggested_products']/div[@t-foreach='suggested_products']" position="attributes">
+            <attribute name="t-attf-class">oms_cart_suggest_card d-flex gap-3</attribute>
+        </xpath>
+        <xpath expr="//a[hasclass('js_add_suggested_products')]" position="attributes">
+            <attribute name="class">js_add_suggested_products oms_cart_suggest_btn text-nowrap</attribute>
+        </xpath>
+    </template>
+
+    <template id="oms_cart_mobile_bar" name="OMS Cart Mobile Checkout Bar" inherit_id="website_sale_custom.cart" priority="9999">
+        <xpath expr="//t[@t-call='website_sale_custom.cart_lines']" position="after">
+            <div t-if="website_sale_order and website_sale_order.website_order_line"
+                 class="oms_cart_mobile_bar d-lg-none">
+                <div class="oms_cart_mobile_total">
+                    <span>Tạm tính</span>
+                    <strong t-out="website_sale_order.amount_total"
+                            t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" />
+                </div>
+                <a t-if="website_sale_order._is_cart_ready()" href="/shop/checkout"
+                   class="oms_cart_mobile_btn">
+                    Thanh toán
+                    <i class="fa fa-angle-right ms-1" />
+                </a>
+                <span t-else="" class="oms_cart_mobile_btn disabled">Chờ Sales báo giá</span>
+            </div>
+        </xpath>
+    </template>
+</odoo>

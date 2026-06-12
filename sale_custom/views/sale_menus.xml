@@ -1,0 +1,406 @@
+<odoo>
+    <!-- ROOT MENU -->
+    <menuitem id="sale_menu_root"
+        name="Sales"
+        web_icon="sale_management,static/description/icon.png"
+        sequence="30" />
+
+    <!-- ORDERS MENU -->
+    <menuitem id="sale_order_menu"
+        name="Orders"
+        parent="sale_menu_root"
+        sequence="10" />
+
+    <menuitem id="menu_sale_quotations"
+        name="Quotations"
+        parent="sale_order_menu"
+        action="action_quotations_with_onboarding"
+        groups="sale_custom.group_sale_user"
+        sequence="10" />
+
+    <menuitem id="menu_sale_order"
+        name="Orders"
+        parent="sale_order_menu"
+        action="action_orders"
+        groups="sales_team.group_sale_manager"
+        sequence="20" />
+
+    <menuitem id="report_sales_team"
+        name="Sales Teams"
+        parent="sale_order_menu"
+        action="sales_team.crm_team_action_sales"
+        groups="sales_team.group_sale_manager"
+        sequence="30" />
+
+    <menuitem id="menu_oms_promotion"
+        name="Khuyến mãi OMS/UC"
+        parent="sale_order_menu"
+        action="action_oms_promotion"
+        sequence="35"
+        groups="sales_team.group_sale_manager" />
+
+    <!-- OMS CUSTOM MENUS (dưới menu Orders) -->
+    <menuitem id="menu_oms_pricelist"
+        name="Bảng giá OMS"
+        parent="sale_order_menu"
+        action="action_oms_pricelist"
+        sequence="36"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_special_price"
+        name="Giá đặc biệt KH OMS"
+        parent="sale_order_menu"
+        action="action_oms_special_price"
+        sequence="37"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_pricelist_commission"
+        name="Hoa hồng bảng giá OMS"
+        parent="sale_order_menu"
+        action="action_oms_pricelist_commission"
+        sequence="38"
+        groups="sales_team.group_sale_manager"/>
+        
+    <menuitem id="menu_oms_promotion_product_category"
+        name="Danh mục SP khuyến mãi"
+        parent="sale_order_menu"
+        action="action_oms_promotion_product_category"
+        sequence="39"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_warehouse_order_preparation"
+        name="Đơn hàng chờ giao"
+        parent="sale_order_menu"
+        action="action_warehouse_order_preparation"
+        sequence="40"
+        groups="sales_team.group_sale_manager"/>
+
+    <!-- Customers và Khách hàng OMS -->
+    <menuitem id="res_partner_menu"
+        name="Customers"
+        parent="sale_order_menu"
+        action="account.res_partner_action_customer"
+        groups="sales_team.group_sale_manager"
+        sequence="40" />
+
+    <menuitem id="menu_oms_customer"
+        name="Khách hàng OMS"
+        parent="sale_order_menu"
+        action="action_oms_customer"
+        groups="sales_team.group_sale_manager"
+        sequence="100"/>
+
+    <!-- QR thanh toán OMS (Vietcombank 103 693 6868) -->
+    <menuitem id="menu_oms_qr_payment_root"
+        name="QR thanh toán OMS"
+        parent="sale_order_menu"
+        action="action_oms_qr_payment_wizard"
+        groups="sales_team.group_sale_manager"
+        sequence="101"/>
+
+
+    <!-- TO INVOICE MENU -->
+    <menuitem id="menu_sale_invoicing"
+        name="To Invoice"
+        parent="sale_menu_root"
+        groups="sales_team.group_sale_manager"
+        sequence="20" />
+
+    <menuitem id="menu_sale_order_invoice"
+        name="Orders to Invoice"
+        parent="menu_sale_invoicing"
+        action="action_orders_to_invoice"
+        sequence="10" />
+
+    <menuitem id="menu_sale_order_upselling"
+        name="Upselling Orders"
+        parent="menu_sale_invoicing"
+        action="action_orders_upselling"
+        sequence="20" />
+
+    <!-- PRODUCTS MENU -->
+    <menuitem id="product_menu_catalog"
+        name="Products"
+        parent="sale_menu_root"
+        groups="sales_team.group_sale_manager"
+        sequence="30" />
+
+    <menuitem id="menu_product_template_action"
+        name="Product Templates"
+        parent="product_menu_catalog"
+        action="product_template_action"
+        sequence="10" />
+
+    <menuitem id="menu_products"
+        name="Products"
+        parent="product_menu_catalog"
+        action="product.product_normal_action_sell"
+        groups="product.group_product_variant"
+        sequence="20" />
+
+    <menuitem id="menu_product_pricelist_main"
+        name="Pricelists"
+        parent="product_menu_catalog"
+        action="product.product_pricelist_action2"
+        groups="product.group_product_pricelist"
+        sequence="30" />
+
+    <!-- REPORTING MENU -->
+    <menuitem id="menu_sale_report"
+        name="Reporting"
+        parent="sale_menu_root"
+        groups="sales_team.group_sale_manager"
+        sequence="40" />
+
+    <menuitem id="menu_reporting_sales"
+        name="Sales"
+        parent="menu_sale_report"
+        action="action_order_report_all"
+        sequence="10" />
+
+    <menuitem id="menu_reporting_salespeople"
+        name="Salespersons"
+        parent="menu_sale_report"
+        action="action_order_report_salesperson"
+        sequence="20" />
+
+    <menuitem id="menu_reporting_product"
+        name="Products"
+        parent="menu_sale_report"
+        action="action_order_report_products"
+        sequence="30" />
+
+    <menuitem id="menu_reporting_customer"
+        name="Customers"
+        parent="menu_sale_report"
+        action="action_order_report_customers"
+        sequence="40" />
+
+    <!-- CONFIGURATION MENU -->
+    <menuitem id="menu_sale_config"
+        name="Configuration"
+        parent="sale_menu_root"
+        groups="sales_team.group_sale_manager"
+        sequence="50" />
+
+    <menuitem id="menu_sale_general_settings"
+        name="Settings"
+        parent="menu_sale_config"
+        action="action_sale_config_settings"
+        groups="base.group_system"
+        sequence="10" />
+
+    <menuitem id="sales_team_config"
+        name="Sales Teams"
+        parent="menu_sale_config"
+        action="sales_team.crm_team_action_config"
+        sequence="20" />
+
+    <menuitem id="menu_sales_config"
+        name="Sales Orders"
+        parent="menu_sale_config"
+        sequence="30" />
+
+    <menuitem id="menu_tag_config"
+        name="Tags"
+        parent="menu_sales_config"
+        action="sales_team.sales_team_crm_tag_action"
+        sequence="10" />
+
+    <menuitem id="prod_config_main"
+        name="Products"
+        parent="menu_sale_config"
+        sequence="40" />
+    
+    <menuitem id="menu_product_attribute_action"
+        name="Product Attributes"
+        parent="prod_config_main"
+        action="product.attribute_action"
+        groups="product.group_product_variant"
+        sequence="10" />
+
+    <menuitem id="menu_product_combos"
+        name="Combo Choices"
+        parent="prod_config_main"
+        action="product.product_combo_action"
+        sequence="15" />
+
+    <menuitem id="menu_product_categories"
+        name="Product Categories"
+        parent="prod_config_main"
+        action="product.product_category_action_form"
+        sequence="20" />
+
+    <menuitem id="menu_product_tags"
+        name="Product Tags"
+        parent="prod_config_main"
+        action="product.product_tag_action"
+        sequence="30" />
+
+    <menuitem
+        id="menu_oms_product_group"
+        name="Product Groups OMS"
+        parent="prod_config_main"
+        action="action_oms_product_group"
+        sequence="40"
+        groups="sales_team.group_sale_manager"
+    />
+
+    <menuitem id="payment_menu"
+        name="Online Payments"
+        parent="menu_sale_config"
+        groups="base.group_system"
+        sequence="45" />
+    
+    <menuitem id="menu_approval_workflow_root"
+        name="Approval Workflows"
+        parent="menu_sale_config"
+        sequence="110"
+        groups="sales_team.group_sale_manager"/>
+    
+    <menuitem id="menu_approval_workflow"
+        name="Quy trình duyệt"
+        parent="menu_approval_workflow_root"
+        action="action_approval_workflow"
+        sequence="10"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="payment_provider_menu"
+        name="Payment Providers"
+        parent="payment_menu"
+        action="payment.action_payment_provider"
+        sequence="10" />
+
+    <menuitem id="payment_method_menu"
+        name="Payment Methods"
+        parent="payment_menu"
+        action="payment.action_payment_method"
+        sequence="20" />
+
+    <menuitem id="payment_token_menu"
+        name="Payment Tokens"
+        parent="payment_menu"
+        action="payment.action_payment_token"
+        groups="base.group_no_one"
+        sequence="30" />
+
+    <menuitem id="payment_transaction_menu"
+        name="Payment Transactions"
+        parent="payment_menu"
+        action="payment.action_payment_transaction"
+        groups="base.group_no_one"
+        sequence="40" />
+
+    <menuitem id="next_id_16"
+        name="Units of Measure"
+        parent="menu_sale_config"
+        groups="uom.group_uom"
+        sequence="50" />
+
+    <menuitem id="menu_product_uom_form_action"
+        name="Units of Measure"
+        parent="next_id_16"
+        action="uom.product_uom_form_action"
+        groups="base.group_no_one"
+        sequence="10" />
+
+    <menuitem id="menu_product_uom_categ_form_action"
+        name="UoM Categories"
+        parent="next_id_16"
+        action="uom.product_uom_categ_form_action"
+        sequence="20" />
+
+    <!-- ... PHẦN MENU TRÊN GIỮ NGUYÊN ... -->
+
+    <!-- Tax Groups OMS --> 
+    <menuitem
+        id="menu_oms_taxgroup"
+        name="Tax Groups OMS"
+        parent="menu_sale_config"
+        action="action_oms_taxgroup"
+        sequence="60"
+        groups="sales_team.group_sale_manager"
+    />
+    <!-- OMS Payment Terms (Điều khoản thanh toán OMS) -->
+    <menuitem
+        id="menu_oms_payment_terms"
+        name="Điều khoản thanh toán OMS"
+        parent="menu_sale_config"
+        action="action_oms_payment_terms"
+        sequence="70"
+        groups="sales_team.group_sale_manager"/>
+    <menuitem
+        id="menu_oms_prjinfo"
+        name="Dự án OMS"
+        parent="menu_sale_config"
+        action="action_oms_prjinfo"
+        sequence="80"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem
+        id="menu_oms_warehouse"
+        name="Kho OMS"
+        parent="menu_sale_config"
+        action="action_oms_warehouse"
+        sequence="90"
+        groups="sales_team.group_sale_manager"/>
+
+     <menuitem
+        id="menu_oms_inventory_root"
+        name="Tồn kho OMS"
+        parent="menu_sale_config"
+        action="action_oms_inventory"
+        sequence="91"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem
+        id="menu_oms_marketing_campaign"
+        name="Chương trình Marketing OMS"
+        parent="menu_sale_config"
+        action="action_oms_marketing_campaign"
+        sequence="100"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_sales_blanket_agreement"
+        name="Hợp đồng nguyên tắc OMS"
+        parent="menu_sale_config"
+        action="action_sales_blanket_agreement"
+        sequence="110"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_transport"
+        name="Phương thức vận chuyển OMS"
+        parent="menu_sale_config"
+        action="action_oms_transport"
+        sequence="120"
+        groups="sales_team.group_sale_manager"/>
+
+
+    <!-- OMS Product Items (dưới cấu hình Sản phẩm) -->
+    <menuitem
+        id="menu_oms_product_item"
+        name="OMS Product Items"
+        parent="prod_config_main"
+        action="action_oms_product_item"
+        sequence="50"
+        groups="sales_team.group_sale_manager"
+    />
+    <!-- ============ OMS: Group Price List (Config) ============ -->
+    <menuitem
+        id="menu_oms_group_price_list"
+        name="Bảng giá theo Nhóm SP (Extra)"
+        parent="prod_config_main"
+        action="action_oms_group_price_list"
+        sequence="51"
+        groups="sales_team.group_sale_manager"
+    />
+    <!-- Menu (đặt dưới menu UC hiện có của anh; anh sửa parent theo module của anh) -->
+    <menuitem id="menu_uc_pricelist_frame"
+              name="UC PriceList Frame"
+              parent="prod_config_main"
+              action="action_oms_pricelist_frame"
+              sequence="52"
+              groups="sales_team.group_sale_manager"
+              />
+    
+</odoo>

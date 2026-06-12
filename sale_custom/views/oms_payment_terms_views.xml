@@ -1,0 +1,44 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_oms_payment_terms_tree" model="ir.ui.view">
+        <field name="name">oms.payment.terms.list</field>
+        <field name="model">oms.payment.terms</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="group_num"/>
+                <field name="pymnt_group"/>
+                <field name="extra_days"/>
+                <field name="bsline_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_oms_payment_terms_form" model="ir.ui.view">
+        <field name="name">oms.payment.terms.form</field>
+        <field name="model">oms.payment.terms</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="group_num"/>
+                    <field name="pymnt_group"/>
+                    <field name="extra_days"/>
+                    <field name="bsline_date"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action: Window for Payment Terms OMS -->
+    <record id="action_oms_payment_terms" model="ir.actions.act_window">
+        <field name="name">Điều khoản thanh toán OMS</field>
+        <field name="res_model">oms.payment.terms</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo điều khoản thanh toán cho đơn hàng OMS tại đây.
+            </p>
+        </field>
+    </record>
+    
+</odoo>

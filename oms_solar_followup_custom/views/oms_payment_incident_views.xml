@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_payment_incident_tree" model="ir.ui.view">
+        <field name="name">oms.payment.incident.tree</field>
+        <field name="model">oms.payment.incident</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="occurred_at"/>
+                <field name="incident_type"/>
+                <field name="severity"/>
+                <field name="state"/>
+                <field name="sale_order_id"/>
+                <field name="payment_transaction_id"/>
+                <field name="short_description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_oms_payment_incident_form" model="ir.ui.view">
+        <field name="name">oms.payment.incident.form</field>
+        <field name="model">oms.payment.incident</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="occurred_at"/>
+                            <field name="incident_type"/>
+                            <field name="severity"/>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="sale_order_id"/>
+                            <field name="payment_transaction_id"/>
+                            <field name="partner_id"/>
+                            <field name="provider_code"/>
+                            <field name="payment_reference"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="short_description"/>
+                    </group>
+                    <notebook>
+                        <page string="Nguyên nhân &amp; phòng tránh">
+                            <group>
+                                <field name="root_cause"/>
+                                <field name="prevention"/>
+                            </group>
+                        </page>
+                        <page string="Xử lý">
+                            <group>
+                                <field name="solution"/>
+                                <field name="result_note"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_payment_incident" model="ir.actions.act_window">
+        <field name="name">Sự cố / cảnh báo thanh toán OMS</field>
+        <field name="res_model">oms.payment.incident</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+</odoo>

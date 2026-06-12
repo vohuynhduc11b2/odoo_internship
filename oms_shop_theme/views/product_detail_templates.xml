@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="oms_product_detail_overhaul" name="OMS Product Detail Overhaul" inherit_id="website_sale_custom.product" priority="9999">
+        <xpath expr="//section[@id='product_detail']" position="replace">
+            <section id="product_detail"
+                     t-attf-class="oms_product_detail oe_website_sale container py-4 py-lg-5 #{'discount' if combination_info['has_discounted_price'] else ''}"
+                     t-att-data-view-track="view_track and '1' or '0'"
+                     t-att-data-product-tracking-info="'product_tracking_info' in combination_info and json.dumps(combination_info['product_tracking_info'])">
+                <t t-set="base_url" t-value="website.get_base_url()"/>
+                <t t-set="single_value_attributes" t-value="product.valid_product_template_attribute_line_ids._prepare_single_value_for_display()"/>
+                <t t-set="product_documents" t-value="product.sudo().product_document_ids.filtered(lambda doc: doc.shown_on_product_page)"/>
+
+                <div class="oms_pd_breadcrumb_row">
+                    <ol class="o_wsale_breadcrumb breadcrumb oms_pd_breadcrumb p-0 m-0">
+                        <li class="breadcrumb-item">
+                            <a t-att-href="keep('/shop', category=0, attribute_value=0, tags=0)">Tất cả sản phẩm</a>
+                        </li>
+                        <li t-if="category" class="breadcrumb-item">
+                            <a t-att-href="keep('/shop/category/%s' % slug(category), category=0, attribute_value=0, tags=0)" t-out="category.name"/>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <span t-field="product.name"/>
+                        </li>
+                    </ol>
+                    <div class="oms_pd_top_search">
+                        <t t-if="is_view_active('website_sale_custom.search')" t-call="website_sale_custom.search">
+                            <t t-set="search" t-value="False"/>
+                            <t t-set="_form_classes" t-valuef="mb-0"/>
+                            <t t-set="_classes" t-value="'oms_pd_search_input'"/>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="oms_pd_main" id="product_detail_main" data-name="Product Page"
+                     t-att-data-image_width="website.product_page_image_width"
+                     t-att-data-image_layout="website.product_page_image_layout">
+                    <t t-set="image_cols" t-value="website._get_product_page_proportions()"/>
+                    <div class="oms_pd_left_col">
+                        <div class="oms_pd_gallery" t-if="website.product_page_image_width != 'none'" t-att-data-image-amount="len(product_variant._get_images() if product_variant else product._get_images())">
+                            <div class="oms_pd_card oms_pd_gallery_card o_wsale_product_images position-relative">
+                                <t t-call="website_sale_custom.shop_product_images"/>
+                            </div>
+                        </div>
+
+                        <div class="oms_pd_info_grid">
+                            <section class="oms_pd_card oms_pd_section oms_pd_description">
+                                <h2>Mô tả sản phẩm</h2>
+                                <div t-if="product.description_ecommerce" t-field="product.description_ecommerce" class="oe_structure"/>
+                                <div t-elif="product.website_description" t-field="product.website_description" class="oe_structure"/>
+                                <p t-else="" class="oms_pd_empty">Đang cập nhật mô tả sản phẩm.</p>
+                            </section>
+
+                            <section class="oms_pd_card oms_pd_section">
+                                <h2>Thông tin chi tiết</h2>
+                                <div class="oms_pd_specs_grid">
+                                    <div t-if="product.default_code" class="oms_pd_spec"><span>Mã sản phẩm</span><strong t-out="product.default_code"/></div>
+                                    <div t-if="product_variant and product_variant.default_code and product_variant.default_code != product.default_code" class="oms_pd_spec"><span>Mã biến thể</span><strong t-out="product_variant.default_code"/></div>
+                                    <div t-if="product.barcode" class="oms_pd_spec"><span>Barcode</span><strong t-out="product.barcode"/></div>
+                                    <div t-if="'brand_id' in product._fields and product.brand_id" class="oms_pd_spec"><span>Thương hiệu</span><strong t-field="product.brand_id.name"/></div>
+                                    <div t-if="product.uom_id" class="oms_pd_spec"><span>Đơn vị tính</span><strong t-field="product.uom_id.name"/></div>
+                                    <div t-if="product.public_categ_ids" class="oms_pd_spec"><span>Danh mục</span><strong t-out="', '.join(product.public_categ_ids.mapped('name'))"/></div>
+                                    <div t-if="product.weight" class="oms_pd_spec"><span>Khối lượng</span><strong><t t-out="product.weight"/> kg</strong></div>
+                                    <div t-if="product.volume" class="oms_pd_spec"><span>Thể tích</span><strong><t t-out="product.volume"/> m³</strong></div>
+                                    <div t-if="product.sale_ok" class="oms_pd_spec"><span>Trạng thái bán</span><strong>Cho phép bán</strong></div>
+                                    <div t-if="product.website_published" class="oms_pd_spec"><span>Website</span><strong>Đang hiển thị</strong></div>
+                                    <div t-if="'hot_deals' in product._fields and product.hot_deals" class="oms_pd_spec"><span>Hot sale</span><strong>Có</strong></div>
+                                    <div t-if="'top_selling' in product._fields and product.top_selling" class="oms_pd_spec"><span>Bán chạy</span><strong>Có</strong></div>
+                                    <div t-if="'most_viewed' in product._fields and product.most_viewed" class="oms_pd_spec"><span>Xem nhiều</span><strong>Có</strong></div>
+                                    <div t-if="'qty_sold' in product._fields and product.qty_sold" class="oms_pd_spec"><span>Đã bán</span><strong t-out="product.qty_sold"/></div>
+                                    <div t-if="'views' in product._fields and product.views" class="oms_pd_spec"><span>Lượt xem</span><strong t-out="product.views"/></div>
+                                    <div t-if="'oms_solar_scope_status' in product._fields and product.oms_solar_scope_status" class="oms_pd_spec"><span>OMS Solar</span><strong t-out="dict(product._fields['oms_solar_scope_status'].selection).get(product.oms_solar_scope_status)"/></div>
+                                    <t t-foreach="single_value_attributes" t-as="attribute">
+                                        <div class="oms_pd_spec">
+                                            <span t-field="attribute.name"/>
+                                            <strong>
+                                                <t t-foreach="single_value_attributes[attribute]" t-as="ptal">
+                                                    <span t-field="ptal.product_template_value_ids._only_active().name"/><t t-if="not ptal_last">, </t>
+                                                </t>
+                                            </strong>
+                                        </div>
+                                    </t>
+                                </div>
+                                <p t-if="not (product.default_code or product.barcode or product.weight or product.volume or product.uom_id or product.public_categ_ids or single_value_attributes)" class="oms_pd_empty">Đang cập nhật thông tin chi tiết.</p>
+                            </section>
+                        </div>
+
+                        <section class="oms_pd_policy_grid">
+                            <div class="oms_pd_policy_card">
+                                <i class="fa fa-phone"/>
+                                <h3>Tư vấn bán hàng</h3>
+                                <p>Liên hệ NVKD để xác nhận giá, tồn kho và phương án giao hàng.</p>
+                            </div>
+                            <div class="oms_pd_policy_card">
+                                <i class="fa fa-truck"/>
+                                <h3>Giao hàng</h3>
+                                <p>Hỗ trợ giao hàng theo khu vực, đơn hàng và chính sách hiện hành.</p>
+                            </div>
+                            <div class="oms_pd_policy_card">
+                                <i class="fa fa-shield"/>
+                                <h3>Bảo hành</h3>
+                                <p>Sản phẩm chính hãng, bảo hành theo điều kiện của nhà cung cấp.</p>
+                            </div>
+                        </section>
+
+                        <section class="oms_pd_card oms_pd_section oms_pd_documents" t-if="product_documents">
+                            <h2>Tài liệu</h2>
+                            <div id="product_documents" class="oms_pd_doc_list">
+                                <t t-foreach="product_documents" t-as="document_sudo">
+                                    <t t-set="attachment_sudo" t-value="document_sudo.ir_attachment_id"/>
+                                    <t t-set="target" t-value="attachment_sudo.type == 'url' and '_blank' or '_self'"/>
+                                    <t t-set="icon" t-value="attachment_sudo.type == 'url' and 'fa-link' or 'fa-download'"/>
+                                    <a t-att-href="'/shop/' + slug(product) + '/document/' + str(document_sudo.id)" t-att-target="target">
+                                        <i t-att-class="'fa ' + icon"/><t t-out="attachment_sudo.name"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="oms_pd_buy_col" id="product_details">
+                        <div class="oms_pd_card oms_pd_buy_card">
+                            <div class="oms_pd_meta_line">
+                                <span t-if="product.default_code" class="oms_pd_badge"><i class="fa fa-barcode"/> <t t-out="product.default_code"/></span>
+                                <span t-if="product.public_categ_ids" class="oms_pd_badge oms_pd_badge_soft"><i class="fa fa-folder-o"/> <t t-out="product.public_categ_ids[:1].name"/></span>
+                                <span t-if="product.website_published" class="oms_pd_badge oms_pd_badge_ok"><i class="fa fa-check-circle"/> Đang kinh doanh</span>
+                            </div>
+
+                            <h1 itemprop="name" t-field="product.name">Product Name</h1>
+                            <span itemprop="url" style="display:none;" t-esc="base_url + product.website_url"/>
+                            <span itemprop="image" style="display:none;" t-esc="base_url + website.image_url(product, 'image_1920')"/>
+
+                            <div t-if="product.description_sale" class="oms_pd_intro" t-field="product.description_sale"/>
+
+                            <div class="oms_pd_quick_facts">
+                                <div t-if="product.default_code"><span>SKU</span><strong t-out="product.default_code"/></div>
+                                <div t-if="'brand_id' in product._fields and product.brand_id"><span>Thương hiệu</span><strong t-field="product.brand_id.name"/></div>
+                                <div t-if="product.public_categ_ids"><span>Danh mục</span><strong t-out="', '.join(product.public_categ_ids.mapped('name')[:2])"/></div>
+                            </div>
+
+                            <form t-if="product._is_add_to_cart_possible()" action="/shop/cart/update" method="POST" class="oms_pd_form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" t-nocache="The csrf token must always be up to date."/>
+                                <div class="js_product js_main_product">
+                                    <div class="oms_pd_price_block">
+                                        <t t-call="website_sale_custom.product_price"/>
+                                        <small t-if="'base_unit_price' in combination_info" class="ms-1 text-muted o_base_unit_price_wrapper d-none" groups="website_sale_custom.group_show_uom_price">
+                                            <t t-call="website_sale_custom.base_unit_price"/>
+                                        </small>
+                                    </div>
+
+                                    <t t-placeholder="select">
+                                        <input type="hidden" class="product_id" name="product_id" t-att-value="product_variant.id"/>
+                                        <input type="hidden" class="product_template_id" name="product_template_id" t-att-value="product.id"/>
+                                        <input t-if="product.public_categ_ids.ids" type="hidden" class="product_category_id" name="product_category_id" t-att-value="product.public_categ_ids.ids[0]"/>
+                                        <t t-call="website_sale_custom.variants">
+                                            <t t-set="ul_class" t-valuef="flex-column"/>
+                                            <t t-set="parent_combination" t-value="None"/>
+                                            <t t-set="combination" t-value="combination_info['combination']"/>
+                                        </t>
+                                    </t>
+
+                                    <p t-if="True" class="css_not_available_msg alert alert-warning">Tổ hợp này không khả dụng.</p>
+
+                                    <div id="o_wsale_cta_wrapper" class="oms_pd_cta_wrap d-flex flex-wrap align-items-center">
+                                        <t t-set="hasQuantities" t-value="false"/>
+                                        <t t-set="hasBuyNow" t-value="false"/>
+                                        <t t-set="ctaSizeBig" t-value="not hasQuantities or not hasBuyNow"/>
+                                        <div t-attf-class="css_quantity oms_pd_quantity input-group {{'d-none' if combination_info['prevent_zero_price_sale'] else 'd-inline-flex'}} align-items-center mb-2" contenteditable="false">
+                                            <a href="#" class="btn btn-link js_add_cart_json" aria-label="Giảm số lượng" title="Giảm số lượng">
+                                                <i class="fa fa-minus"/>
+                                            </a>
+                                            <input type="text" class="form-control quantity text-center" data-min="1" name="add_qty" t-att-value="1"/>
+                                            <a href="#" class="btn btn-link js_add_cart_json" aria-label="Tăng số lượng" title="Tăng số lượng">
+                                                <i class="fa fa-plus"/>
+                                            </a>
+                                        </div>
+                                        <div id="add_to_cart_wrap" t-attf-class="{{'d-none' if combination_info['prevent_zero_price_sale'] else 'd-inline-flex'}} align-items-center mb-2">
+                                            <a data-animation-selector=".o_wsale_product_images" role="button" id="add_to_cart" class="btn btn-primary oms_pd_add_to_cart js_check_product a-submit" href="#">
+                                                <i class="fa fa-shopping-cart me-2"/>Thêm vào giỏ hàng
+                                            </a>
+                                        </div>
+                                        <div t-if="combination_info.get('uc_wait_sales_price')" class="alert alert-info py-2 px-3 mb-2 w-100" role="alert">
+                                            Chưa có giá bán. Bạn vẫn có thể thêm vào giỏ hàng, Sales sẽ nhập giá trước khi thanh toán.
+                                        </div>
+                                        <div id="product_option_block" class="d-flex flex-wrap w-100"/>
+                                    </div>
+
+                                    <t t-if="is_view_active('website_sale_custom.product_tags')" t-call="website_sale_custom.product_tags">
+                                        <t t-set="all_product_tags" t-value="product_variant.all_product_tag_ids"/>
+                                    </t>
+                                </div>
+                            </form>
+
+                            <div t-if="product._is_add_to_cart_possible()"
+                                 class="oms-price-tiers oms_pd_tiers"
+                                 t-att-data-product-id="product_variant.id or combination_info['product_id']"
+                                 t-att-data-template-id="product.id">
+                                <div class="oms_pd_tiers_head">
+                                    <div>
+                                        <h3>Bảng giá theo số lượng</h3>
+                                        <p>Giá tự cập nhật khi thay đổi số lượng đặt mua.</p>
+                                    </div>
+                                    <i class="fa fa-tags"/>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Số lượng</th>
+                                                <th>Khung giá</th>
+                                                <th>Giá (VND)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="oms_price_table"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <p t-if="not product._is_add_to_cart_possible() and not product.active" class="alert alert-warning">Sản phẩm này không còn khả dụng.</p>
+                            <p t-if="not product._is_add_to_cart_possible() and product.active" class="alert alert-warning">Sản phẩm chưa có biến thể hợp lệ.</p>
+
+                            <div class="oms_pd_stock_panel">
+                                <div class="oms_pd_stock_status oms_pd_stock_ok" t-if="product.website_published and not ('oms_show_low_stock_warning' in product._fields and product.oms_show_low_stock_warning)">
+                                    <i class="fa fa-check-circle"/>
+                                    <div><strong>Đang kinh doanh</strong><span t-if="'oms_available_qty' in product._fields">Tồn OMS khả dụng: <t t-out="product.oms_available_qty"/></span><span t-else="">Có thể đặt hàng / liên hệ NVKD để xác nhận tồn kho.</span></div>
+                                </div>
+                                <div class="oms_pd_stock_status oms_pd_stock_warn" t-if="product.website_published and 'oms_show_low_stock_warning' in product._fields and product.oms_show_low_stock_warning">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                    <div><strong>Sắp hết hàng</strong><span t-out="product.oms_low_stock_warning_message_display or 'Vui lòng liên hệ NVKD để xác nhận tồn kho.'"/></div>
+                                </div>
+                                <div class="oms_pd_stock_status oms_pd_stock_warn" t-if="not product.website_published">
+                                    <i class="fa fa-exclamation-circle"/>
+                                    <div><strong>Tạm ngưng kinh doanh</strong><span>Vui lòng liên hệ NVKD để biết thêm thông tin.</span></div>
+                                </div>
+                            </div>
+
+                            <div id="contact_us_wrapper" t-attf-class="{{'d-flex' if combination_info['prevent_zero_price_sale'] else 'd-none'}} oms_pd_contact_wrapper oe_structure oe_structure_solo">
+                                <section class="s_text_block" data-snippet="s_text_block" data-name="Text">
+                                    <a t-att-href="website.contact_us_button_url" class="btn oms_pd_contact_btn">Liên hệ NVKD</a>
+                                </section>
+                            </div>
+                            <div id="o_product_terms_and_share" class="d-flex justify-content-between flex-column flex-md-row align-items-md-end gap-3 mb-0"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

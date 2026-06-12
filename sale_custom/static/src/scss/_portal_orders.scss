@@ -1,0 +1,361 @@
+/* ============================================================
+   DAT — /my/orders redesign
+   Uses brand tokens from _portal_brand.scss
+   ============================================================ */
+
+.o_portal .oms_portal_orders_page {
+    color: var(--dat-text);
+
+    .dat-eyebrow {
+        color: var(--dat-muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+        text-transform: uppercase;
+
+        &--ondark { color: rgba(255, 255, 255, 0.78); }
+    }
+
+    /* ---------- Brand banner ---------- */
+    .dat-orders-banner__grid {
+        align-items: center;
+        column-gap: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem;
+        row-gap: 14px;
+    }
+
+    .dat-orders-banner__name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-top: 0.15rem;
+    }
+
+    .dat-orders-banner__updated {
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-top: 0.4rem;
+    }
+
+    .dat-orders-banner__avail {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: var(--dat-radius-sm);
+        min-width: 220px;
+        padding: 0.7rem 1rem;
+        text-align: right;
+    }
+
+    .dat-orders-banner__avail-value {
+        font-size: 1.45rem;
+        font-variant-numeric: tabular-nums;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-top: 0.15rem;
+    }
+
+    .dat-orders-banner__avail-sub {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    /* ---------- Compact KPI strip ---------- */
+    .dat-kpi-strip {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .dat-kpi {
+        --c: var(--dat-primary);
+        align-items: center;
+        background: var(--dat-surface);
+        border: 1px solid var(--dat-line);
+        border-left: 3px solid var(--c);
+        border-radius: var(--dat-radius-sm);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+        display: flex;
+        gap: 0.7rem;
+        min-width: 0;
+        padding: 0.7rem 0.85rem;
+        transition: box-shadow 0.16s ease, transform 0.16s ease;
+
+        &:hover { box-shadow: var(--dat-shadow-hover); transform: translateY(-1px); }
+
+        &--credit { --c: var(--dat-info); }
+        &--sales { --c: #475569; }
+        &--debt { --c: var(--dat-danger); }
+        &--advance { --c: var(--dat-success); }
+    }
+
+    .dat-kpi__icon {
+        align-items: center;
+        background: color-mix(in srgb, var(--c) 12%, transparent);
+        border-radius: 10px;
+        color: var(--c);
+        display: flex;
+        flex: 0 0 auto;
+        font-size: 1rem;
+        height: 38px;
+        justify-content: center;
+        width: 38px;
+    }
+
+    .dat-kpi__body { min-width: 0; }
+
+    .dat-kpi__label {
+        color: var(--dat-muted);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1.25;
+        text-transform: uppercase;
+    }
+
+    .dat-kpi__value {
+        color: var(--dat-ink);
+        font-size: 1.02rem;
+        font-variant-numeric: tabular-nums;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* ---------- Toolbar ---------- */
+    .dat-orders-toolbar {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        justify-content: space-between;
+    }
+
+    .dat-chips {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .dat-chip {
+        background: var(--dat-surface);
+        border: 1px solid var(--dat-line);
+        border-radius: var(--dat-radius-pill);
+        color: var(--dat-text);
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0.45rem 0.85rem;
+        transition: all 0.15s ease;
+
+        &:hover { border-color: var(--dat-primary); color: var(--dat-primary); }
+
+        &.is-active {
+            background: var(--dat-primary);
+            border-color: var(--dat-primary);
+            box-shadow: var(--dat-shadow-cta);
+            color: #fff;
+        }
+    }
+
+    .dat-orders-toolbar__right {
+        display: inline-flex;
+        gap: 0.4rem;
+    }
+
+    /* ---------- Action group (shared table + cards) ---------- */
+    .dat-actions {
+        align-items: center;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        justify-content: flex-end;
+
+        form { display: inline-flex; margin: 0; }
+
+        .btn { white-space: nowrap; }
+    }
+
+    /* ---------- Desktop table ---------- */
+    .dat-orders-table-card { overflow: hidden; padding: 0; }
+
+    .dat-orders-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+
+        thead th {
+            background: var(--dat-surface-2);
+            border-bottom: 1px solid var(--dat-line);
+            color: var(--dat-muted);
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            padding: 0.85rem 0.6rem;
+            text-transform: uppercase;
+        }
+
+        tbody td {
+            border-top: 1px solid var(--dat-line-soft);
+            color: var(--dat-text);
+            font-size: 0.88rem;
+            padding: 0.72rem 0.6rem;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: background 0.16s ease;
+            &:hover { background: #f8fbff; }
+            &:first-child td { border-top: 0; }
+        }
+
+        .dat-orders-row__id {
+            color: var(--dat-primary);
+            font-weight: 800;
+            text-decoration: none;
+            &:hover { color: var(--dat-primary-700); text-decoration: underline; text-underline-offset: 3px; }
+        }
+
+        .dat-orders-row__amount { color: var(--dat-ink); font-variant-numeric: tabular-nums; }
+
+        .dat-orders-table__actions { min-width: 300px; white-space: nowrap; }
+    }
+
+    /* ---------- Mobile / tablet cards ---------- */
+    .dat-orders-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .dat-order-card {
+        padding: 0.9rem 1rem;
+
+        &__top {
+            align-items: center;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+
+        &__id {
+            color: var(--dat-primary);
+            font-size: 1rem;
+            font-weight: 800;
+            text-decoration: none;
+            &:hover { text-decoration: underline; }
+        }
+
+        &__amount {
+            color: var(--dat-ink);
+            font-size: 1.2rem;
+            font-variant-numeric: tabular-nums;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin: 0.35rem 0 0.6rem;
+        }
+
+        &__meta {
+            border-top: 1px dashed var(--dat-line);
+            display: grid;
+            gap: 0.5rem 1rem;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding-top: 0.6rem;
+        }
+
+        &__cell { display: flex; flex-direction: column; min-width: 0; }
+
+        &__k {
+            color: var(--dat-muted);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        &__v {
+            color: var(--dat-text);
+            font-size: 0.88rem;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__actions {
+            border-top: 1px solid var(--dat-line-soft);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+
+            .dat-actions { justify-content: flex-start; width: 100%; }
+            .dat-actions .btn,
+            .dat-actions form { flex: 1 1 auto; }
+            .dat-actions .btn { justify-content: center; }
+        }
+    }
+
+    /* ---------- Client-side payment filter ---------- */
+    .dat-orders-row.is-hidden,
+    .dat-order-card.is-hidden { display: none !important; }
+
+    .dat-chips-empty {
+        color: var(--dat-muted);
+        font-weight: 600;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    /* ---------- Empty state ---------- */
+    .dat-empty {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 3rem 1.5rem;
+        text-align: center;
+
+        &__icon {
+            align-items: center;
+            background: var(--dat-primary-050);
+            border-radius: 50%;
+            color: var(--dat-primary);
+            display: flex;
+            font-size: 1.6rem;
+            height: 64px;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            width: 64px;
+
+            &--muted { background: var(--dat-surface-2); color: var(--dat-muted); }
+        }
+
+        &__title { color: var(--dat-ink); font-size: 1.05rem; font-weight: 800; }
+        &__text { color: var(--dat-muted); max-width: 420px; }
+    }
+
+    /* ---------- Responsive ---------- */
+    @include media-breakpoint-down(xl) {
+        .dat-kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @include media-breakpoint-down(md) {
+        .dat-orders-banner__grid { flex-direction: column; align-items: stretch; }
+        .dat-orders-banner__avail { text-align: left; }
+        .dat-orders-toolbar { align-items: stretch; flex-direction: column; }
+        .dat-orders-toolbar__right { justify-content: flex-end; }
+    }
+
+    @include media-breakpoint-down(sm) {
+        .dat-kpi-strip { grid-template-columns: 1fr; }
+        .dat-order-card__meta { grid-template-columns: 1fr; }
+    }
+}
