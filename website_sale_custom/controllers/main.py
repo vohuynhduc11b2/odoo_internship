@@ -398,16 +398,8 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
         website = request.env['website'].get_current_website()
         website_domain = website.website_domain()
-        if ppg:
-            try:
-                ppg = int(ppg)
-                post['ppg'] = ppg
-            except ValueError:
-                ppg = False
-        if not ppg:
-            ppg = website.shop_ppg or 48
-            if ppg < 48:
-                ppg = 48
+        ppg = 20
+        post.pop('ppg', None)
 
         ppr = website.shop_ppr or 4
 

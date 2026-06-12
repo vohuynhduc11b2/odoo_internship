@@ -72,10 +72,6 @@ const initOmsShop = () => {
     const excelFileLabel = root.querySelector('.oms_excel_file_label');
     const quickCartTextarea = root.querySelector('.oms_quick_cart_textarea');
     const quickCartImportButton = root.querySelector('.oms_quick_cart_import_btn');
-    const initialVisibleLimit = 48;
-    const loadMoreStep = 12;
-    let visibleLimit = initialVisibleLimit;
-
     if (!cards.length) {
         return;
     }
@@ -154,11 +150,11 @@ const initOmsShop = () => {
         cards.forEach((card) => {
             card.hidden = true;
         });
-        matchingCards.slice(0, visibleLimit).forEach((card) => {
+        matchingCards.forEach((card) => {
             card.hidden = false;
         });
 
-        const shownCount = Math.min(visibleLimit, matchingCards.length);
+        const shownCount = matchingCards.length;
         if (visibleCountElement) {
             visibleCountElement.textContent = shownCount.toString();
         }
@@ -174,8 +170,6 @@ const initOmsShop = () => {
         updateActiveFilters();
     };
 
-    const debouncedApplyFilter = debounce(applyFilter, 500);
-    
     // Auto-submit form to server for global search
     // Debounce 500ms to avoid too many requests
     let searchTimeout;
@@ -203,7 +197,6 @@ const initOmsShop = () => {
             if (!activeCategory && categoryRadios[0]) {
                 categoryRadios[0].checked = true;
             }
-            visibleLimit = initialVisibleLimit;
             applyFilter();
         });
     });
@@ -214,7 +207,6 @@ const initOmsShop = () => {
             categoryChips.forEach((chip) => {
                 chip.classList.toggle('active', normalize(chip.dataset.filterValue) === activeCategory);
             });
-            visibleLimit = initialVisibleLimit;
             applyFilter();
         });
     });
@@ -233,7 +225,6 @@ const initOmsShop = () => {
             syncTagFilters();
             return;
         }
-        visibleLimit = initialVisibleLimit;
         applyFilter();
     }));
 
@@ -245,7 +236,6 @@ const initOmsShop = () => {
             input.value = '';
         }
         resetCategoryFilter();
-        visibleLimit = initialVisibleLimit;
         syncTagFilters();
     };
 
@@ -259,14 +249,12 @@ const initOmsShop = () => {
         }
         if (button.dataset.filterType === 'category') {
             resetCategoryFilter();
-            visibleLimit = initialVisibleLimit;
             applyFilter();
             return;
         }
         const checkbox = brandChecks.find((item) => item.value === button.dataset.filterValue);
         if (checkbox) {
             checkbox.checked = false;
-            visibleLimit = initialVisibleLimit;
             if (checkbox.name === 'tags') {
                 syncTagFilters();
                 return;
