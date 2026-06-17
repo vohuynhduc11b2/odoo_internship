@@ -147,3 +147,10 @@ access_sale_custom_order_head,sale_custom_order head,sale_custom.model_sale_cust
 
 access_sale_custom_order_logis_ro,sale_custom.order logistics readonly,sale_custom.model_sale_custom_order,sale_custom.group_logistics,1,0,0,0
 access_sale_custom_order_line_logis_w,sale_custom.order.line logistics write,sale_custom.model_sale_custom_order_line,sale_custom.group_logistics,1,1,0,0
+
+access_oms_customer_pricelist_user,oms.customer.pricelist user,model_oms_customer_pricelist,base.group_user,1,1,1,1
+access_oms_customer_pricelist_manager,oms.customer.pricelist manager,model_oms_customer_pricelist,sales_team.group_sale_manager,1,1,1,1
+access_oms_customer_pricelist_salesman,oms.customer.pricelist salesman,model_oms_customer_pricelist,sales_team.group_sale_salesman,1,1,1,1
+
+access_oms_pricelist_frame_user,oms.pricelist.frame user,model_oms_pricelist_frame,base.group_user,1,1,1,1
+access_oms_pricelist_frame_manager,oms.pricelist.frame manager,model_oms_pricelist_frame,sales_team.group_sale_manager,1,1,1,1

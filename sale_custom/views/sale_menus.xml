@@ -402,5 +402,33 @@
               sequence="52"
               groups="sales_team.group_sale_manager"
               />
-    
+
+    <!-- ============ OMS: AUT Pricelist Menus ============ -->
+    <menuitem id="menu_oms_aut_pricelist_root"
+        name="Bảng giá AUT"
+        parent="menu_sale_config"
+        sequence="53"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_aut_pricelist"
+        name="Bảng giá AUT"
+        parent="menu_oms_aut_pricelist_root"
+        action="action_oms_aut_pricelist"
+        sequence="10"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_customer_pricelist"
+        name="Gán bảng giá khách hàng"
+        parent="menu_oms_aut_pricelist_root"
+        action="action_oms_customer_pricelist"
+        sequence="20"
+        groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_oms_customer_pricelist_import"
+        name="Import Gán Bảng giá"
+        parent="menu_oms_aut_pricelist_root"
+        action="action_oms_customer_pricelist_import"
+        sequence="30"
+        groups="sales_team.group_sale_manager"/>
+
 </odoo>

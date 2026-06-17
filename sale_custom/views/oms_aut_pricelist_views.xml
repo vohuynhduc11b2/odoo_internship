@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action cho Bảng giá AUT -->
+    <record id="action_oms_aut_pricelist" model="ir.actions.act_window">
+        <field name="name">Bảng giá AUT</field>
+        <field name="res_model">product.pricelist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('x_is_aut_pricelist', '=', True)]</field>
+        <field name="context">{'default_x_is_aut_pricelist': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có bảng giá AUT nào.
+            </p>
+            <p>
+                Bảng giá AUT là các bảng giá được đồng bộ từ hệ thống BE.
+                Chúng được nhóm theo khung giá và có thể được gán cho khách hàng.
+            </p>
+        </field>
+    </record>
+
+    <!-- List View mở rộng cho product.pricelist AUT -->
+    <record id="view_product_pricelist_aut_list" model="ir.ui.view">
+        <field name="name">product.pricelist.aut.list</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="x_is_aut_pricelist" optional="show"/>
+                <field name="x_is_strategic" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_be_price_frame_id" optional="show"/>
+                <field name="x_frame_publish_pricelist_ids" widget="many2many_tags" optional="show"/>
+                <field name="x_frame_max_qty" optional="show"/>
+                <field name="x_category_id" optional="show"/>
+                <field name="x_group_code" optional="show"/>
+                <field name="x_level_code" optional="show"/>
+                <field name="x_last_sync_date" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -110,4 +110,31 @@
         </field>
     </record>
 
+    <!-- Mở rộng view partner để thêm tab Bảng giá áp dụng -->
+    <record id="res_partner_view_form_pricelist_assignments" model="ir.ui.view">
+        <field name="name">res.partner.view.form.pricelist.assignments</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority" eval="95"/>
+        <field name="arch" type="xml">
+            <!-- Thêm tab Bảng giá áp dụng sau tab Internal Notes -->
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page name="oms_pricelist_assignments" string="Bảng giá áp dụng"
+                    groups="sales_team.group_sale_salesman">
+                    <group>
+                        <group>
+                            <field name="x_oms_card_code" readonly="1"/>
+                        </group>
+                        <group>
+                            <p class="text-muted">
+                                Sử dụng menu <b>Sales &gt; Configuration &gt; Bảng giá AUT &gt; Gán bảng giá khách hàng</b> 
+                                để quản lý bảng giá cho khách hàng.
+                            </p>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

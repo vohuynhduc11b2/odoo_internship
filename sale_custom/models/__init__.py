@@ -42,3 +42,5 @@ from . import oms_qr_payment_wizard
 from . import oms_pricelist_frame
 from . import res_config_settings_auto_purchase_promo
 from . import sale_order_auto_purchase_promo
+from . import oms_customer_pricelist
+from . import product_pricelist

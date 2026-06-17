@@ -7,6 +7,8 @@ import unicodedata
 from datetime import date
 from collections import defaultdict
 
+_logger = logging.getLogger(__name__)
+
 MAX_BG_PRICE_TYPE = 99
 PRICE_TYPE_SELECTION = [
     (f"BG{idx:02d}", f"BG{idx:02d}")
@@ -160,6 +162,16 @@ class OmsPriceList(models.Model):
         string="Odoo Pricelist",
         copy=False,
         tracking=True,
+    )
+
+    frame_ids = fields.Many2many(
+        "oms.pricelist.frame",
+        "oms_price_list_frame_rel",
+        "pricelist_id",
+        "frame_id",
+        string="Khung giá OMS liên quan",
+        readonly=True,
+        help="Các khung giá OMS đã publish vào bảng giá này.",
     )
 
 
@@ -754,9 +766,10 @@ class OmsPriceList(models.Model):
             elif p_new == p_cur and float(line.price) < float(cur.price):
                 chosen_lines[key] = line
 
-        def _sync_to_pricelist(target_pricelist, chosen_lines, *, update_existing, cleanup_product_ids=None):
+        def _sync_to_pricelist(target_pricelist, chosen_lines, *, update_existing, cleanup_product_ids=None, oms_meta=None):
             created = 0
             updated = 0
+            oms_meta = oms_meta or {}
 
             chosen_keys = set(chosen_lines)
             product_ids = set(cleanup_product_ids or []) | {key[0] for key in chosen_keys}
@@ -806,6 +819,9 @@ class OmsPriceList(models.Model):
                     vals["oms_price_frame_name"] = frame_name
                 if "oms_max_quantity" in PricelistItem._fields:
                     vals["oms_max_quantity"] = max_qty
+                if "oms_category_name" in PricelistItem._fields:
+                    # Lấy category_name từ OMS Price List metadata (bảng giá nguồn)
+                    vals["oms_category_name"] = oms_meta.get("category_name", "")
 
                 if existing:
                     if update_existing:
@@ -813,7 +829,7 @@ class OmsPriceList(models.Model):
                         updated += len(existing)
                     continue
 
-                PricelistItem.create({
+                create_vals = {
                     "pricelist_id": target_pricelist.id,
                     "applied_on": "0_product_variant",
                     "product_id": product_id,
@@ -822,10 +838,11 @@ class OmsPriceList(models.Model):
                     "min_quantity": min_qty,
                     "date_start": date_start,
                     "date_end": date_end,
-                    **({"oms_price_frame_id": frame.id if frame else False} if "oms_price_frame_id" in PricelistItem._fields else {}),
-                    **({"oms_price_frame_name": frame_name} if "oms_price_frame_name" in PricelistItem._fields else {}),
-                    **({"oms_max_quantity": max_qty} if "oms_max_quantity" in PricelistItem._fields else {}),
-                })
+                }
+                # Merge vals vào create_vals
+                create_vals.update(vals)
+                
+                PricelistItem.create(create_vals)
                 created += 1
 
             return created, updated
@@ -887,18 +904,68 @@ class OmsPriceList(models.Model):
         configured_target_ids.update([default_pl.id, special_pl.id])
 
         target_lines = defaultdict(dict)
+        target_aut_meta = {}
+        frame_ids_by_oms_pricelist = defaultdict(set)
         touched_product_ids = set()
         source_names = []
         valid_line_count = 0
 
+        def _get_or_create_oms_pricelist(category_id, category_name, oms_pricelist_name):
+            """Tìm hoặc tạo bảng giá [OMS] {category_name} cho category cụ thể."""
+            pl_name = f"[OMS] {category_name}"
+            pl = ProductPricelist.search([
+                ('name', '=ilike', pl_name),
+                ('active', '=', True),
+            ], limit=1)
+            if not pl:
+                pl = _get_or_create_pricelist(pl_name)
+                configured_target_ids.add(pl.id)
+                _logger.info(f"  Auto-created pricelist '{pl_name}' for category_id={category_id}")
+            return pl
+
+        def _get_category_targets(category_id, category_name, oms_pricelist_name, configured_ids):
+            """
+            Trả về target pricelists:
+            1.Ưu tiên: bảng giá trong configured_ids CÓ x_category_id trùng category_id
+            2.Fallback: tìm/tạo [OMS] {category_name} nếu không có target nào đúng category
+            """
+            if not category_id:
+                return ProductPricelist.browse()
+
+            # Ưu tiên 1: target nào có x_category_id trùng
+            cat_matching = ProductPricelist.search([
+                ('id', 'in', list(configured_ids)),
+                ('x_category_id', '=', category_id),
+                ('active', '=', True),
+            ])
+            if cat_matching:
+                return cat_matching
+
+            # Fallback 2: tìm/tạo [OMS] {category_name}
+            return _get_or_create_oms_pricelist(category_id, category_name, oms_pricelist_name)
+
         for oms_pricelist in self:
             category_id = int(oms_pricelist.category_id or 0)
+            category_name = oms_pricelist.category_name or ""
             source_names.append(oms_pricelist.display_name)
+            _logger.info(f"=== Publishing OMS PriceList: {oms_pricelist.display_name} (CategoryId={category_id}, CategoryName='{category_name}') ===")
 
-            for line in oms_pricelist.line_ids:
+            # Cache category target cho toàn bộ lines của OMS pricelist này
+            _category_target_cache = {}
+
+            for idx, line in enumerate(oms_pricelist.line_ids):
                 if not line.item_id or not line.price or line.price <= 0:
+                    skip_reason = ""
+                    if not line.item_id:
+                        skip_reason = "no item_id"
+                    elif not line.price:
+                        skip_reason = "no price"
+                    elif line.price <= 0:
+                        skip_reason = f"price <= 0 ({line.price})"
+                    _logger.warning(f"  Line {idx}: SKIP - {skip_reason}")
                     continue
                 valid_line_count += 1
+                _logger.info(f"  Line {idx}: Product={line.item_id.name}, Price={line.price}, Frame={line.price_frame_id.price_list_name if line.price_frame_id else 'N/A'}")
 
                 mapped_frame = False
                 if line.price_frame_name:
@@ -919,25 +986,76 @@ class OmsPriceList(models.Model):
                         "price_frame_name": mapped_frame.price_list_name,
                     })
 
-                target_pricelists = (
+                # Lấy target từ frame config
+                frame_targets = (
                     mapped_frame.publish_pricelist_ids
                     if mapped_frame
                     else ProductPricelist.browse()
                 )
 
-                for target_pricelist in target_pricelists:
+                # Nếu frame config không target đúng category → dùng category fallback
+                if frame_targets and category_id:
+                    has_category_match = any(
+                        t.x_category_id and int(t.x_category_id) == category_id
+                        for t in frame_targets
+                    )
+                    if not has_category_match:
+                        frame_targets = _get_category_targets(
+                            category_id, category_name, oms_pricelist.display_name, configured_target_ids
+                        )
+                        _logger.info(f"    Frame fallback: dùng category target '{frame_targets.name}' (category_id={category_id})")
+                elif not frame_targets and category_id:
+                    frame_targets = _get_category_targets(
+                        category_id, category_name, oms_pricelist.display_name, configured_target_ids
+                    )
+
+                # Auto-add frame to OMS pricelist if not already there
+                if mapped_frame and mapped_frame not in oms_pricelist.frame_ids:
+                    oms_pricelist.frame_ids = [(4, mapped_frame.id)]
+                    _logger.info(f"    Frame '{mapped_frame.price_list_name}' được add vào OMS PriceList '{oms_pricelist.name}'")
+
+                if mapped_frame:
+                    _logger.info(f"    Frame: {mapped_frame.price_list_name}, Target Pricelists: {[p.name for p in frame_targets]}")
+                else:
+                    _logger.warning(f"    WARNING: No frame mapped for line {idx}")
+
+                for target_pricelist in frame_targets:
                     _keep_best_line(target_lines[target_pricelist.id], line)
+                    if mapped_frame:
+                        frame_ids_by_oms_pricelist[oms_pricelist.id].add(mapped_frame.id)
+                    meta = target_aut_meta.setdefault(target_pricelist.id, {
+                        "be_price_frame_id": False,
+                        "category_name": False,
+                        "source_pricelist_code": False,
+                        "sync_key": False,
+                        "category_id": False,
+                        "version": False,
+                    })
+                    if mapped_frame and not meta["be_price_frame_id"]:
+                        meta["be_price_frame_id"] = mapped_frame.id
+                    if oms_pricelist.category_name and not meta["source_pricelist_code"]:
+                        meta["source_pricelist_code"] = oms_pricelist.name
+                    if not meta["category_name"]:
+                        meta["category_name"] = oms_pricelist.category_name or oms_pricelist.name
+                    if not meta["category_id"]:
+                        meta["category_id"] = oms_pricelist.category_id or False
+                    if not meta["version"]:
+                        meta["version"] = oms_pricelist.version or False
 
                 publish_products = line.item_id | oms_pricelist._get_base_price_child_products(line.item_id)
                 touched_product_ids.update(publish_products.ids)
                 for child_product in publish_products - line.item_id:
-                    for target_pricelist in target_pricelists:
+                    for target_pricelist in frame_targets:
                         _keep_best_line(target_lines[target_pricelist.id], line, product=child_product)
 
         if not valid_line_count:
+            _logger.error("ERROR: Không có dòng giá hợp lệ để publish. Check logs trên để xem dòng nào bị skip.")
             raise UserError("Không có dòng giá hợp lệ để publish.")
 
+        _logger.info(f"Total valid lines: {valid_line_count}, Target lines: {len(target_lines)}")
+        
         if not target_lines:
+            _logger.error("ERROR: Không có bảng giá nào để publish. Kiểm tra 'Bảng giá lấy' trên UC PriceList Frame.")
             raise UserError(
                 "Không có bảng giá nào để publish. Hãy chọn 'Bảng giá lấy' trên UC PriceList Frame."
             )
@@ -946,20 +1064,43 @@ class OmsPriceList(models.Model):
 
         publish_results = {}
         sync_target_ids = configured_target_ids | set(target_lines)
+        _logger.info(f"=== Syncing to Pricelists ===")
         for target_id in sync_target_ids:
             target_pricelist = ProductPricelist.browse(target_id).exists()
             if not target_pricelist:
                 continue
             chosen_lines = target_lines.get(target_id, {})
+            oms_meta = target_aut_meta.get(target_id, {})
 
             created, updated = _sync_to_pricelist(
                 target_pricelist,
                 chosen_lines,
                 update_existing=True,
                 cleanup_product_ids=touched_product_ids,
+                oms_meta=oms_meta,
             )
+            _logger.info(f"Target Pricelist: {target_pricelist.name}, Items: {len(chosen_lines)}, Created: {created}, Updated: {updated}")
             if not chosen_lines:
                 continue
+
+            meta = target_aut_meta.get(target_id)
+            if meta:
+                aut_vals = {}
+                if meta.get("be_price_frame_id"):
+                    aut_vals["x_be_price_frame_id"] = meta["be_price_frame_id"]
+                if meta.get("source_pricelist_code"):
+                    aut_vals["x_source_pricelist_code"] = meta["source_pricelist_code"]
+                # category_id giờ là Many2one → ghi trực tiếp ID
+                if meta.get("category_id"):
+                    cat_id = meta["category_id"]
+                    if isinstance(cat_id, int):
+                        aut_vals["x_category_id"] = cat_id
+                    elif isinstance(cat_id, models.BaseModel):
+                        aut_vals["x_category_id"] = cat_id.id
+                    # category_name sẽ tự resolve qua related field x_category_id.display_name
+                if aut_vals:
+                    target_pricelist.sudo().write(aut_vals)
+
             publish_results[target_pricelist.display_name] = {
                 "lines": len(chosen_lines),
                 "created": created,
@@ -970,6 +1111,11 @@ class OmsPriceList(models.Model):
             raise UserError("Không tìm thấy bảng giá đích còn hoạt động để publish.")
 
         self.write({"odoo_pricelist_id": default_pl.id})
+
+        for oms_pl in self:
+            frame_ids = frame_ids_by_oms_pricelist.get(oms_pl.id, [])
+            if frame_ids:
+                oms_pl.sudo().write({"frame_ids": [(6, 0, list(frame_ids))]})
 
         _logger.info(
             "Publish OMS->Odoo aggregated done sources=%s results=%s",
@@ -1047,11 +1193,163 @@ class ProductPricelistItem(models.Model):
         "oms.pricelist.frame",
         string="OMS Price Frame",
         index=True,
-        readonly=True,
+        readonly=False,
+        store=True,
     )
-    oms_price_frame_name = fields.Char(string="OMS Price Frame Name", readonly=True)
-    oms_max_quantity = fields.Float(string="OMS Max Quantity", readonly=True)
+    oms_price_frame_name = fields.Char(
+        string="OMS Price Frame Name",
+        related="oms_price_frame_id.price_list_name",
+        readonly=True,
+        store=True,
+    )
+    oms_max_quantity = fields.Float(
+        string="OMS Max Quantity",
+        related="oms_price_frame_id.max_qty",
+        readonly=True,
+        store=True,
+    )
+    oms_category_name = fields.Char(
+        string="Category Name",
+        related="oms_price_frame_id.category_name",
+        readonly=True,
+        store=True,
+    )
+    x_item_code = fields.Char(string="Item Code", index=True)
+    x_group_code = fields.Char(string="Group Code", index=True)
+    x_level_code = fields.Char(string="Level Code", index=True)
 
+    def _get_mapped_price_frame(self):
+        """
+        Helper method để lấy price_frame_id phù hợp cho product_id.
+        Tìm frame dựa trên:
+        1. Product trực tiếp trong OMS pricelist
+        2. Hoặc lấy frame từ same category + price_type tương ứng
+        
+        Returns:
+            int: Frame ID hoặc False
+        """
+        if not self.product_id:
+            return False
+
+        try:
+            line_obj = self.env["oms.price.list.line"].sudo()
+            Frame = self.env["oms.pricelist.frame"].sudo()
+            
+            product_id = self.product_id.id
+            
+            # Debug logging
+            _logger.info(f"=== Mapping Price Frame ===")
+            _logger.info(f"Product ID: {product_id}, Name: {self.product_id.name}")
+            if self.pricelist_id:
+                _logger.info(f"AUT Pricelist: {self.pricelist_id.name}")
+                _logger.info(f"AUT Category: {self.pricelist_id.x_category_id}")
+            
+            # PHƯƠNG PHÁP 1: Tìm OMS line trực tiếp với product + frame
+            oms_lines_with_frame = line_obj.search([
+                ("item_id", "=", product_id),
+                ("price_frame_id", "!=", False),
+                ("pricelist_id.active", "=", True),
+            ], order="pricelist_id,id")
+            
+            all_frame_ids = oms_lines_with_frame.mapped("price_frame_id").ids
+            _logger.info(f"Method 1 (direct): Found {len(all_frame_ids)} frames with product")
+            
+            if all_frame_ids:
+                # Filter by category if available
+                if self.pricelist_id and self.pricelist_id.x_category_id:
+                    cat_frames = Frame.search([
+                        ("id", "in", all_frame_ids),
+                        ("category_id", "=", self.pricelist_id.x_category_id.id),
+                        ("active", "=", True),
+                    ], order="id", limit=1)
+                    
+                    if cat_frames:
+                        _logger.info(f"Found frame by category: {cat_frames.price_list_name}")
+                        return cat_frames.id
+                
+                # Fallback: use any found frame
+                first_frame = Frame.browse(all_frame_ids[0]).exists()
+                if first_frame:
+                    _logger.info(f"Using fallback frame: {first_frame.price_list_name}")
+                    return first_frame.id
+            
+            # PHƯƠNG PHÁP 2: Nếu không tìm thấy với product+frame, 
+            # tìm OMS lines có product nhưng chưa publish (price_frame_id = False)
+            # rồi lấy frame dựa trên price_type
+            _logger.info("Method 1 found no frames, trying Method 2...")
+            
+            unpublished_lines = line_obj.search([
+                ("item_id", "=", product_id),
+                ("pricelist_id.active", "=", True),
+            ])
+            
+            _logger.info(f"Found {len(unpublished_lines)} unpublished OMS lines with product")
+            
+            if unpublished_lines:
+                # Get price_types from unpublished lines
+                price_types = set(unpublished_lines.mapped("price_type"))
+                _logger.info(f"Price types: {price_types}")
+                
+                # Try to find frames matching these price_types
+                if self.pricelist_id and self.pricelist_id.x_category_id:
+                    for price_type in price_types:
+                        frame_by_type = Frame.search([
+                            ("category_id", "=", self.pricelist_id.x_category_id.id),
+                            ("active", "=", True),
+                        ], order="id", limit=1)
+                        
+                        if frame_by_type:
+                            _logger.info(f"Found frame by category+type: {frame_by_type.price_list_name}")
+                            return frame_by_type.id
+                
+                # Fallback: get any frame from same category
+                if self.pricelist_id and self.pricelist_id.x_category_id:
+                    any_frame = Frame.search([
+                        ("category_id", "=", self.pricelist_id.x_category_id.id),
+                        ("active", "=", True),
+                    ], order="id", limit=1)
+                    
+                    if any_frame:
+                        _logger.info(f"Found frame by category: {any_frame.price_list_name}")
+                        return any_frame.id
+            
+            _logger.info("No suitable frame found")
+            return False
+            
+        except Exception as e:
+            _logger.error(f"Error in _get_mapped_price_frame: {str(e)}", exc_info=True)
+            return False
+
+    def action_sync_price_frame(self):
+        """
+        Action button để thực hiện mapping khung giá OMS cho dòng này.
+        Dùng khi user muốn thực hiện sync thủ công.
+        """
+        self.ensure_one()
+        mapped_frame_id = self._get_mapped_price_frame()
+        if mapped_frame_id:
+            self.oms_price_frame_id = mapped_frame_id
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Thành công',
+                    'message': f'Đã mapping khung giá OMS thành công!',
+                    'type': 'success',
+                    'sticky': False,
+                },
+            }
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Không tìm thấy',
+                    'message': f'Không tìm thấy khung giá OMS cho sản phẩm này!',
+                    'type': 'warning',
+                    'sticky': False,
+                },
+            }
 
 class OmsPriceListLine(models.Model):
     _name = "oms.price.list.line"
@@ -1087,9 +1385,19 @@ class OmsPriceListLine(models.Model):
         store=True,
         readonly=True,
     )
+    price_frame_name = fields.Char(
+        string="Price Frame Name",
+        index=True,
+        readonly=True,
+    )
+    max_qty_frame = fields.Integer(
+        string="Max Qty (Frame)",
+        default=9999999,
+        readonly=True,
+        help="Max Quantity từ khung giá UC PriceList Frame.",
+    )
 
     price = fields.Float(string="Giá", required=True)
-    price_frame_name = fields.Char(string="Price Frame Name", index=True, readonly=True)
     is_invoice = fields.Boolean(string="Is Invoice")
     group_code_solar = fields.Char(string="Group Code Solar")
     level_code = fields.Char(string="Level Code")

@@ -1664,7 +1664,18 @@ class SaleOrder(models.Model):
                 order.pricelist_id = pl
                 continue
 
-            # Fallback: theo partner (logic cũ)
+            # 4) Lấy từ oms.customer.pricelist (theo tài liệu AUT)
+            if order.partner_id:
+                CustomerPricelist = self.env['oms.customer.pricelist'].sudo()
+                at_date = order.date_order.date() if order.date_order else fields.Date.today()
+                pl_from_cust = CustomerPricelist.get_pricelist_for_partner(
+                    order.partner_id, at_date=at_date
+                )
+                if pl_from_cust and pl_from_cust.active:
+                    order.pricelist_id = pl_from_cust
+                    continue
+
+            # 5) Fallback: theo partner property
             if not order.partner_id:
                 order.pricelist_id = False
                 continue

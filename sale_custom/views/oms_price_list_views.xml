@@ -42,15 +42,23 @@
                     <field name="from_date"/>
                     <field name="to_date"/>
                     <field name="note"/>
+                    <field name="frame_ids" widget="many2many_tags" readonly="1"/>
                 </group>
                 <notebook>
                     <page string="Chi tiết bảng giá">
                         <field name="line_ids">
                             <list>
                                 <field name="item_code" string="ItemCode" readonly="1"/>
-                                <field name="api_price_list_id" string="PriceList" readonly="1"/>
+                                <field name="item_id" string="Product" readonly="1" optional="show"/>
+                                <field name="price_frame_name" string="Khung giá" readonly="1"/>
+                                <field name="max_qty_frame" string="Max OMS" readonly="1"/>
                                 <field name="price" string="Price" readonly="1"/>
-                                <field name="price_frame_name" string="ListName" readonly="1"/>
+                                <field name="min_qty" string="Min" readonly="1"/>
+                                <field name="max_qty" string="Max" readonly="1"/>
+                                <field name="group_code_solar" string="Group Code" readonly="1" optional="show"/>
+                                <field name="level_code" string="Level Code" readonly="1" optional="show"/>
+                                <field name="from_date" string="From Date" readonly="1"/>
+                                <field name="to_date" string="To Date" readonly="1"/>
                             </list>
                         </field>
                     </page>

@@ -19,6 +19,23 @@ class ResPartner(models.Model):
     loyalty_card_count = fields.Integer(string="Loyalty Cards", compute="_compute_loyalty_card_count")
 
     # ==========================
+    # Bảng giá áp dụng cho khách hàng
+    # ==========================
+    customer_pricelist_ids = fields.One2many(
+        'oms.customer.pricelist',
+        'partner_id',
+        string='Bảng giá áp dụng',
+        help='Danh sách bảng giá được gán cho khách hàng này.',
+    )
+    
+    customer_pricelist_count = fields.Integer(
+        string='Số bảng giá',
+        compute='_compute_customer_pricelist_count',
+        store=False,
+        help='Số bảng giá đang áp dụng cho khách hàng này.',
+    )
+
+    # ==========================
     # CTKM 2% / 1% (AUTO POLICY)
     # ==========================
     uc_policy_2p1p_active = fields.Boolean(string="Áp dụng policy 2%/1%", default=False)
@@ -65,6 +82,24 @@ class ResPartner(models.Model):
     def _compute_loyalty_card_count(self):
         for r in self:
             r.loyalty_card_count = 0
+
+    def _compute_customer_pricelist_count(self):
+        """Đếm số bảng giá đang áp dụng cho khách hàng."""
+        for partner in self:
+            count = self.env['oms.customer.pricelist'].search_count([
+                ('partner_id', '=', partner.id),
+                ('state', '=', 'active'),
+                ('active', '=', True),
+            ])
+            partner.customer_pricelist_count = count
+
+    def action_view_pricelists(self):
+        """Xem danh sách bảng giá áp dụng cho khách hàng."""
+        self.ensure_one()
+        action = self.env['ir.actions.act_window']._for_xml_id('sale_custom.action_oms_customer_pricelist')
+        action['domain'] = [('partner_id', '=', self.id)]
+        action['context'] = {'default_partner_id': self.id}
+        return action
 
     @api.model
     def _get_sale_order_domain_count(self):

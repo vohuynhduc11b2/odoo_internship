@@ -51,6 +51,7 @@ This module contains all the common features of Sales Management and eCommerce.
         'wizard/oms_price_list_import_export_views.xml',
         'wizard/oms_special_price_import_export_views.xml',
         'wizard/oms_promo_apply_product_ie_views.xml',
+        'wizard/oms_customer_pricelist_import_views.xml',
 
         # Define sale order views before their references
         'views/sale_order_views.xml',
@@ -92,8 +93,17 @@ This module contains all the common features of Sales Management and eCommerce.
         'views/oms_group_price_list_views.xml',
         'views/oms_qr_payment_views.xml',
         'views/oms_pricelist_frame_views.xml', 
+        'views/oms_customer_pricelist_views.xml',
+        'views/oms_aut_pricelist_views.xml',
+        'views/product_pricelist_aut_views.xml',
+        'views/product_pricelist_item_aut_views.xml',
+        'views/res_partner_pricelist_views.xml',
+        'views/product_pricelist_customer_views.xml',
         
         'views/sale_menus.xml',  # Last because referencing actions defined in previous files
+        
+        # Security rules - load at end after models are registered
+        'security/oms_customer_pricelist_rules.xml',
     ],
     'demo': [
         'data/product_demo.xml',

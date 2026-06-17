@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tab Khách hàng áp dụng trên form bảng giá -->
+    <record id="view_product_pricelist_form_customers" model="ir.ui.view">
+        <field name="name">product.pricelist.form.customers</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="customers" string="Khách hàng áp dụng">
+                    <field name="x_customer_pricelist_ids" readonly="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

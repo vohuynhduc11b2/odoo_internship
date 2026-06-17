@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_oms_customer_pricelist_import_form" model="ir.ui.view">
+        <field name="name">oms.customer.pricelist.import.form</field>
+        <field name="model">oms.customer.pricelist.import</field>
+        <field name="arch" type="xml">
+            <form string="Import Gán Bảng giá Khách hàng">
+                <group>
+                    <group>
+                        <field name="file_import" widget="binary"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="overwrite"/>
+                        <p class="text-muted">
+                            Nếu check, các assignment đã tồn tại sẽ bị ghi đè.
+                            Nếu không check, các assignment đã tồn tại sẽ bị bỏ qua.
+                        </p>
+                    </group>
+                </group>
+                <group>
+                    <p class="alert alert-info">
+                        <strong>Cấu trúc file Excel:</strong><br/>
+                        File Excel cần có các cột sau:<br/>
+                        - <strong>card_code</strong>: Mã khách hàng (bắt buộc)<br/>
+                        - <strong>pricelist_name</strong>: Tên bảng giá (bắt buộc)<br/>
+                        - <strong>is_default</strong>: Bảng giá mặc định (True/False, mặc định: False)<br/>
+                        - <strong>priority</strong>: Độ ưu tiên (số, mặc định: 10)<br/>
+                        - <strong>valid_from</strong>: Ngày bắt đầu (định dạng ngày)<br/>
+                        - <strong>valid_to</strong>: Ngày kết thúc (định dạng ngày)<br/>
+                        - <strong>note</strong>: Ghi chú
+                    </p>
+                </group>
+                <footer>
+                    <button name="action_import" string="Import" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_oms_customer_pricelist_import" model="ir.actions.act_window">
+        <field name="name">Import Gán Bảng giá</field>
+        <field name="res_model">oms.customer.pricelist.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

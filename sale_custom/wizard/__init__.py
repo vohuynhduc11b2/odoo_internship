@@ -13,3 +13,4 @@ from . import promotion_multi_apply_wizard
 from . import oms_price_list_import_export
 from . import oms_special_price_import_export
 from . import oms_promo_apply_product_ie
+from . import oms_customer_pricelist_import
