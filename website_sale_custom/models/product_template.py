@@ -262,6 +262,9 @@ class ProductTemplate(models.Model):
         if not self:
             return {}
 
+        # Clear cache to ensure fresh prices are loaded from DB
+        self.env.registry.clear_cache()
+
         try:
             pricelist = website.get_current_pricelist()
         except Exception:

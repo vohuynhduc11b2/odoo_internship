@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 
+
 class OmsSpecialPrice(models.Model):
     _name = "oms.special.price"
     _description = "Special Price for Customer"
@@ -14,6 +15,20 @@ class OmsSpecialPrice(models.Model):
     valid_to = fields.Date(string="Ngày kết thúc", required=True)
 
     line_ids = fields.One2many("oms.special.price.line", "special_price_id", string="Special Price Lines")
+
+    def write(self, vals):
+        """Clear cache when special prices are updated to ensure website prices are refreshed."""
+        res = super().write(vals)
+        if self:
+            self.env.registry.clear_cache()
+        return res
+
+    def unlink(self):
+        """Clear cache when special prices are deleted."""
+        res = super().unlink()
+        if self:
+            self.env.registry.clear_cache()
+        return res
 
     @api.onchange('valid_from', 'valid_to')
     def _onchange_date_sync_lines(self):
@@ -44,6 +59,20 @@ class OmsSpecialPriceLine(models.Model):
     valid_to = fields.Date(string="Valid To", required=True)
     note = fields.Char(string="Note")
 
+    def write(self, vals):
+        """Clear cache when special price lines are updated to ensure website prices are refreshed."""
+        res = super().write(vals)
+        if self:
+            self.env.registry.clear_cache()
+        return res
+
+    def unlink(self):
+        """Clear cache when special price lines are deleted."""
+        res = super().unlink()
+        if self:
+            self.env.registry.clear_cache()
+        return res
+
     @api.model
     def create(self, vals):
         """Tự động lấy ngày tổng khi thêm mới nếu chưa nhập tay."""
@@ -53,7 +82,10 @@ class OmsSpecialPriceLine(models.Model):
             vals['valid_from'] = price.valid_from
         if not vals.get('valid_to') and price and price.valid_to:
             vals['valid_to'] = price.valid_to
-        return super().create(vals)
+        result = super().create(vals)
+        if result:
+            self.env.registry.clear_cache()
+        return result
 
     @api.onchange('special_price_id')
     def _onchange_special_price_id(self):

@@ -174,6 +174,19 @@ class OmsPriceList(models.Model):
         help="Các khung giá OMS đã publish vào bảng giá này.",
     )
 
+    def write(self, vals):
+        """Clear cache when OMS pricelist is updated to ensure website prices are refreshed."""
+        res = super().write(vals)
+        if self:
+            self.env.registry.clear_cache()
+        return res
+
+    def unlink(self):
+        """Clear cache when OMS pricelist is deleted."""
+        res = super().unlink()
+        if self:
+            self.env.registry.clear_cache()
+        return res
 
     @api.onchange('from_date', 'to_date')
     def _onchange_date_sync_lines(self):
@@ -1416,7 +1429,63 @@ class OmsPriceListLine(models.Model):
             vals['from_date'] = pricelist.from_date
         if not vals.get('to_date') and pricelist and pricelist.to_date:
             vals['to_date'] = pricelist.to_date
-        return super(OmsPriceListLine, self).create(vals)
+        result = super(OmsPriceListLine, self).create(vals)
+        if result:
+            self.env.registry.clear_cache()
+        return result
+
+    def write(self, vals):
+        """Clear cache when OMS price list lines are updated to ensure website prices are refreshed."""
+        res = super().write(vals)
+        if self:
+            # Auto-sync price changes to product.pricelist.item
+            if 'price' in vals or 'min_qty' in vals or 'max_qty' in vals or 'from_date' in vals or 'to_date' in vals:
+                self._auto_sync_to_pricelist_items(vals)
+            self.env.registry.clear_cache()
+        return res
+
+    def _auto_sync_to_pricelist_items(self, vals):
+        """Auto-sync price changes from OMS to product.pricelist.item"""
+        PricelistItem = self.env['product.pricelist.item'].sudo()
+        
+        for line in self:
+            if not line.price_frame_id or not line.pricelist_id:
+                continue
+            
+            # Find the corresponding pricelist items via oms_price_frame_id
+            domain = [
+                ('oms_price_frame_id', '=', line.price_frame_id.id),
+                ('product_id', '=', line.item_id.id),
+                ('min_quantity', '=', line.min_qty),
+                ('date_start', '=', line.from_date),
+                ('date_end', '=', line.to_date),
+            ]
+            
+            # Add max_qty to domain if field exists
+            if 'oms_max_quantity' in PricelistItem._fields:
+                domain.append(('oms_max_quantity', '=', line.max_qty))
+            
+            items = PricelistItem.search(domain)
+            if items:
+                update_vals = {}
+                if 'price' in vals:
+                    update_vals['fixed_price'] = vals['price']
+                if 'min_qty' in vals:
+                    update_vals['min_quantity'] = vals['min_qty']
+                if 'from_date' in vals:
+                    update_vals['date_start'] = vals['from_date']
+                if 'to_date' in vals:
+                    update_vals['date_end'] = vals['to_date']
+                
+                if update_vals:
+                    items.write(update_vals)
+
+    def unlink(self):
+        """Clear cache when OMS price list lines are deleted."""
+        res = super().unlink()
+        if self:
+            self.env.registry.clear_cache()
+        return res
 
     @api.onchange('pricelist_id')
     def _onchange_pricelist_id(self):

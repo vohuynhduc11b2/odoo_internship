@@ -21,39 +21,42 @@ class WebsiteSaleSync(WebsiteSale):
         if locked_id:
             pl = env["product.pricelist"].sudo().browse(int(locked_id)).exists()
             if pl:
+                _logger.warning(
+                    "[PICK PL sync] step=1 session_lock pl_id=%s pl_name=%s",
+                    pl.id, pl.name,
+                )
                 return pl
 
         # 2) nếu order đã có pricelist -> lock lại và dùng
         if order.pricelist_id:
             request.session[LOCK_KEY] = order.pricelist_id.id
+            _logger.warning(
+                "[PICK PL sync] step=2 order_pl pl_id=%s pl_name=%s order=%s",
+                order.pricelist_id.id, order.pricelist_id.name, order.id,
+            )
             return order.pricelist_id.sudo()
 
-        # 3) ưu tiên pricelist theo partner (B2B)
-        partner = (
-            order.partner_id.commercial_partner_id
-            if order.partner_id
-            else env.user.partner_id.commercial_partner_id
-        )
-        pl = getattr(partner, "property_product_pricelist", False)
-        if pl:
-            request.session[LOCK_KEY] = pl.id
-            return pl.sudo()
-
-        # 4) ưu tiên website current/default
+        # 3) ưu tiên website pricelist (bỏ qua partner property)
         pl = getattr(website, "pricelist_id", False)
         if pl:
             request.session[LOCK_KEY] = pl.id
+            _logger.warning(
+                "[PICK PL sync] step=3 website_pl pl_id=%s pl_name=%s",
+                pl.id, pl.name,
+            )
             return pl.sudo()
 
-        # 5) fallback: public pricelist (list0) hoặc 1 pricelist bất kỳ
+        # 4) fallback: public pricelist (list0) hoặc 1 pricelist bất kỳ
         try:
             pl = env.ref("product.list0").sudo()
             request.session[LOCK_KEY] = pl.id
+            _logger.warning("[PICK PL sync] step=4 fallback list0 pl_id=%s", pl.id)
             return pl
         except Exception:
             pl = env["product.pricelist"].sudo().search([], limit=1)
             if pl:
                 request.session[LOCK_KEY] = pl.id
+                _logger.warning("[PICK PL sync] step=4 fallback search pl_id=%s", pl.id)
             return pl
 
     def _apply_promotions(self, order):
@@ -96,6 +99,34 @@ class WebsiteSaleSync(WebsiteSale):
         if pl and ((not order.pricelist_id) or (order.pricelist_id.id != pl.id)):
             # chỉ set pricelist, không recompute
             order.sudo().write({"pricelist_id": pl.id})
+
+        # Detect stale cached prices: nếu pricelist item đã đổi giá nhưng order line
+        # vẫn giữ giá cũ (price_unit == technical_price_unit = giá auto-computed cũ) → recompute.
+        # Không làm gì đến dòng Sales đã set thủ công (price_unit != technical_price_unit).
+        if order.pricelist_id and order.order_line:
+            def _is_stale_sync(l):
+                if not (l.product_id and not l.display_type
+                        and not getattr(l, 'is_delivery', False)
+                        and not getattr(l, 'is_gift', False)
+                        and not getattr(l, 'is_bundle', False)):
+                    return False
+                try:
+                    pl_price = l.order_id.pricelist_id._get_product_price(
+                        product=l.product_id,
+                        quantity=l.product_uom_qty or 1.0,
+                        currency=l.currency_id,
+                        date=l._get_order_date(),
+                    )
+                except Exception:
+                    return False
+                return (
+                    float(l.technical_price_unit or 0.0) > 0
+                    and float(pl_price or 0.0) > 0
+                    and l.price_unit != pl_price
+                )
+            stale_lines = order.order_line.filtered(_is_stale_sync)
+            if stale_lines:
+                stale_lines.with_context(force_price_recomputation=True)._compute_price_unit()
 
         # Apply KM/voucher nếu cần (đặc biệt checkout/payment)
         if apply_promo:

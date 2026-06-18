@@ -453,9 +453,10 @@ class Product(models.Model):
     def _get_oms_normal_price_lines(self, lines):
         return lines.filtered(lambda line: not self._is_oms_special_price_line(line))
 
-    def _oms_price_lines_to_tiers(self, lines):
+    def _oms_price_lines_to_tiers(self, lines, price_map=None):
         INF = 10**18
         best_by_range = {}
+        price_map = price_map or {}
         for line in lines:
             minq = int(line.min_qty or 1)
             if minq < 1:
@@ -479,7 +480,7 @@ class Product(models.Model):
                     "priority": priority,
                     "min_qty": minq,
                     "max_norm": max_norm,
-                    "price": float(line.price or 0.0),
+                    "price": price_map.get(line.item_id.id, float(line.price or 0.0)),
                     "name": frame_name,
                 }
 
@@ -496,8 +497,29 @@ class Product(models.Model):
                 "is_special": _is_oms_special_price_name(tier["name"]),
             })
         return res
-    
-    
+
+    def _sync_oms_line_prices_from_items(self, mapped_lines):
+        """Build item_id -> fixed_price lookup for mapped_lines.
+
+        Reads the authoritative price from product.pricelist.item (the source
+        of truth). Returns a dict {item_id: fixed_price}. Caller passes this
+        to _oms_price_lines_to_tiers so tier prices reflect any manual admin
+        edits without writing back to oms.price.list.line (which would cause
+        RecursionError during website template rendering).
+        """
+        self.ensure_one()
+        if not mapped_lines:
+            return {}
+        item_ids = [line.item_id.id for line in mapped_lines if line.item_id]
+        if not item_ids:
+            return {}
+        Item = self.env["product.pricelist.item"].sudo()
+        return {
+            it.id: float(it.fixed_price or 0.0)
+            for it in Item.browse(item_ids).exists()
+            if float(it.fixed_price or 0.0) > 0
+        }
+
     def _get_oms_tier_price_lines(self, at_date=None, pricelist=None):
         """
         Return tiers from the same product.pricelist.item rules used by cart.
@@ -512,7 +534,8 @@ class Product(models.Model):
 
         mapped_lines = self._get_oms_mapped_price_lines(pl, at_date=at_date)
         if mapped_lines:
-            return self._oms_price_lines_to_tiers(mapped_lines)
+            price_map = self._sync_oms_line_prices_from_items(mapped_lines)
+            return self._oms_price_lines_to_tiers(mapped_lines, price_map=price_map)
 
         if self._is_oms_special_pricelist(pl):
             default_pl = self._get_oms_default_pricelist()
@@ -522,7 +545,8 @@ class Product(models.Model):
                     at_date=at_date,
                 )
                 if default_mapped_lines:
-                    return self._oms_price_lines_to_tiers(default_mapped_lines)
+                    price_map = self._sync_oms_line_prices_from_items(default_mapped_lines)
+                    return self._oms_price_lines_to_tiers(default_mapped_lines, price_map=price_map)
 
         items = self._get_oms_candidate_pricelist_items(pl, at_date=at_date)
         force_single_special = False

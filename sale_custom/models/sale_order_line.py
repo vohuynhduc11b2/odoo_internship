@@ -967,6 +967,8 @@ class SaleOrderLine(models.Model):
                 and not getattr(line, 'is_gift', False)
                 and not getattr(line, 'is_bundle', False)
                 and float(line.price_unit or 0.0) > 1.0
+                and float(line.technical_price_unit or 0.0) > 1.0
+                and line.technical_price_unit != line.price_unit
             ):
                 continue
             # check if the price has been manually set or there is already invoiced amount.

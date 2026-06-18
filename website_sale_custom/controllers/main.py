@@ -551,7 +551,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
                 layout_mode = 'grid'
             request.session['website_sale_shop_layout_mode'] = layout_mode
 
-        products_prices = lazy(lambda: products._get_sales_prices(website))
+        products_prices = products._get_sales_prices(website) if products else {}
 
         attributes_values = request.env['product.attribute.value'].browse(attrib_set)
         sorted_attributes_values = attributes_values.sorted('sequence')
@@ -587,7 +587,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
             'search_categories_ids': search_categories.ids,
             'layout_mode': layout_mode,
             'products_prices': products_prices,
-            'get_product_prices': lambda product: lazy(lambda: products_prices[product.id]),
+            'get_product_prices': lazy(lambda: lambda product: products_prices.get(product.id, {})),
             'float_round': float_round,
         }
         if filter_by_price_enabled:

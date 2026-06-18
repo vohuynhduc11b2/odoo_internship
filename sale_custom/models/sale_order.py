@@ -3629,8 +3629,9 @@ class SaleOrder(models.Model):
                 'order_id': self.id,
                 'product_id': product_id,
                 'product_uom_qty': quantity,
-                'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),  # put it at the end of the order
+                'sequence': ((self.order_line and self.order_line[-1].sequence + 1) or 10),
             })
+            sol.with_context(force_price_recomputation=True)._compute_price_unit()
         return sol.price_unit * (1-(sol.discount or 0.0)/100.0)
 
     #=== TOOLING ===#

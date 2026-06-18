@@ -52,7 +52,7 @@
                                 <field name="item_id" string="Product" readonly="1" optional="show"/>
                                 <field name="price_frame_name" string="Khung giá" readonly="1"/>
                                 <field name="max_qty_frame" string="Max OMS" readonly="1"/>
-                                <field name="price" string="Price" readonly="1"/>
+                                <field name="price" string="Price"/>
                                 <field name="min_qty" string="Min" readonly="1"/>
                                 <field name="max_qty" string="Max" readonly="1"/>
                                 <field name="group_code_solar" string="Group Code" readonly="1" optional="show"/>
