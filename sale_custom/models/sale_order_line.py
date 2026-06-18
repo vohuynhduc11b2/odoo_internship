@@ -190,6 +190,11 @@ class SaleOrderLine(models.Model):
         digits='Product Price',
         store=True, readonly=False, required=True, precompute=True)
     technical_price_unit = fields.Float()
+    extra_price = fields.Float(
+        string="Extra Price",
+        digits='Product Price',
+        help="Giá cộng/trừ thêm cho từng dòng (số dương = tăng, số âm = giảm)"
+    )
     
     discount = fields.Float(
         string="Discount (%)",
@@ -1235,20 +1240,33 @@ class SaleOrderLine(models.Model):
         default=0.0,
         help="Phần trăm KM mua lần đầu/hai (website auto purchase), tách riêng khỏi discount promotions."
     )
-    @api.depends('product_uom_qty', 'discount', 'uc_auto_purchase_pct', 'price_unit', 'tax_id')
+    @api.depends('product_uom_qty', 'discount', 'uc_auto_purchase_pct', 'price_unit', 'tax_id', 'extra_price')
     def _compute_amount(self):
         for line in self:
-            # ghép discount theo kiểu nhân hiệu lực để không cộng dồn sai
             d_other = float(line.discount or 0.0)
             d_auto  = float(getattr(line, "uc_auto_purchase_pct", 0.0) or 0.0)
             eff = 100.0 * (1.0 - (1.0 - d_other/100.0) * (1.0 - d_auto/100.0))
             eff = 0.0 if eff < 0 else (100.0 if eff > 100.0 else eff)
 
-            base_line = line._prepare_base_line_for_taxes_computation(discount=eff)
-            self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
-            line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            line.price_total = base_line['tax_details']['raw_total_included_currency']
-            line.price_tax = line.price_total - line.price_subtotal
+            extra = float(line.extra_price or 0.0)
+            qty = float(line.product_uom_qty or 0.0)
+            base_price = float(line.price_unit or 0.0)
+            effective_price = base_price + extra
+
+            if qty and effective_price:
+                base_line = line._prepare_base_line_for_taxes_computation(
+                    discount=eff,
+                    price_unit=effective_price,
+                )
+                self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
+
+                line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
+                line.price_total    = base_line['tax_details']['raw_total_included_currency']
+                line.price_tax      = line.price_total - line.price_subtotal
+            else:
+                line.price_subtotal = 0.0
+                line.price_total    = 0.0
+                line.price_tax      = 0.0
 
     @api.depends('price_subtotal', 'product_uom_qty')
     def _compute_price_reduce_taxexcl(self):

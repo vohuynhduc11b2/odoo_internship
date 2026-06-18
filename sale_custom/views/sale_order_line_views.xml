@@ -14,6 +14,7 @@
                 <field name="qty_invoiced"/>
                 <field name="qty_to_invoice"/>
                 <field name="product_uom" string="Unit of Measure" groups="uom.group_uom"/>
+                <field name="extra_price"/>
                 <field name="promotion_ids" widget="many2many_tags" string="Khuyến mãi"/>
                 <field name="price_subtotal" sum="Total" />
                 <field name="currency_id" column_invisible="True"/>
@@ -68,6 +69,7 @@
                             <field name="company_id" invisible="1"/>
                             <field name="tax_country_id" invisible="1"/>
                             <field name="price_unit" digits="0"/>
+                            <field name="extra_price" digits="0"/>
                             <field name="technical_price_unit" invisible="1"/>
                             <field name="discount" groups="sale_custom.group_discount_per_so_line"/>
                             <field name="price_subtotal"
